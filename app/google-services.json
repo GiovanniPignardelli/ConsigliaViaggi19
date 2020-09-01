@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "330216002309",
+    "firebase_url": "https://consigliaviaggi19-387f9.firebaseio.com",
+    "project_id": "consigliaviaggi19-387f9",
+    "storage_bucket": "consigliaviaggi19-387f9.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:330216002309:android:08bfbf71b362d9f6985d6c",
+        "android_client_info": {
+          "package_name": "it.gpgames.consigliaviaggi19"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "330216002309-5pbq5lpjiq0a83a9ts389l9c9r0jg18c.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "it.gpgames.consigliaviaggi19",
+            "certificate_hash": "37859ae036fbb4448cc84b581088e439e26ab4a9"
+          }
+        },
+        {
+          "client_id": "330216002309-sqpg1vpmv9ou6upd8mmlc6bk6dal7f83.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB0Y-aO1avq0auOcVOnYk0kQZCHSJ6ePMU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "330216002309-sqpg1vpmv9ou6upd8mmlc6bk6dal7f83.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
