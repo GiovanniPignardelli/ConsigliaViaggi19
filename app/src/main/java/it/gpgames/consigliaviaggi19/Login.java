@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -50,26 +51,30 @@ public class Login extends AppCompatActivity {
                     e.setError("Inserire una mail valida.");
                 }
 
-                if(password.length()<8)
+                else if(password.length()<8)
                 {
                     p.setError("Ricorda che la password ha almeno 8 caratteri.");
                 }
+                else
+                {
+                    fAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(
+                            new OnCompleteListener<AuthResult>() {
+                                @Override
+                                public void onComplete(@NonNull Task<AuthResult> task) {
+                                    if(task.isSuccessful())
+                                    {
+                                        Toast.makeText(Login.this,"Accesso eseguito", Toast.LENGTH_LONG).show();
+                                        startActivity(new Intent(getApplicationContext(),MainActivity.class));
+                                    }
+                                    else
+                                    {
+                                        Log.d("my tag", "eccomi");
+                                        Toast.makeText(Login.this,"Credenziali non valide. Riprovare", Toast.LENGTH_LONG).show();
+                                    }
+                                }
+                            });
+                }
 
-                fAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(
-                        new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                if(task.isSuccessful())
-                                {
-                                    Toast.makeText(Login.this,"Accesso eseguito", Toast.LENGTH_LONG).show();
-                                    startActivity(new Intent(getApplicationContext(),MainActivity.class));
-                                }
-                                else if(!task.isSuccessful())
-                                {
-                                    Toast.makeText(Login.this,"Credenziali non valide. Riprovare", Toast.LENGTH_LONG).show();
-                                }
-                            }
-                        });
             }
         });
 
