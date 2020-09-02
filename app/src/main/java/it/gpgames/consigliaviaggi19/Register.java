@@ -57,13 +57,14 @@ public class Register extends AppCompatActivity {
                     return;
                 }
 
-                if(TextUtils.isEmpty(password) || password.length()<=8)
+                if(TextUtils.isEmpty(password) || password.length()<8)
                 {
                     psw.setError("Inserire una password valida. Almeno 8 caratteri.");
                     return;
                 }
 
-                fAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                fAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(
+                        new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful())
@@ -77,6 +78,16 @@ public class Register extends AppCompatActivity {
                         }
                     }
                 });
+            }
+        });
+
+        loginbtn.setOnClickListener(new View.OnClickListener()
+        {
+
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(Register.this, Login.class));
+                finish();
             }
         });
     }
