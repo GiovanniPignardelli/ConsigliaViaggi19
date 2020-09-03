@@ -16,6 +16,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
+import it.gpgames.consigliaviaggi19.home.MainActivity;
+
 public class Register extends AppCompatActivity {
     EditText usr,psw,mail;
     Button loginbtn,registerbtn;
@@ -34,7 +36,7 @@ public class Register extends AppCompatActivity {
 
         if(fAuth.getCurrentUser()!=null)
         {
-            startActivity(new Intent(getApplicationContext(),MainActivity.class));
+            startActivity(new Intent(getApplicationContext(), MainActivity.class));
             finish();
         }
 

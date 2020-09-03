@@ -17,6 +17,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
+import it.gpgames.consigliaviaggi19.home.MainActivity;
+
 public class Login extends AppCompatActivity {
 
     Button login,signin;
@@ -35,7 +37,7 @@ public class Login extends AppCompatActivity {
 
         if(fAuth.getCurrentUser()!=null)
         {
-            startActivity(new Intent(getApplicationContext(),MainActivity.class));
+            startActivity(new Intent(getApplicationContext(), MainActivity.class));
             finish();
         }
 
