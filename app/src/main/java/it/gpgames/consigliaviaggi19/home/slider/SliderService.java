@@ -45,7 +45,7 @@ public class SliderService extends JobIntentService {
 
     @Override
     protected void onHandleWork(@NonNull Intent intent) {
-        /* Scarica tutte le immagini dello slider dal DB */
+        /* Scarica tutte le immagini dello slider dal DBs */
 
     }
 
