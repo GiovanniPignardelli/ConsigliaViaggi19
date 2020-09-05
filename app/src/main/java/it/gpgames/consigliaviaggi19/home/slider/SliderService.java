@@ -33,8 +33,7 @@ public class SliderService extends JobIntentService {
     final Handler mHandler = new Handler();
     private static final String TAG = "SliderService";
     private static final int JOB_ID = 2;
-    List<SliderItem> SliderItemToShow = new ArrayList<>();
-    DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference();
+
 
     public static void enqueueWork(Context context, Intent intent) {
         enqueueWork(context, SliderService.class, JOB_ID, intent);
@@ -47,44 +46,10 @@ public class SliderService extends JobIntentService {
     @Override
     protected void onHandleWork(@NonNull Intent intent) {
         /* Scarica tutte le immagini dello slider dal DB */
-        final DatabaseReference sliderImgsRef = dbRef.child("home").child("slider");
-        sliderImgsRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Integer index = new Integer(1);
-                while (dataSnapshot.hasChild(index.toString())) {
-                    DataSnapshot currentRef = dataSnapshot.child(index.toString());
-                    SliderItemToShow.add(new SliderItem(
-                            getBitmapFromURL(currentRef.child("img").getValue().toString()),
-                            currentRef.child("keyword").getValue().toString()
-                    ));
-                    index++;
 
-                    Intent toMainActivity = new Intent();
-                    toMainActivity.setAction(MY_ACTION);
-                    sendBroadcast(toMainActivity);
-                    Bundle sliderItemBundle = new Bundle();
-                    sliderItemBundle.putParcelable("SliderItemsList", (Parcelable) SliderItemToShow);
-                    toMainActivity.putExtra("SliderItemsList", sliderItemBundle);
-                    sendBroadcast(toMainActivity);
-                }
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) { }
-        });
     }
 
-    /** Ottiene un Bitmap da un URL. */
-    public static Bitmap getBitmapFromURL(String inUrl) {
-        try {
-            URL url = new URL(inUrl);
-            Bitmap image = BitmapFactory.decodeStream(url.openConnection().getInputStream());
-            return image;
-        } catch(IOException e) {
-            System.out.println(e);
-        }
-        return null;
-    }
+
 }
 
 

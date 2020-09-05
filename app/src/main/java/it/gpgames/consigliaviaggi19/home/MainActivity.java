@@ -30,9 +30,13 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import it.gpgames.consigliaviaggi19.R;
 import it.gpgames.consigliaviaggi19.home.slider.SliderItem;
+import it.gpgames.consigliaviaggi19.home.slider.SliderRunnable;
 import it.gpgames.consigliaviaggi19.home.slider.SliderService;
 
 public class MainActivity extends AppCompatActivity {
@@ -44,26 +48,15 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         main_image=findViewById(R.id.main_image);
+        Runnable sliderRunnable= new SliderRunnable();
+        ExecutorService myExecutor= Executors.newSingleThreadExecutor();
+        myExecutor.execute(sliderRunnable);
     }
 
-    BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Bundle getSliderListFromService = intent.getBundleExtra("SliderItemsList");
-            SliderItemToShow = (List<SliderItem>) getSliderListFromService.getParcelable("SliderItemsList");
-            main_image.setImageBitmap(SliderItemToShow.get(0).getImg());
-        }
-    };
 
     @Override
     protected void onStart() {
         super.onStart();
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(SliderService.MY_ACTION);
-        registerReceiver(broadcastReceiver, intentFilter);
-        SliderService ss = new SliderService();
-        Intent mIntent = new Intent(this,SliderService.class);
-        SliderService.enqueueWork(this, mIntent);
     }
 
 
