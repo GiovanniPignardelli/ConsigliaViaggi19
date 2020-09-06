@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
         initSlider();
     }
 
-    /** Scarica gli SliderItem dal FirebaseDatabase ed avvia la ViewPage. */
+    /** Inizializza lo slider di immagini nell'activity_main.xml. Nota: vedere SliderItemsGetter e SliderAdapter. */
     void initSlider(){
         final DatabaseReference sliderImgsRef = dbRef.child("home").child("slider");
         sliderImgsRef.addValueEventListener(new ValueEventListener() {
@@ -71,8 +71,10 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                 };
+
                 Runnable sliderRunnable= new SliderItemsGetter(sliderInitializator,dataSnapshot);
                 sliderInitializator.post(sliderRunnable);
+
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) { }

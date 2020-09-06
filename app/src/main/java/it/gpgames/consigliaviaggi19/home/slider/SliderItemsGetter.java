@@ -23,7 +23,10 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-/** Ha il compito caricare le immagini dello slider dal database*/
+/** La classe SliderItemsGetter inizializza lo slider di immagini dell'activity_main.xml.
+ * Genera la lista di SliderItem scaricando i dati dal FirebaseDatabase, per poi avviare
+ * lo SliderAdapter.
+ */
 public class SliderItemsGetter implements Runnable {
 
     List<SliderItem> SliderItemToShow = new ArrayList<>();

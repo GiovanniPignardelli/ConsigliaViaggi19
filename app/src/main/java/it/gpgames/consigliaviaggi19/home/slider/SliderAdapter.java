@@ -15,6 +15,7 @@ import java.util.List;
 
 import it.gpgames.consigliaviaggi19.R;
 
+/** La classe SliderAdapter offre le funzionalità necessarie a far funzionare lo slider di immagini nella homepage. */
 public class SliderAdapter extends RecyclerView.Adapter<SliderAdapter.SliderViewHolder>{
 
     private List<SliderItem> sliderItemList;
@@ -43,9 +44,9 @@ public class SliderAdapter extends RecyclerView.Adapter<SliderAdapter.SliderView
             holder.setImage(sliderItemList.get(position));
     }
 
+    /**Ottiene il numero di SliderItem presenti nella lista sliderItemList. */
     @Override
     public int getItemCount() {
-        //Log.d("numero", new Integer(sliderItemList.size()).toString() );
         return sliderItemList.size();
     }
 
