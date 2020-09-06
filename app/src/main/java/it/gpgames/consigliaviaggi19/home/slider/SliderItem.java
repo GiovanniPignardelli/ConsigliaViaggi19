@@ -10,6 +10,12 @@ public class SliderItem implements Parcelable {
     String keyword;
     Bitmap img;
 
+    public int getIndex() {
+        return index;
+    }
+
+    int index;
+
     protected SliderItem(Parcel in) {
         keyword = in.readString();
         img = in.readParcelable(Bitmap.class.getClassLoader());
@@ -33,9 +39,10 @@ public class SliderItem implements Parcelable {
 
 
 
-    public SliderItem(Bitmap img, String keyword){
+    public SliderItem(Bitmap img, String keyword, int index){
         this.img = img;
         this.keyword = keyword;
+        this.index=index;
     }
 
     public Bitmap getImg() {

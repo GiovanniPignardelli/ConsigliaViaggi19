@@ -2,6 +2,7 @@ package it.gpgames.consigliaviaggi19.home;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.viewpager2.widget.ViewPager2;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -29,11 +30,12 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import it.gpgames.consigliaviaggi19.R;
+import it.gpgames.consigliaviaggi19.home.slider.SliderAdapter;
 import it.gpgames.consigliaviaggi19.home.slider.SliderItem;
 import it.gpgames.consigliaviaggi19.home.slider.SliderItemsGetter;
 
 public class MainActivity extends AppCompatActivity {
-    public ImageView main_image;
+    private ViewPager2 viewPager;
     static List<SliderItem> SliderItemToShow = new ArrayList<>();
     DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference();
 
@@ -41,8 +43,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        main_image=findViewById(R.id.main_image);
-
+        viewPager=findViewById(R.id.sliderImage);
         initSlider();
     }
 
@@ -64,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
                             uiThread.post(new Runnable() {
                                 @Override
                                 public void run() {
-                                    main_image.setImageBitmap(SliderItemToShow.get(1).getImg());
+                                    viewPager.setAdapter(new SliderAdapter(SliderItemToShow,viewPager));
                                 }
                             });
                         }
@@ -76,6 +77,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) { }
         });
+
+
     }
 
 

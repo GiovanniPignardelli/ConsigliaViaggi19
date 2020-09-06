@@ -43,7 +43,8 @@ public class SliderItemsGetter implements Runnable {
             DataSnapshot currentRef = resultDB.child(index.toString());
             SliderItemToShow.add(new SliderItem(
                     getBitmapFromURL(currentRef.child("img").getValue().toString()),
-                    currentRef.child("keyword").getValue().toString()
+                    currentRef.child("keyword").getValue().toString(),
+                    index-1
             ));
             index++;
         }
