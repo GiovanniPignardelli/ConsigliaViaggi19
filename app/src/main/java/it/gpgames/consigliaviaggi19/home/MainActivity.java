@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager2.widget.ViewPager2;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -14,6 +15,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.os.Parcelable;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 
 import com.google.firebase.database.DataSnapshot;
@@ -30,21 +32,46 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import it.gpgames.consigliaviaggi19.R;
+import it.gpgames.consigliaviaggi19.UserPanel;
 import it.gpgames.consigliaviaggi19.home.slider.SliderAdapter;
 import it.gpgames.consigliaviaggi19.home.slider.SliderItem;
 import it.gpgames.consigliaviaggi19.home.slider.SliderItemsGetter;
 
 public class MainActivity extends AppCompatActivity {
+
+    DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference();
+
     private ViewPager2 viewPager;
     static List<SliderItem> SliderItemToShow = new ArrayList<>();
-    DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference();
+
+    private ImageView user_button;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         viewPager=findViewById(R.id.sliderImage);
+        user_button=findViewById(R.id.user);
+        init();
+    }
+
+    /**inizializza tutte le componenti della activity_main.xml*/
+    private void init()
+    {
         initSlider();
+        initListeners();
+    }
+
+    /**Inizializza i listener della activity_main.xml*/
+    private void initListeners()
+    {
+        //Inizializzazione listener dello user_button, per accede al pannello di controllo dell'utente
+        user_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, UserPanel.class));
+            }
+        });
     }
 
     /** Inizializza lo slider di immagini nell'activity_main.xml. Nota: vedere SliderItemsGetter e SliderAdapter. */
@@ -82,7 +109,6 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
-
 
     @Override
     protected void onStart() {
