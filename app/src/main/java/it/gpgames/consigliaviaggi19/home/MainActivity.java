@@ -5,9 +5,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager2.widget.ViewPager2;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -18,21 +15,20 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
+import it.gpgames.consigliaviaggi19.Login;
 import it.gpgames.consigliaviaggi19.R;
-import it.gpgames.consigliaviaggi19.UserPanel;
+import it.gpgames.consigliaviaggi19.userpanel.UserData;
+import it.gpgames.consigliaviaggi19.userpanel.UserPanelActivity;
 import it.gpgames.consigliaviaggi19.home.slider.SliderAdapter;
 import it.gpgames.consigliaviaggi19.home.slider.SliderItem;
 import it.gpgames.consigliaviaggi19.home.slider.SliderItemsGetter;
@@ -40,36 +36,62 @@ import it.gpgames.consigliaviaggi19.home.slider.SliderItemsGetter;
 public class MainActivity extends AppCompatActivity {
 
     DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference();
+    UserData userData = new UserData();
 
     private ViewPager2 viewPager;
     static List<SliderItem> SliderItemToShow = new ArrayList<>();
 
-    private ImageView user_button;
+    private ImageView bUserPanel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         viewPager=findViewById(R.id.sliderImage);
-        user_button=findViewById(R.id.user);
+        bUserPanel=findViewById(R.id.user);
+        checkIfTokenHasExpired();
         init();
     }
 
-    /**inizializza tutte le componenti della activity_main.xml*/
+    @Override
+    protected void onResume() {
+        super.onResume();
+        initUserData();
+    }
+
+    /**Controlla se il token d'accesso è scaduto. In tal caso è necessario ri-effettuare l'accesso.*/
+    private void checkIfTokenHasExpired(){
+        if(FirebaseAuth.getInstance().getCurrentUser() == null){
+            Intent accessNeeded = new Intent(MainActivity.this, Login.class);
+            startActivity(accessNeeded);
+        }
+    }
+
+    /**Inizializza tutte le componenti della activity_main.xml*/
     private void init()
     {
         initSlider();
         initListeners();
     }
 
+    /**Inizializza localmente i dati utente (classe UserData).*/
+    private void initUserData()
+    {
+        userData.downloadUserData();
+    }
+
     /**Inizializza i listener della activity_main.xml*/
     private void initListeners()
     {
         //Inizializzazione listener dello user_button, per accede al pannello di controllo dell'utente
-        user_button.setOnClickListener(new View.OnClickListener() {
+        bUserPanel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, UserPanel.class));
+                Intent toUserPanel = new Intent(MainActivity.this, UserPanelActivity.class);
+                Bundle userDataBundle = new Bundle();
+                userDataBundle.putParcelable("UserData", userData);
+                toUserPanel.putExtras(userDataBundle);
+                startActivity(toUserPanel);
             }
         });
     }

@@ -61,7 +61,7 @@ public class SliderItemsGetter implements Runnable {
     }
 
     /** Ottiene un oggetto Bitmap da una stringa contenente URL. */
-    public Bitmap getBitmapFromURL(String inUrl) {
+    public static Bitmap getBitmapFromURL(String inUrl) {
         try {
             Log.d("pic", inUrl);
             URL url = new URL(inUrl);

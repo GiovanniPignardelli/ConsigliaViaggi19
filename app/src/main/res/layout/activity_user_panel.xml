@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".UserPanel">
+    tools:context=".userpanel.UserPanelActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar2"
@@ -34,10 +34,10 @@
         app:layout_constraintTop_toTopOf="@+id/toolbar2" />
 
     <TextView
-        android:id="@+id/user_title"
+        android:id="@+id/userDisplayName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:fontFamily="sans-serif-black"
         android:text="Il mio profilo"
         android:textSize="18sp"
@@ -58,23 +58,24 @@
         app:srcCompat="@drawable/back" />
 
     <ImageView
-        android:id="@+id/imageView2"
+        android:id="@+id/userPicture"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="20dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.051"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/user_title"
+        app:layout_constraintTop_toBottomOf="@+id/userDisplayName"
         app:srcCompat="@drawable/default_profile_picture" />
 
     <Button
         android:id="@+id/change_image_button"
-        android:layout_width="99dp"
-        android:layout_height="32dp"
-        android:layout_marginStart="16dp"
-        android:text="Cambia Immagine"
-        android:textSize="8sp"
+        android:layout_width="151dp"
+        android:layout_height="49dp"
+        android:layout_marginTop="16dp"
+        android:text="Carica Immagine"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView2" />
+        app:layout_constraintTop_toBottomOf="@+id/userPicture" />
 </androidx.constraintlayout.widget.ConstraintLayout>

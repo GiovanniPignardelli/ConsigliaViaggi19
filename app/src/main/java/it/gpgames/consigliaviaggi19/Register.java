@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -15,23 +16,24 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.UserProfileChangeRequest;
 
 import it.gpgames.consigliaviaggi19.home.MainActivity;
 
 public class Register extends AppCompatActivity {
-    EditText usr,psw,mail;
-    Button loginbtn,registerbtn;
+    EditText eUser,ePsw,eEmail;
+    Button bLogin,bRegister;
     FirebaseAuth fAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
-        usr=findViewById(R.id.usernametxt);
-        psw=findViewById(R.id.passwordtxt);
-        mail=findViewById(R.id.emailtxt);
-        loginbtn=findViewById(R.id.login);
-        registerbtn=findViewById(R.id.signin);
+        eUser=findViewById(R.id.usernametxt);
+        ePsw=findViewById(R.id.passwordtxt);
+        eEmail=findViewById(R.id.emailtxt);
+        bLogin=findViewById(R.id.login);
+        bRegister=findViewById(R.id.signin);
         fAuth=FirebaseAuth.getInstance();
 
         if(fAuth.getCurrentUser()!=null)
@@ -40,28 +42,28 @@ public class Register extends AppCompatActivity {
             finish();
         }
 
-        registerbtn.setOnClickListener(new View.OnClickListener() {
+        bRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String email=mail.getText().toString().trim();
-                String username=usr.getText().toString().trim();
-                String password=psw.getText().toString().trim();
+                String email=eEmail.getText().toString().trim();
+                final String username=eUser.getText().toString().trim();
+                String password=ePsw.getText().toString().trim();
 
                 if(TextUtils.isEmpty(email))
                 {
-                    mail.setError("Inserire una mail valida.");
+                    eEmail.setError("Inserire una mail valida.");
                     return;
                 }
 
                 if(TextUtils.isEmpty(username))
                 {
-                    usr.setError("Inserire un username valido.");
+                    eUser.setError("Inserire un username valido.");
                     return;
                 }
 
                 if(TextUtils.isEmpty(password) || password.length()<8)
                 {
-                    psw.setError("Inserire una password valida. Almeno 8 caratteri.");
+                    ePsw.setError("Inserire una password valida. Almeno 8 caratteri.");
                     return;
                 }
 
@@ -72,7 +74,11 @@ public class Register extends AppCompatActivity {
                         if(task.isSuccessful())
                         {
                             Toast.makeText(Register.this,"Account Creato", Toast.LENGTH_LONG).show();
-                            startActivity(new Intent(getApplicationContext(),MainActivity.class));
+
+                            UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                                .setDisplayName(username)
+                                .build();
+                            fAuth.getCurrentUser().updateProfile(profileUpdates);
                         }
                         else if(!task.isSuccessful())
                         {
@@ -83,7 +89,7 @@ public class Register extends AppCompatActivity {
             }
         });
 
-        loginbtn.setOnClickListener(new View.OnClickListener()
+        bLogin.setOnClickListener(new View.OnClickListener()
         {
 
             @Override
