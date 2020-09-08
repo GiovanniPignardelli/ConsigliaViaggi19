@@ -1,70 +1,94 @@
 package it.gpgames.consigliaviaggi19.home.slider;
 
-import android.util.Log;
+import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.viewpager2.widget.ViewPager2;
+import com.bumptech.glide.Glide;
+import com.smarteist.autoimageslider.SliderViewAdapter;
 
-import com.makeramen.roundedimageview.RoundedImageView;
-
+import java.util.ArrayList;
 import java.util.List;
 
 import it.gpgames.consigliaviaggi19.R;
 
-/** La classe SliderAdapter offre le funzionalità necessarie a far funzionare lo slider di immagini nella homepage. */
-public class SliderAdapter extends RecyclerView.Adapter<SliderAdapter.SliderViewHolder>{
+/**La classe SliderAdapter mette in funzione l'AutoImageSlider presente sull'activity_main.xml.*/
+public class SliderAdapter extends
+        SliderViewAdapter<SliderAdapter.SliderAdapterVH> {
 
-    private List<SliderItem> sliderItemList;
-    private ViewPager2 viewPager2;
-    private String keyWord;
+    private Context context;
+    private List<SliderItem> mSliderItems = new ArrayList<>();
 
-    public SliderAdapter(List<SliderItem> sliderItemList, ViewPager2 viewPager)
-    {
-        this.sliderItemList=sliderItemList;
-        this.viewPager2=viewPager;
+    public SliderAdapter(Context context, List<SliderItem> sliderItems) {
+        this.context = context;
+        mSliderItems = sliderItems;
     }
 
-    @NonNull
+    public void renewItems(List<SliderItem> sliderItems) {
+        this.mSliderItems = sliderItems;
+        notifyDataSetChanged();
+    }
+
+    public void deleteItem(int position) {
+        this.mSliderItems.remove(position);
+        notifyDataSetChanged();
+    }
+
+    public void addItem(SliderItem sliderItem) {
+        this.mSliderItems.add(sliderItem);
+        notifyDataSetChanged();
+    }
+
     @Override
-    public SliderViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new SliderViewHolder(
-                LayoutInflater.from(parent.getContext()).inflate(
-                R.layout.slide_item_container,
-                parent,
-                false
-        ));
+    public SliderAdapterVH onCreateViewHolder(ViewGroup parent) {
+        View inflate = LayoutInflater.from(parent.getContext()).inflate(R.layout.slide_item_container, null);
+        return new SliderAdapterVH(inflate);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull SliderViewHolder holder, int position) {
-            holder.setImage(sliderItemList.get(position));
+    public void onBindViewHolder(SliderAdapterVH viewHolder, final int position) {
+
+        SliderItem sliderItem = mSliderItems.get(position);
+
+        viewHolder.textViewDescription.setText(sliderItem.getDescription());
+        viewHolder.textViewDescription.setTextSize(16);
+        viewHolder.textViewDescription.setTextColor(Color.WHITE);
+        Glide.with(viewHolder.itemView).load(sliderItem.getImg())
+                .into(viewHolder.imageViewBackground);
+
+        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(context, "This is item in position " + position, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
-    /**Ottiene il numero di SliderItem presenti nella lista sliderItemList. */
     @Override
-    public int getItemCount() {
-        return sliderItemList.size();
+    public int getCount() {
+        //slider view count could be dynamic size
+        return mSliderItems.size();
     }
 
-    class SliderViewHolder extends RecyclerView.ViewHolder{
-        private RoundedImageView imageView;
+    class SliderAdapterVH extends SliderViewAdapter.ViewHolder {
 
-        SliderViewHolder(@NonNull View itemView) {
+        View itemView;
+        ImageView imageViewBackground;
+        ImageView imageGifContainer;
+        TextView textViewDescription;
+
+        public SliderAdapterVH(View itemView) {
             super(itemView);
-            imageView=itemView.findViewById(R.id.imageSlide);
-        }
-
-        void setImage(SliderItem sliderItem)
-        {
-            SliderItem itemToShow=sliderItemList.get(sliderItem.getIndex());
-            imageView.setImageBitmap(itemToShow.getImg());
-            keyWord = itemToShow.getKeyword();
+            imageViewBackground = itemView.findViewById(R.id.iv_auto_image_slider);
+            //imageGifContainer = itemView.findViewById(R.id.iv_gif_container);
+            textViewDescription = itemView.findViewById(R.id.tv_auto_image_slider);
+            this.itemView = itemView;
         }
     }
-
 
 }

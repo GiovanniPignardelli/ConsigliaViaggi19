@@ -2,16 +2,14 @@ package it.gpgames.consigliaviaggi19.home;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.viewpager2.widget.ViewPager2;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.Message;
-import android.os.Parcelable;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -21,15 +19,18 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.smarteist.autoimageslider.IndicatorView.animation.type.IndicatorAnimationType;
+import com.smarteist.autoimageslider.SliderAnimations;
+import com.smarteist.autoimageslider.SliderView;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import it.gpgames.consigliaviaggi19.Login;
 import it.gpgames.consigliaviaggi19.R;
+import it.gpgames.consigliaviaggi19.home.slider.SliderAdapter;
 import it.gpgames.consigliaviaggi19.userpanel.UserData;
 import it.gpgames.consigliaviaggi19.userpanel.UserPanelActivity;
-import it.gpgames.consigliaviaggi19.home.slider.SliderAdapter;
 import it.gpgames.consigliaviaggi19.home.slider.SliderItem;
 import it.gpgames.consigliaviaggi19.home.slider.SliderItemsGetter;
 
@@ -38,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
     DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference();
     UserData userData = UserData.getUserInstance();
 
-    private ViewPager2 viewPager;
+    private SliderView sliderView;
     static List<SliderItem> SliderItemToShow = new ArrayList<>();
 
     private ImageView bUserPanel;
@@ -47,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        viewPager=findViewById(R.id.sliderImage);
+        sliderView=findViewById(R.id.imageSlider);
         bUserPanel=findViewById(R.id.user);
         checkIfTokenHasExpired();
         init();
@@ -129,7 +130,14 @@ public class MainActivity extends AppCompatActivity {
                             uiThread.post(new Runnable() {
                                 @Override
                                 public void run() {
-                                    viewPager.setAdapter(new SliderAdapter(SliderItemToShow,viewPager));
+                                    sliderView.setSliderAdapter(new SliderAdapter(MainActivity.this,SliderItemToShow));
+                                    sliderView.setIndicatorAnimation(IndicatorAnimationType.WORM); //set indicator animation by using IndicatorAnimationType. :WORM or THIN_WORM or COLOR or DROP or FILL or NONE or SCALE or SCALE_DOWN or SLIDE and SWAP!!
+                                    sliderView.setSliderTransformAnimation(SliderAnimations.SIMPLETRANSFORMATION);
+                                    sliderView.setAutoCycleDirection(SliderView.AUTO_CYCLE_DIRECTION_BACK_AND_FORTH);
+                                    sliderView.setIndicatorSelectedColor(Color.WHITE);
+                                    sliderView.setIndicatorUnselectedColor(Color.GRAY);
+                                    sliderView.setScrollTimeInSec(4);
+                                    sliderView.startAutoCycle();
                                 }
                             });
                         }

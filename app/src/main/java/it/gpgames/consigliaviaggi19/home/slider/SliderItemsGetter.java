@@ -47,6 +47,7 @@ public class SliderItemsGetter implements Runnable {
             SliderItemToShow.add(new SliderItem(
                     getBitmapFromURL(currentRef.child("img").getValue().toString()),
                     currentRef.child("keyword").getValue().toString(),
+                    currentRef.child("desc").getValue().toString(),
                     index-1
             ));
             index++;
