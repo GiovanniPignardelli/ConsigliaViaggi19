@@ -36,7 +36,7 @@ import it.gpgames.consigliaviaggi19.home.slider.SliderItemsGetter;
 public class MainActivity extends AppCompatActivity {
 
     DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference();
-    UserData userData = new UserData();
+    UserData userData = UserData.getUserInstance();
 
     private ViewPager2 viewPager;
     static List<SliderItem> SliderItemToShow = new ArrayList<>();
@@ -92,6 +92,18 @@ public class MainActivity extends AppCompatActivity {
                 userDataBundle.putParcelable("UserData", userData);
                 toUserPanel.putExtras(userDataBundle);
                 startActivity(toUserPanel);
+            }
+        });
+
+        FirebaseAuth.getInstance().addAuthStateListener(new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                if(FirebaseAuth.getInstance().getCurrentUser()==null)
+                {
+                    userData.cleanUserData();
+                    startActivity(new Intent(MainActivity.this, Login.class));
+                    finish();
+                }
             }
         });
     }

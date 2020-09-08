@@ -15,8 +15,8 @@ import java.util.concurrent.Executors;
 
 import it.gpgames.consigliaviaggi19.home.slider.SliderItemsGetter;
 
-/**La classe User detiene localmente le informazioni relative all'utente della sessione attuale. Tutti i suoi
- * membri sono static, così da evitare involontarie duplicazioni dei dati utente.*/
+/**La classe User detiene localmente le informazioni relative all'utente della sessione attuale.
+ * Si tratta di una classe singleton (istanziabile una sola volta). L'istanza è ottenibile con il metodo getUserIstance()*/
 public class UserData implements Parcelable {
 
     private String displayName;
@@ -24,6 +24,25 @@ public class UserData implements Parcelable {
     private Uri avatar;
     private String userID;
     private boolean isEmailVerified;
+    private static UserData localInstance;
+
+    private UserData()
+    {
+
+    }
+
+    public static UserData getUserInstance()
+    {
+        if(localInstance!=null)
+        {
+            return localInstance;
+        }
+        else
+        {
+            localInstance = new UserData();
+            return localInstance;
+        }
+    }
 
     public UserData(Parcel in) {
         displayName = in.readString();
@@ -44,10 +63,6 @@ public class UserData implements Parcelable {
             return new UserData[size];
         }
     };
-
-    public UserData() {
-
-    }
 
     @Override
     public int describeContents() {
@@ -122,6 +137,16 @@ public class UserData implements Parcelable {
     public void downloadUserData(){
         ExecutorService executor = Executors.newFixedThreadPool(1);
         executor.execute(new UserDataUpdater());
+    }
+
+    public void cleanUserData()
+    {
+        displayName=null;
+        email=null;
+        avatar=null;
+        userID=null;
+        isEmailVerified=false;
+        localInstance=null;
     }
 
 }

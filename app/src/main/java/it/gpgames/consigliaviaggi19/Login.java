@@ -72,8 +72,7 @@ public class Login extends AppCompatActivity {
                                     }
                                     else
                                     {
-                                        Log.d("my tag", "eccomi");
-                                        Toast.makeText(Login.this,"Credenziali non valide. Riprovare", Toast.LENGTH_LONG).show();
+                                        Toast.makeText(Login.this,task.getException().getMessage(), Toast.LENGTH_LONG).show();
                                     }
                                 }
                             });

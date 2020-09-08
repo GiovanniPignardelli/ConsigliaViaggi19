@@ -79,10 +79,13 @@ public class Register extends AppCompatActivity {
                                 .setDisplayName(username)
                                 .build();
                             fAuth.getCurrentUser().updateProfile(profileUpdates);
+
+                            startActivity(new Intent(Register.this, MainActivity.class));
+                            finish();
                         }
                         else if(!task.isSuccessful())
                         {
-                            Toast.makeText(Register.this,"Errore", Toast.LENGTH_LONG).show();
+                            Toast.makeText(Register.this,task.getException().getMessage(), Toast.LENGTH_LONG).show();
                         }
                     }
                 });

@@ -36,6 +36,7 @@ import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import it.gpgames.consigliaviaggi19.Login;
 import it.gpgames.consigliaviaggi19.R;
 import it.gpgames.consigliaviaggi19.home.MainActivity;
 import it.gpgames.consigliaviaggi19.home.slider.SliderItemsGetter;
@@ -49,6 +50,7 @@ public class UserPanelActivity extends AppCompatActivity {
     ImageView iUserPicture;
     TextView tUserDisplayName;
     Button bChangeProfilePicture;
+    Button bLogout;
     UserData currentUserData;
 
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -72,11 +74,21 @@ public class UserPanelActivity extends AppCompatActivity {
         bChangeProfilePicture=findViewById(R.id.change_image_button);
         iUserPicture = findViewById(R.id.userPicture);
         tUserDisplayName = findViewById(R.id.userDisplayName);
+        bLogout = findViewById(R.id.logout_button);
 
+        initListeners();
+
+
+    }
+
+    private void initListeners()
+    {
         bBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+                Intent toMainActivity=new Intent(UserPanelActivity.this, MainActivity.class);
+                toMainActivity.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(toMainActivity);
             }
         });
 
@@ -84,6 +96,13 @@ public class UserPanelActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivityForResult(new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI), IMGPRV);
+            }
+        });
+
+        bLogout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FirebaseAuth.getInstance().signOut();
             }
         });
     }
@@ -119,7 +138,7 @@ public class UserPanelActivity extends AppCompatActivity {
             @Override
             public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
                 if (!task.isSuccessful()) {
-                    Toast.makeText(getApplicationContext(),"Si prega di riprovare, l'upload non è andato a buon fine!",Toast.LENGTH_SHORT);
+                    Toast.makeText(getApplicationContext(),"Si prega di riprovare, l'upload non è andato a buon fine!",Toast.LENGTH_SHORT).show();
                     throw task.getException();
                 }
                 return userProfileImagesRef.getDownloadUrl();
@@ -130,11 +149,12 @@ public class UserPanelActivity extends AppCompatActivity {
                 if (task.isSuccessful()) {
                     Uri downloadUri = task.getResult();
                     if (downloadUri == null){
-                        Toast.makeText(getApplicationContext(), "Si prega di riprovare, l'upload non è andato a buon fine!", Toast.LENGTH_SHORT);
+                        Toast.makeText(getApplicationContext(), "Si prega di riprovare, l'upload non è andato a buon fine!", Toast.LENGTH_SHORT).show();
                         return;
                     }
                     else {
                         updateUserPictureAfterUpload(downloadUri);
+
                     }
                 }
             }
@@ -152,7 +172,7 @@ public class UserPanelActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
-                            Toast.makeText(UserPanelActivity.this, "La tua foto profilo è stata aggiornata!", Toast.LENGTH_SHORT);
+                            Toast.makeText(UserPanelActivity.this, "La tua foto profilo è stata aggiornata!", Toast.LENGTH_SHORT).show();
                             Intent backToMain = new Intent(getApplicationContext(), MainActivity.class);
                             startActivity(backToMain);
                             finish();

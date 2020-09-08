@@ -6,6 +6,85 @@
     android:layout_height="match_parent"
     tools:context=".userpanel.UserPanelActivity">
 
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="9dp"
+        android:fillViewport="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar2">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <Button
+                android:id="@+id/change_image_button"
+                android:layout_width="160dp"
+                android:layout_height="60dp"
+                android:layout_marginStart="131dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="132dp"
+                android:text="Carica Immagine"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/userPicture" />
+
+            <Button
+                android:id="@+id/reset_password_button"
+                android:layout_width="160dp"
+                android:layout_height="60dp"
+                android:layout_marginTop="20dp"
+                android:text="Resetta Password"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.498"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/change_image_button" />
+
+            <Button
+                android:id="@+id/logout_button"
+                android:layout_width="160dp"
+                android:layout_height="60dp"
+                android:layout_marginTop="20dp"
+                android:text="Logout"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.498"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/reset_password_button" />
+
+            <TextView
+                android:id="@+id/userDisplayName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="155dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="156dp"
+                android:fontFamily="sans-serif-black"
+                android:text="Il mio profilo"
+                android:textSize="18sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/userPicture"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_marginStart="156dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="158dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/userDisplayName"
+                app:srcCompat="@drawable/default_profile_picture" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
+
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar2"
         android:layout_width="0dp"
@@ -33,19 +112,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/toolbar2" />
 
-    <TextView
-        android:id="@+id/userDisplayName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:fontFamily="sans-serif-black"
-        android:text="Il mio profilo"
-        android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar2" />
-
     <ImageView
         android:id="@+id/back"
         android:layout_width="40dp"
@@ -57,25 +123,4 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/back" />
 
-    <ImageView
-        android:id="@+id/userPicture"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_marginTop="20dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/userDisplayName"
-        app:srcCompat="@drawable/default_profile_picture" />
-
-    <Button
-        android:id="@+id/change_image_button"
-        android:layout_width="151dp"
-        android:layout_height="49dp"
-        android:layout_marginTop="16dp"
-        android:text="Carica Immagine"
-        android:textSize="14sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/userPicture" />
 </androidx.constraintlayout.widget.ConstraintLayout>
