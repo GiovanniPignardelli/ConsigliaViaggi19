@@ -77,10 +77,12 @@ public class MainActivity extends AppCompatActivity {
     /**Inizializza localmente i dati utente (classe UserData).*/
     private void initUserData()
     {
-        userData.downloadUserData();
+        userData.downloadUserDataFromFirebase();
     }
 
-    /**Inizializza i listener della activity_main.xml*/
+    /**Inizializza i listener della activity_main.xml:
+     * - OnClickListener(bUserPanel): button per aprire l'UserPanelActivity;
+     * - AuthStateListener(FirebaseAuth.getInstance()): gestisce la scadenza del token di accesso.*/
     private void initListeners()
     {
         //Inizializzazione listener dello user_button, per accede al pannello di controllo dell'utente
@@ -95,12 +97,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // Inizializzazione listener sullo stato di autenticazione. In caso di scadenza token, il listener si attiva.
         FirebaseAuth.getInstance().addAuthStateListener(new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 if(FirebaseAuth.getInstance().getCurrentUser()==null)
                 {
-                    userData.cleanUserData();
+                    userData.cleanLocalUserData();
                     startActivity(new Intent(MainActivity.this, Login.class));
                     finish();
                 }

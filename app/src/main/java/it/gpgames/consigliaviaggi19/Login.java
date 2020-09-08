@@ -52,12 +52,12 @@ public class Login extends AppCompatActivity {
 
                 if(TextUtils.isEmpty(email))
                 {
-                    e.setError("Inserire una mail valida.");
+                    e.setError("Inserire una email valida.");
                 }
 
                 else if(password.length()<8)
                 {
-                    p.setError("Ricorda che la password ha almeno 8 caratteri.");
+                    p.setError("La password inserita deve avere almeno 8 caratteri.");
                 }
                 else
                 {
@@ -67,7 +67,6 @@ public class Login extends AppCompatActivity {
                                 public void onComplete(@NonNull Task<AuthResult> task) {
                                     if(task.isSuccessful())
                                     {
-                                        Toast.makeText(Login.this,"Accesso eseguito", Toast.LENGTH_LONG).show();
                                         startActivity(new Intent(getApplicationContext(),MainActivity.class));
                                     }
                                     else

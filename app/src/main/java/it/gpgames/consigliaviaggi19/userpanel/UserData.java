@@ -134,12 +134,13 @@ public class UserData implements Parcelable {
         this.userID = userID;
     }
 
-    public void downloadUserData(){
+
+    public void downloadUserDataFromFirebase(){
         ExecutorService executor = Executors.newFixedThreadPool(1);
         executor.execute(new UserDataUpdater());
     }
 
-    public void cleanUserData()
+    public void cleanLocalUserData()
     {
         displayName=null;
         email=null;

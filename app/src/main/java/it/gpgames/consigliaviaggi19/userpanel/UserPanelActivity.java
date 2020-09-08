@@ -46,13 +46,17 @@ import static it.gpgames.consigliaviaggi19.home.slider.SliderItemsGetter.*;
 public class UserPanelActivity extends AppCompatActivity {
 
     public static final int IMGPRV=1;
+
     ImageView bBack;
     ImageView iUserPicture;
     TextView tUserDisplayName;
     Button bChangeProfilePicture;
     Button bLogout;
-    UserData currentUserData;
+    Button bResetPassword;
 
+    UserData currentUserData = UserData.getUserInstance();
+
+    FirebaseAuth auth = FirebaseAuth.getInstance();
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     FirebaseStorage storage = FirebaseStorage.getInstance();
     StorageReference storageReference = storage.getReference();
@@ -70,17 +74,20 @@ public class UserPanelActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_panel);
 
+        bResetPassword = findViewById(R.id.reset_password_button);
         bBack=findViewById(R.id.back);
         bChangeProfilePicture=findViewById(R.id.change_image_button);
         iUserPicture = findViewById(R.id.userPicture);
         tUserDisplayName = findViewById(R.id.userDisplayName);
         bLogout = findViewById(R.id.logout_button);
-
         initListeners();
-
-
     }
 
+    /**Inizializza i Listeners dell'UserPanelActivity:
+     * OnClickListener(bBack): button per tornare alla MainActivity;
+     * OnClickListener(bChangeProfilePicture): cambia immagine profilo per lo User.
+     * OnClickListener(bLogout): effettua sign-out.
+     * OnClickListener(bResetPassword): invia email per il reset della password.*/
     private void initListeners()
     {
         bBack.setOnClickListener(new View.OnClickListener() {
@@ -103,6 +110,21 @@ public class UserPanelActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 FirebaseAuth.getInstance().signOut();
+            }
+        });
+
+        bResetPassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                auth.sendPasswordResetEmail(user.getEmail())
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    Toast.makeText(getApplicationContext(),"Richiesto reset della password. Controlla la casella di posta elettronica.",Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
             }
         });
     }
@@ -131,7 +153,11 @@ public class UserPanelActivity extends AppCompatActivity {
         String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         final StorageReference userProfileImagesRef = storageReference.child("Users/Avatars/avatar_"+
                 uid+".jpg");
+
         bChangeProfilePicture.setEnabled(false);
+        bResetPassword.setEnabled(false);
+        bLogout.setEnabled(false);
+
         UploadTask uploadTask = userProfileImagesRef.putBytes(data);
 
         Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
@@ -208,5 +234,9 @@ public class UserPanelActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    private void resetUserPassword(){
+
     }
 }

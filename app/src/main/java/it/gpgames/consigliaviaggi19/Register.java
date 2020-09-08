@@ -51,7 +51,7 @@ public class Register extends AppCompatActivity {
 
                 if(TextUtils.isEmpty(email))
                 {
-                    eEmail.setError("Inserire una mail valida.");
+                    eEmail.setError("Inserire una email valida.");
                     return;
                 }
 
@@ -73,8 +73,6 @@ public class Register extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful())
                         {
-                            Toast.makeText(Register.this,"Account Creato", Toast.LENGTH_LONG).show();
-
                             UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
                                 .setDisplayName(username)
                                 .build();
