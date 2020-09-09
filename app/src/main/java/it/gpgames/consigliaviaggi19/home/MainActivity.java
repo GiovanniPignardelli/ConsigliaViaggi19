@@ -3,7 +3,10 @@ package it.gpgames.consigliaviaggi19.home;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ActivityManager;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -29,6 +32,8 @@ import java.util.List;
 import it.gpgames.consigliaviaggi19.Login;
 import it.gpgames.consigliaviaggi19.R;
 import it.gpgames.consigliaviaggi19.home.slider.SliderAdapter;
+import it.gpgames.consigliaviaggi19.network.NetworkChangeReceiver;
+import it.gpgames.consigliaviaggi19.network.NoConnectionActivity;
 import it.gpgames.consigliaviaggi19.userpanel.UserData;
 import it.gpgames.consigliaviaggi19.userpanel.UserPanelActivity;
 import it.gpgames.consigliaviaggi19.home.slider.SliderItem;
@@ -38,6 +43,8 @@ public class MainActivity extends AppCompatActivity {
 
     DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference();
     UserData userData = UserData.getUserInstance();
+
+    private static NetworkChangeReceiver networkChangeReceiver=NetworkChangeReceiver.getNetworkChangeReceiverInstance();
 
     private SliderView sliderView;
     static List<SliderItem> SliderItemToShow = new ArrayList<>();
@@ -57,6 +64,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
+        registerReceiver(networkChangeReceiver, filter);
         initUserData();
     }
 
@@ -160,4 +170,13 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(networkChangeReceiver);
+    }
+
+    public static NetworkChangeReceiver getNetworkChangeReceiver() {
+        return networkChangeReceiver;
+    }
 }

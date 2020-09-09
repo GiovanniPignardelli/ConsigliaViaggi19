@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -40,12 +41,15 @@ import it.gpgames.consigliaviaggi19.Login;
 import it.gpgames.consigliaviaggi19.R;
 import it.gpgames.consigliaviaggi19.home.MainActivity;
 import it.gpgames.consigliaviaggi19.home.slider.SliderItemsGetter;
+import it.gpgames.consigliaviaggi19.network.NetworkChangeReceiver;
 
 import static it.gpgames.consigliaviaggi19.home.slider.SliderItemsGetter.*;
 
 public class UserPanelActivity extends AppCompatActivity {
 
     public static final int IMGPRV=1;
+
+    private static NetworkChangeReceiver networkChangeReceiver=NetworkChangeReceiver.getNetworkChangeReceiverInstance();
 
     ImageView bBack;
     ImageView iUserPicture;
@@ -64,6 +68,11 @@ public class UserPanelActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
+        registerReceiver(networkChangeReceiver, filter);
+
         Bundle userDataBundle = getIntent().getExtras();
         currentUserData = userDataBundle.getParcelable("UserData");
         loadViewWithUserData();
@@ -239,4 +248,11 @@ public class UserPanelActivity extends AppCompatActivity {
     private void resetUserPassword(){
 
     }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(networkChangeReceiver);
+    }
+
 }

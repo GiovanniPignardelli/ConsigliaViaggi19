@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -19,11 +20,14 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.UserProfileChangeRequest;
 
 import it.gpgames.consigliaviaggi19.home.MainActivity;
+import it.gpgames.consigliaviaggi19.network.NetworkChangeReceiver;
 
 public class Register extends AppCompatActivity {
     EditText eUser,ePsw,eEmail;
     Button bLogin,bRegister;
     FirebaseAuth fAuth;
+
+    private static NetworkChangeReceiver networkChangeReceiver=NetworkChangeReceiver.getNetworkChangeReceiverInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,5 +103,19 @@ public class Register extends AppCompatActivity {
                 finish();
             }
         });
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(networkChangeReceiver);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
+        registerReceiver(networkChangeReceiver, filter);
     }
 }
