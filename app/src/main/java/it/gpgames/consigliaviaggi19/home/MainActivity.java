@@ -34,6 +34,7 @@ import it.gpgames.consigliaviaggi19.R;
 import it.gpgames.consigliaviaggi19.home.slider.SliderAdapter;
 import it.gpgames.consigliaviaggi19.network.NetworkChangeReceiver;
 import it.gpgames.consigliaviaggi19.network.NoConnectionActivity;
+import it.gpgames.consigliaviaggi19.places.Restaurant;
 import it.gpgames.consigliaviaggi19.userpanel.UserData;
 import it.gpgames.consigliaviaggi19.userpanel.UserPanelActivity;
 import it.gpgames.consigliaviaggi19.home.slider.SliderItem;
@@ -58,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
         sliderView=findViewById(R.id.imageSlider);
         bUserPanel=findViewById(R.id.user);
         checkIfTokenHasExpired();
+        // Debug-line ADD RESTAURANT PLACE: Restaurant.RestaurantGenerator();
         init();
     }
 
