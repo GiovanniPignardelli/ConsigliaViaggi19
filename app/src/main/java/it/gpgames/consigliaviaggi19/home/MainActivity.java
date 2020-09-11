@@ -15,6 +15,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.SearchView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -34,7 +35,10 @@ import it.gpgames.consigliaviaggi19.R;
 import it.gpgames.consigliaviaggi19.home.slider.SliderAdapter;
 import it.gpgames.consigliaviaggi19.network.NetworkChangeReceiver;
 import it.gpgames.consigliaviaggi19.network.NoConnectionActivity;
+import it.gpgames.consigliaviaggi19.places.Hotel;
+import it.gpgames.consigliaviaggi19.places.Place;
 import it.gpgames.consigliaviaggi19.places.Restaurant;
+import it.gpgames.consigliaviaggi19.search.ResultsActivity;
 import it.gpgames.consigliaviaggi19.userpanel.UserData;
 import it.gpgames.consigliaviaggi19.userpanel.UserPanelActivity;
 import it.gpgames.consigliaviaggi19.home.slider.SliderItem;
@@ -51,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
     static List<SliderItem> SliderItemToShow = new ArrayList<>();
 
     private ImageView bUserPanel;
+    SearchView svSearchPlaces;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,8 +63,13 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         sliderView=findViewById(R.id.imageSlider);
         bUserPanel=findViewById(R.id.user);
+        svSearchPlaces = findViewById(R.id.searchView);
         checkIfTokenHasExpired();
         // Debug-line ADD RESTAURANT PLACE: Restaurant.RestaurantGenerator();
+        for(int i=0; i<2;i++){
+            //Hotel.HotelGenerator();
+            //Place.PlaceGenerator();
+        }
         init();
     }
 
@@ -122,6 +132,22 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+        svSearchPlaces.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                Intent iShowResults = new Intent(MainActivity.this, ResultsActivity.class);
+                iShowResults.putExtra("searchString",query);
+                startActivity(iShowResults);
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return true;
+            }
+        });
+
     }
 
     /** Inizializza lo slider di immagini nell'activity_main.xml. Nota: vedere SliderItemsGetter e SliderAdapter. */

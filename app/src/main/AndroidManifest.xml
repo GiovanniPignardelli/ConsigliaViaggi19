@@ -15,7 +15,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.DayNight.NoActionBar">
-        <activity android:name=".network.NoConnectionActivity"></activity>
+        <activity android:name=".search.ResultsActivity"></activity>
+        <activity android:name=".network.NoConnectionActivity" />
         <activity android:name=".userpanel.UserPanelActivity" />
         <activity android:name=".Login" />
         <activity android:name=".Register">
@@ -35,7 +36,7 @@
 
         <receiver
             android:name=".network.NetworkChangeReceiver"
-            android:label="NetworkChangeReceiver" >
+            android:label="NetworkChangeReceiver">
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
                 <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />

@@ -10,18 +10,14 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.auth.api.signin.internal.Storage;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -32,15 +28,11 @@ import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.net.URI;
-import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import it.gpgames.consigliaviaggi19.Login;
 import it.gpgames.consigliaviaggi19.R;
 import it.gpgames.consigliaviaggi19.home.MainActivity;
-import it.gpgames.consigliaviaggi19.home.slider.SliderItemsGetter;
 import it.gpgames.consigliaviaggi19.network.NetworkChangeReceiver;
 
 import static it.gpgames.consigliaviaggi19.home.slider.SliderItemsGetter.*;
@@ -84,7 +76,7 @@ public class UserPanelActivity extends AppCompatActivity {
         setContentView(R.layout.activity_user_panel);
 
         bResetPassword = findViewById(R.id.reset_password_button);
-        bBack=findViewById(R.id.back);
+        bBack=findViewById(R.id.back2);
         bChangeProfilePicture=findViewById(R.id.change_image_button);
         iUserPicture = findViewById(R.id.userPicture);
         tUserDisplayName = findViewById(R.id.userDisplayName);
