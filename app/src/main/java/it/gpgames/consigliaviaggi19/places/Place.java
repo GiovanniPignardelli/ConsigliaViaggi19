@@ -153,6 +153,11 @@ public class Place {
         this.website = website;
     }
 
+    public Place()
+    {
+
+    }
+
     private List<String> pictures;
     private String addYear;
     private String latitude;

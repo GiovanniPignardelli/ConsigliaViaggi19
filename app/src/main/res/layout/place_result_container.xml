@@ -47,12 +47,13 @@
 
             <RatingBar
                 android:id="@+id/ratingView"
-                android:layout_width="159dp"
-                android:layout_height="31dp"
+                android:layout_width="235dp"
+                android:layout_height="47dp"
                 android:layout_marginStart="12dp"
-                android:layout_marginTop="3dp"
+                android:layout_marginTop="8dp"
                 android:layout_marginEnd="109dp"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toEndOf="@+id/imageView2"
                 app:layout_constraintTop_toBottomOf="@+id/addressView" />
 
@@ -83,10 +84,10 @@
                 android:layout_marginEnd="44dp"
                 android:layout_marginBottom="24dp"
                 android:text="(1430)"
-                android:textSize="18sp"
+                android:textSize="14sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.166"
+                app:layout_constraintHorizontal_bias="0.3"
                 app:layout_constraintStart_toEndOf="@+id/ratingView"
                 app:layout_constraintTop_toBottomOf="@+id/addressView"
                 app:layout_constraintVertical_bias="0.0" />
