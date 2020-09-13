@@ -1,5 +1,7 @@
 package it.gpgames.consigliaviaggi19.search;
 
+import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,29 +15,47 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 
+import java.util.List;
+import java.util.Set;
+import java.util.zip.Inflater;
+
 import it.gpgames.consigliaviaggi19.R;
 import it.gpgames.consigliaviaggi19.places.Place;
 
-public class QueryResultsAdapter extends FirestoreRecyclerAdapter<Place, QueryResultsAdapter.ResultsViewHolder> {
+public class QueryResultsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    public QueryResultsAdapter(@NonNull FirestoreRecyclerOptions<Place> options) {
-        super(options);
-    }
+    private Context context;
+    private List<Place> placesList;
+    private LayoutInflater inflater;
+    private Place holdingPlace;
 
-    @Override
-    protected void onBindViewHolder(@NonNull ResultsViewHolder holder, int position, @NonNull Place model) {
-        holder.title.setText(model.getName());
-        holder.location.setText(model.getAddress()+", "+model.getCity()+", "+model.getState());
-        //TO IMPLEMENT holder.rating, holder.nReviews, holder.image
-
-
+    public QueryResultsAdapter(Context context, List<Place> list) {
+        this.context=context;
+        this.placesList=list;
+        inflater= LayoutInflater.from(context);
     }
 
     @NonNull
     @Override
     public ResultsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view= LayoutInflater.from(parent.getContext()).inflate(R.layout.place_result_container, parent, false);
+        View view=inflater.inflate(R.layout.place_result_container,parent, false);
         return new ResultsViewHolder(view);
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder h, int position) {
+        ResultsViewHolder holder= (ResultsViewHolder)h;
+        holdingPlace=placesList.get(position);
+
+        holder.title.setText(holdingPlace.getName());
+        //holder.rating.setNumStars(holdingPlace.get);
+        holder.location.setText(holdingPlace.getAddress()+", "+holdingPlace.getCity()+", "+holdingPlace.getState());
+    }
+
+    @Override
+    public int getItemCount() {
+        Log.d("query","Ci sono "+placesList.size()+" elementi");
+        return placesList.size();
     }
 
     public class ResultsViewHolder extends RecyclerView.ViewHolder {

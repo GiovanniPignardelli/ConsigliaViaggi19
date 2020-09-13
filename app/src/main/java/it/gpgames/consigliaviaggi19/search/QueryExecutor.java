@@ -1,83 +1,94 @@
 package it.gpgames.consigliaviaggi19.search;
 
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+
+import it.gpgames.consigliaviaggi19.places.Place;
 
 public class QueryExecutor {
     int currentIndex;
     String[] parsedString;
     ResultsActivity waitingForResults;
     FirebaseFirestore dbRef = FirebaseFirestore.getInstance();
-    com.google.firebase.firestore.Query query=null;
-    com.google.firebase.firestore.Query topQuery=null;
-    com.google.firebase.firestore.Query weakQuery=null;
-
+    List<Place> weakList;
+    List<Place> topList;
     public QueryExecutor(String[] parsed, ResultsActivity activity)
     {
         this.parsedString=parsed;
         this.currentIndex=0;
         this.waitingForResults=activity;
+        this.weakList=null;
+        this.topList=null;
     }
 
-    private QueryExecutor(int actualIndex, String[] parsedString, ResultsActivity activity, com.google.firebase.firestore.Query weakQuery, com.google.firebase.firestore.Query topQuery )
+    private QueryExecutor(int currentIndex, String[] parsedString, ResultsActivity activity, List<Place> weakList, List<Place> topList)
     {
-        this.currentIndex=actualIndex;
+        this.currentIndex=currentIndex;
         this.parsedString=parsedString;
         this.waitingForResults=activity;
-        this.weakQuery=weakQuery;
-        this.topQuery=topQuery;
-        this.query=topQuery;
+        this.weakList=weakList;
+        this.topList=topList;
     }
 
     public void executeQuery()
     {
-        if(query==null)
-        {
-            query=dbRef.collection("hotels").whereArrayContains("searchTags",parsedString[currentIndex]).limit(50);
-            query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<QuerySnapshot> task)
-                {
-                    Log.d("query",new Integer(currentIndex).toString());
-                    if(query!=null)
-                    {
-                        Log.d("query","La query non è null");
-                        weakQuery=topQuery;
-                        topQuery=query;
-                        Log.d("query","Lunghezza: "+parsedString.length+"; indice: "+currentIndex);
-                        if(currentIndex<parsedString.length-1)
+        dbRef.collection("hotels")
+                .whereArrayContains("searchTags", parsedString[currentIndex])
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        Log.d("query", "la query è terminata.");
+                        if (task.isSuccessful())
                         {
-                            Log.d("query","Lunghezza: "+parsedString.length+"; indice: "+currentIndex);
-                            new QueryExecutor(currentIndex+1,parsedString,waitingForResults,weakQuery,topQuery).executeQuery();
+                            Log.d("query", "Il task ha avuto successo");
+                            List<Place> newList=new ArrayList<>();
+                            for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult()))
+                            {
+                                Log.d("query", document.getId() + " => " + document.getData().toString());
+                                newList.add(document.toObject(Place.class));
+                            }
+
+                            if(topList==null || topList.isEmpty())
+                                topList=newList;
+                            else if(topList.size()<newList.size())
+                            {
+                                weakList=topList;
+                                topList=newList;
+                            }
+                            if(currentIndex+1 < parsedString.length-1)
+                            {
+                                QueryExecutor executor=new QueryExecutor(currentIndex+1,parsedString,waitingForResults,weakList,topList);
+                                executor.executeQuery();
+                            }
+                            else
+                            {
+                                waitingForResults.setUpRecycleView(weakList,topList);
+                            }
+
+
                         }
                         else
                         {
-                            waitingForResults.setUpRecycleView(topQuery,weakQuery);
+                            Log.d("query", "Error getting documents: ", task.getException());
+                            Toast.makeText(waitingForResults,"E' stato riscontrato un errore.", Toast.LENGTH_LONG).show();
                         }
                     }
-                    else
-                    {
-                        Log.d("query","La query è null");
-                        if(currentIndex<parsedString.length-1)
-                        {
-                            new QueryExecutor(currentIndex+1,parsedString,waitingForResults,weakQuery,topQuery).executeQuery();
-                        }
-                        else
-                        {
-                            waitingForResults.setUpRecycleView(topQuery,weakQuery);
-                        }
-                    }
-
-                }
-            });
-        }
-
+                });
     }
 
 }
