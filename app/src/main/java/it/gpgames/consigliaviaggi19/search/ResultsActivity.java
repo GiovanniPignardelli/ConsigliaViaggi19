@@ -6,39 +6,24 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
-import com.firebase.ui.firestore.FirestoreRecyclerOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
-
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
 
 import it.gpgames.consigliaviaggi19.R;
 import it.gpgames.consigliaviaggi19.home.MainActivity;
+import it.gpgames.consigliaviaggi19.network.NetworkChangeReceiver;
 import it.gpgames.consigliaviaggi19.places.Place;
-import it.gpgames.consigliaviaggi19.places.Restaurant;
-import it.gpgames.consigliaviaggi19.places.Hotel;
-
 
 public class ResultsActivity extends AppCompatActivity {
 
-    ImageView bBack;
-    RecyclerView resultQueries;
-    QueryResultsAdapter adapter;
+    private ImageView bBack;
+    private RecyclerView resultQueries;
+    private QueryResultsAdapter adapter;
+    private static NetworkChangeReceiver networkChangeReceiver=NetworkChangeReceiver.getNetworkChangeReceiverInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +48,20 @@ public class ResultsActivity extends AppCompatActivity {
         super.onStop();
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(networkChangeReceiver);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
+        registerReceiver(networkChangeReceiver, filter);
+    }
+
     public void setUpRecycleView(List<Place> weakList, List<Place> topList) {
         if(topList==null)
             Log.d("query","Topquery=null");
@@ -85,7 +84,7 @@ public class ResultsActivity extends AppCompatActivity {
         bBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(ResultsActivity.this, MainActivity.class));
+                //startActivity(new Intent(ResultsActivity.this, MainActivity.class));
                 finish();
             }
         });

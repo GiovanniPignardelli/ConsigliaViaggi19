@@ -46,8 +46,8 @@ public class QueryExecutor {
 
     public void executeQuery()
     {
-        dbRef.collection("hotels")
-                .whereArrayContains("searchTags", parsedString[currentIndex])
+        dbRef.collection("places")
+                .whereArrayContains("searchTags", parsedString[currentIndex].toLowerCase())
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override

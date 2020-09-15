@@ -24,13 +24,14 @@ public class Restaurant extends Place {
 
     public static void RestaurantGenerator(){
             FirebaseFirestore mFirestore = FirebaseFirestore.getInstance();
-            final CollectionReference restaurants = mFirestore.collection("restaurants");
+            final CollectionReference restaurants = mFirestore.collection("places");
             final Restaurant toAdd = new Restaurant("Hotel Bobby", "Via Martino 3", "Afragola", "80021", "Italia", "€",new ArrayList<String>(Arrays.asList("Vista mare","Free Wifi")),"2020","40.936752", "14.319622","info@bobby.com","0818526746","www.bobby.com",new ArrayList<String>(Arrays.asList("Asporto","Al tavolo")),new ArrayList<String>(Arrays.asList("Italiana","Bar")));
             restaurants.add(toAdd).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                 @Override
                 public void onSuccess(DocumentReference documentReference) {
                     documentReference.update("serviceTags", toAdd.serviceTags);
                     documentReference.update("cuisineTags", toAdd.cuisineTags);
+                    documentReference.update("category","restaurant");
                     Log.d("RestaurantGenerator", "DocumentSnapshot written with ID: " + documentReference.getId());
 
                 }

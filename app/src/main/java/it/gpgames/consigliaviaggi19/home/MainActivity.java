@@ -66,8 +66,8 @@ public class MainActivity extends AppCompatActivity {
         svSearchPlaces = findViewById(R.id.searchView);
         checkIfTokenHasExpired();
         // Debug-line ADD RESTAURANT PLACE: Restaurant.RestaurantGenerator();
-        for(int i=0; i<2;i++){
-            //Hotel.HotelGenerator();
+        for(int i=0; i<3;i++){
+            //Restaurant.RestaurantGenerator();
             //Place.PlaceGenerator();
         }
         init();
@@ -138,6 +138,8 @@ public class MainActivity extends AppCompatActivity {
             public boolean onQueryTextSubmit(String query) {
                 Intent iShowResults = new Intent(MainActivity.this, ResultsActivity.class);
                 iShowResults.putExtra("searchString",query);
+                iShowResults.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
                 startActivity(iShowResults);
                 return true;
             }
