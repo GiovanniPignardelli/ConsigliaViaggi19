@@ -15,7 +15,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.DayNight.NoActionBar">
-        <activity android:name=".search.ResultsActivity"></activity>
+        <activity android:name=".search.place_details.PlaceDetailsActivity"></activity>
+        <activity android:name=".search.ResultsActivity" />
         <activity android:name=".network.NoConnectionActivity" />
         <activity android:name=".userpanel.UserPanelActivity" />
         <activity android:name=".Login" />

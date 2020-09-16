@@ -29,7 +29,7 @@ public class Login extends AppCompatActivity {
     EditText e,p;
     FirebaseAuth fAuth;
 
-    private static NetworkChangeReceiver networkChangeReceiver=NetworkChangeReceiver.getNetworkChangeReceiverInstance();
+    private static final NetworkChangeReceiver networkChangeReceiver=NetworkChangeReceiver.getNetworkChangeReceiverInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -41,7 +41,7 @@ public class UserPanelActivity extends AppCompatActivity {
 
     public static final int IMGPRV=1;
 
-    private static NetworkChangeReceiver networkChangeReceiver=NetworkChangeReceiver.getNetworkChangeReceiverInstance();
+    private static final NetworkChangeReceiver networkChangeReceiver=NetworkChangeReceiver.getNetworkChangeReceiverInstance();
 
     ImageView bBack;
     ImageView iUserPicture;

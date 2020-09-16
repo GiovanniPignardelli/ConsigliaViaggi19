@@ -27,7 +27,7 @@ public class Register extends AppCompatActivity {
     Button bLogin,bRegister;
     FirebaseAuth fAuth;
 
-    private static NetworkChangeReceiver networkChangeReceiver=NetworkChangeReceiver.getNetworkChangeReceiverInstance();
+    private static final NetworkChangeReceiver networkChangeReceiver=NetworkChangeReceiver.getNetworkChangeReceiverInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
     DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference();
     UserData userData = UserData.getUserInstance();
 
-    private static NetworkChangeReceiver networkChangeReceiver=NetworkChangeReceiver.getNetworkChangeReceiverInstance();
+    private static final NetworkChangeReceiver networkChangeReceiver=NetworkChangeReceiver.getNetworkChangeReceiverInstance();
 
     private SliderView sliderView;
     static List<SliderItem> SliderItemToShow = new ArrayList<>();

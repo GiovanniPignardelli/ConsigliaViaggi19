@@ -41,7 +41,7 @@ public class SliderItemsGetter implements Runnable {
     @Override
     public void run() {
         Integer index = new Integer(1);
-        Bitmap image = Bitmap.createBitmap(1000, 1000,Bitmap.Config.ARGB_8888); // Generic bitmap.
+        //Bitmap image = Bitmap.createBitmap(1000, 1000,Bitmap.Config.ARGB_8888); // Generic bitmap.
         while (resultDB.hasChild(index.toString())) {
             DataSnapshot currentRef = resultDB.child(index.toString());
             SliderItemToShow.add(new SliderItem(

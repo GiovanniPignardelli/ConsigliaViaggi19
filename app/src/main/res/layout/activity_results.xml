@@ -40,4 +40,18 @@
         app:layout_constraintTop_toBottomOf="@+id/toolbar4"
         app:layout_constraintVertical_bias="0.0" />
 
+    <TextView
+        android:id="@+id/titleResultText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-black"
+        android:text="Ciao!"
+        app:autoSizeTextType="uniform"
+        app:layout_constraintBottom_toBottomOf="@+id/toolbar4"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.05"
+        app:layout_constraintStart_toEndOf="@+id/back2"
+        app:layout_constraintTop_toTopOf="@id/toolbar4"
+        app:layout_constraintVertical_bias="0.533" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

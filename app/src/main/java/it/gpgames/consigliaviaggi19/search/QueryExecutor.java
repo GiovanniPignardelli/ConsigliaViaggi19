@@ -12,20 +12,33 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
+import it.gpgames.consigliaviaggi19.places.Hotel;
 import it.gpgames.consigliaviaggi19.places.Place;
+import it.gpgames.consigliaviaggi19.places.Restaurant;
 
+/** Si occupa di eseguire le query. Ha due costruttori: uno pubblico, uno privato. Se la stringa di ricerca
+ * ha più di una parola, vengono generati ricorsivamente tanti QueryExecutor quante sono le parole di ricerca.*/
 public class QueryExecutor {
-    int currentIndex;
+    /** La stringa di ricerca è stata precedentemente splittata in parole*/
     String[] parsedString;
+
+    /** Posizione attuale nell'array delle stringhe di ricerca*/
+    int currentIndex;
+
+    /** Riferimento all'activity che attende i risultati della query*/
     ResultsActivity waitingForResults;
+
     FirebaseFirestore dbRef = FirebaseFirestore.getInstance();
+
+    /** Vengono mantenute sempre due liste di risultati. Quando una lista "migliore" (con meno elementi) viene
+     * trovata, la vecchia topList diventa la weakList, e la topList diventa la nuova lista.*/
     List<Place> weakList;
     List<Place> topList;
+
+    /** Costruttore pubblico che inizializza i parametri */
     public QueryExecutor(String[] parsed, ResultsActivity activity)
     {
         this.parsedString=parsed;
@@ -35,6 +48,8 @@ public class QueryExecutor {
         this.topList=null;
     }
 
+    /** Costruttore privato. Esso viene utilizzato all'interno della classe stessa per generare nuovi QueryExecutor. A queste nuove istanze
+     * verranno passati i dati ottenuti fino ad adesso, e l'indice della posizione dell'array (incrementato di 1)*/
     private QueryExecutor(int currentIndex, String[] parsedString, ResultsActivity activity, List<Place> weakList, List<Place> topList)
     {
         this.currentIndex=currentIndex;
@@ -44,6 +59,9 @@ public class QueryExecutor {
         this.topList=topList;
     }
 
+    /** Metodo che esegue la query sulla parola contenuta in parsedString[currentIndex].
+     *Viene generato un listener che attende la ricezione dei risultati.
+     * Quando essi pervengono, vengono effettuati i controlli per gestire topList, weakList e l'interruzione dell'iterazione.*/
     public void executeQuery()
     {
         dbRef.collection("places")
@@ -60,7 +78,23 @@ public class QueryExecutor {
                             for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult()))
                             {
                                 Log.d("query", document.getId() + " => " + document.getData().toString());
-                                newList.add(document.toObject(Place.class));
+                                if(document.toObject(Place.class).getCategory().equals(Place.CATEGORY_RESTAURANT))
+                                {
+                                    Log.d("gen", "sto generando ristorante");
+                                    Restaurant rest=new Restaurant(document.toObject(Place.class), (ArrayList<String>) document.get("cuisineTags"),(ArrayList<String>)document.get("serviceTags"));
+                                    newList.add(rest);
+                                }
+                                else if(document.toObject(Place.class).getCategory().equals(Place.CATEGORY_HOTEL))
+                                {
+                                    Log.d("gen", "sto generando hotel");
+                                    newList.add((Hotel)document.toObject(Hotel.class));
+                                }
+                                else
+                                {
+                                    Log.d("gen", "sto generando place");
+                                    newList.add(document.toObject(Place.class));
+                                }
+
                             }
 
                             if(topList==null || topList.isEmpty())

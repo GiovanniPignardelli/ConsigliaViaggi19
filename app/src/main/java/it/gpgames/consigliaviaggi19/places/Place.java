@@ -10,12 +10,21 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class Place {
+public class Place implements Serializable {
+
+    public static final String CATEGORY_RESTAURANT="restaurant";
+    public static final String CATEGORY_PLACE="place";
+    public static final String CATEGORY_HOTEL="hotel";
+
+    public String category;
+
+    public String getCategory() { return category; }
 
     public String getName() {
         return name;
@@ -127,6 +136,29 @@ public class Place {
     private String postal_code;
     private String state;
     private String priceTag;
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public String getRegion() {
+        return region;
+    }
+
+    public void setRegion(String region) {
+        this.region = region;
+    }
+
+    public String getProvince() {
+        return province;
+    }
+
+    public void setProvince(String province) {
+        this.province = province;
+    }
+
+    private String region;
+    private String province;
     private List<String> tags;
 
     public List<String> getPictures() {
@@ -137,7 +169,7 @@ public class Place {
         this.pictures = pictures;
     }
 
-    public Place(String name, String address, String city, String postal_code, String state, String priceTag, List<String> tags, String addYear, String latitude, String longitude, String email, String telephone, String website) {
+    public Place(String name, String address, String city, String postal_code, String state, String priceTag, List<String> tags, String addYear, String latitude, String longitude, String email, String telephone, String website, String category) {
         this.name = name;
         this.address = address;
         this.city = city;
@@ -151,6 +183,7 @@ public class Place {
         this.email = email;
         this.telephone = telephone;
         this.website = website;
+        this.category = category;
     }
 
     public Place()
@@ -166,10 +199,11 @@ public class Place {
     private String telephone;
     private String website;
 
+    /*
     public static void PlaceGenerator(){
         FirebaseFirestore mFirestore = FirebaseFirestore.getInstance();
         final CollectionReference places = mFirestore.collection("places");
-        final Place toAdd = new Place("Hotel Bobby", "Via Martino 3", "Afragola", "80021", "Italia", "€",new ArrayList<String>(Arrays.asList("Vista mare","Free Wifi")),"2020","40.936752", "14.319622","info@bobby.com","0818526746","www.bobby.com");
+        final Place toAdd = new Place("Hotel Bobby", "Via Martino 3", "Afragola", "80021", "Italia", "€",new ArrayList<String>(Arrays.asList("Vista mare","Free Wifi")),"2020","40.936752", "14.319622","info@bobby.com","0818526746","www.bobby.com","restaurant");
         places.add(toAdd).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
             @Override
             public void onSuccess(DocumentReference documentReference) {
@@ -184,4 +218,5 @@ public class Place {
                     }
                 });
     }
+    */
 }
