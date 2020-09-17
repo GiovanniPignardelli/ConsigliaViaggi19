@@ -87,7 +87,8 @@ public class QueryExecutor {
                                 else if(document.toObject(Place.class).getCategory().equals(Place.CATEGORY_HOTEL))
                                 {
                                     Log.d("gen", "sto generando hotel");
-                                    newList.add((Hotel)document.toObject(Hotel.class));
+                                    Hotel hotel=new Hotel(document.toObject(Place.class),  document.get("hClass").toString(), (ArrayList<String>) document.get("roomTags"), (ArrayList<String>) document.get("roomTypeTags"));
+                                    newList.add(hotel);
                                 }
                                 else
                                 {

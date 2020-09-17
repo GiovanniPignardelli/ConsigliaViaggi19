@@ -17,7 +17,7 @@ import java.util.List;
 
 public class Hotel extends Place implements Serializable {
 
-    public Hotel(String name, String address, String city, String postal_code, String state, String priceTag, List<String> tags, String addYear, String latitude, String longitude, String email, String telephone, String website, List<String> roomTags, List<String> roomTypeTags, Integer hClass, String category) {
+    public Hotel(String name, String address, String city, String postal_code, String state, String priceTag, List<String> tags, String addYear, String latitude, String longitude, String email, String telephone, String website, List<String> roomTags, List<String> roomTypeTags, String hClass, String category) {
         super(name, address, city, postal_code, state, priceTag, tags, addYear, latitude, longitude, email, telephone, website, category);
         this.roomTags = roomTags;
         this.roomTypeTags = roomTypeTags;
@@ -26,7 +26,7 @@ public class Hotel extends Place implements Serializable {
 
     private List<String> roomTags;
     private List<String> roomTypeTags;
-    private Integer hClass;
+    private String hClass;
 
     public List<String> getRoomTags() {
         return roomTags;
@@ -44,11 +44,11 @@ public class Hotel extends Place implements Serializable {
         this.roomTypeTags = roomTypeTags;
     }
 
-    public Integer gethClass() {
+    public String gethClass() {
         return hClass;
     }
 
-    public void sethClass(Integer hClass) {
+    public void sethClass(String hClass) {
         this.hClass = hClass;
     }
 
@@ -77,5 +77,11 @@ public class Hotel extends Place implements Serializable {
     }
     */
 
+    public Hotel(Place toObject,String hClass, ArrayList<String> roomTags, ArrayList<String> roomTypeTags) {
+        super(toObject.getName(),toObject.getAddress(),toObject.getCity(),toObject.getPostal_code(),toObject.getState(),toObject.getPriceTag(),toObject.getTags(),toObject.getAddYear(), toObject.getLatitude(), toObject.getLongitude(), toObject.getEmail(), toObject.getTelephone(), toObject.getWebsite(), toObject.getCategory());
+        this.hClass=hClass;
+        this.roomTags=roomTags;
+        this.roomTypeTags=roomTypeTags;
+    }
 
 }
