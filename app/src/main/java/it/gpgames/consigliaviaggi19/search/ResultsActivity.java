@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -84,7 +85,7 @@ public class ResultsActivity extends AppCompatActivity {
                 for(Place place: topList)
                     Log.d("query",place.getName());
             }
-        adapter = new QueryResultsAdapter(ResultsActivity.this, topList);
+        adapter = new QueryResultsAdapter(ResultsActivity.this, topList, this);
         resultQueries.setAdapter(adapter);
         resultQueries.setLayoutManager(new LinearLayoutManager(ResultsActivity.this, RecyclerView.VERTICAL, false));
     }

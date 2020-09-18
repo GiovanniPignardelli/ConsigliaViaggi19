@@ -8,12 +8,8 @@ import android.os.Parcelable;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-import java.net.URL;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-import it.gpgames.consigliaviaggi19.home.slider.SliderItemsGetter;
 
 /**La classe User detiene localmente le informazioni relative all'utente della sessione attuale.
  * Si tratta di una classe singleton (istanziabile una sola volta). L'istanza è ottenibile con il metodo getUserIstance()*/

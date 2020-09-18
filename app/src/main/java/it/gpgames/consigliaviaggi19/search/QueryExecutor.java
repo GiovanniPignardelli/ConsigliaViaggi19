@@ -81,19 +81,20 @@ public class QueryExecutor {
                                 if(document.toObject(Place.class).getCategory().equals(Place.CATEGORY_RESTAURANT))
                                 {
                                     Log.d("gen", "sto generando ristorante");
-                                    Restaurant rest=new Restaurant(document.toObject(Place.class), (ArrayList<String>) document.get("cuisineTags"),(ArrayList<String>)document.get("serviceTags"));
+                                    Restaurant rest=new Restaurant(document.toObject(Place.class), (ArrayList<String>) document.get("cuisineTags"),(ArrayList<String>)document.get("serviceTags"), document.getId());
                                     newList.add(rest);
                                 }
                                 else if(document.toObject(Place.class).getCategory().equals(Place.CATEGORY_HOTEL))
                                 {
                                     Log.d("gen", "sto generando hotel");
-                                    Hotel hotel=new Hotel(document.toObject(Place.class),  document.get("hClass").toString(), (ArrayList<String>) document.get("roomTags"), (ArrayList<String>) document.get("roomTypeTags"));
+                                    Hotel hotel=new Hotel(document.toObject(Place.class),  document.get("hClass").toString(), (ArrayList<String>) document.get("roomTags"), (ArrayList<String>) document.get("roomTypeTags"),document.getId());
                                     newList.add(hotel);
                                 }
                                 else
                                 {
                                     Log.d("gen", "sto generando place");
-                                    newList.add(document.toObject(Place.class));
+                                    Place place=new Place(document.toObject(Place.class), document.getId());
+                                    newList.add(place);
                                 }
 
                             }

@@ -17,19 +17,19 @@ import java.util.List;
 
 import it.gpgames.consigliaviaggi19.R;
 
-/**La classe SliderAdapter mette in funzione l'AutoImageSlider presente sull'activity_main.xml.*/
-public class SliderAdapter extends
-        SliderViewAdapter<SliderAdapter.SliderAdapterVH> {
+/**La classe HomeSliderAdapter mette in funzione l'AutoImageSlider presente sull'activity_main.xml.*/
+public class HomeSliderAdapter extends
+        SliderViewAdapter<HomeSliderAdapter.SliderAdapterVH> {
 
     private Context context;
-    private List<SliderItem> mSliderItems = new ArrayList<>();
+    private List<HomeSliderItem> mSliderItems = new ArrayList<>();
 
-    public SliderAdapter(Context context, List<SliderItem> sliderItems) {
+    public HomeSliderAdapter(Context context, List<HomeSliderItem> sliderItems) {
         this.context = context;
         mSliderItems = sliderItems;
     }
 
-    public void renewItems(List<SliderItem> sliderItems) {
+    public void renewItems(List<HomeSliderItem> sliderItems) {
         this.mSliderItems = sliderItems;
         notifyDataSetChanged();
     }
@@ -39,7 +39,7 @@ public class SliderAdapter extends
         notifyDataSetChanged();
     }
 
-    public void addItem(SliderItem sliderItem) {
+    public void addItem(HomeSliderItem sliderItem) {
         this.mSliderItems.add(sliderItem);
         notifyDataSetChanged();
     }
@@ -53,7 +53,7 @@ public class SliderAdapter extends
     @Override
     public void onBindViewHolder(SliderAdapterVH viewHolder, final int position) {
 
-        SliderItem sliderItem = mSliderItems.get(position);
+        HomeSliderItem sliderItem = mSliderItems.get(position);
 
         viewHolder.textViewDescription.setText(sliderItem.getDescription());
         viewHolder.textViewDescription.setTextSize(16);
@@ -79,13 +79,11 @@ public class SliderAdapter extends
 
         View itemView;
         ImageView imageViewBackground;
-        ImageView imageGifContainer;
         TextView textViewDescription;
 
         public SliderAdapterVH(View itemView) {
             super(itemView);
             imageViewBackground = itemView.findViewById(R.id.iv_auto_image_slider);
-            //imageGifContainer = itemView.findViewById(R.id.iv_gif_container);
             textViewDescription = itemView.findViewById(R.id.tv_auto_image_slider);
             this.itemView = itemView;
         }

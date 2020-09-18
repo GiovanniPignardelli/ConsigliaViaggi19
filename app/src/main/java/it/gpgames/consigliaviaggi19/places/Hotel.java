@@ -17,13 +17,6 @@ import java.util.List;
 
 public class Hotel extends Place implements Serializable {
 
-    public Hotel(String name, String address, String city, String postal_code, String state, String priceTag, List<String> tags, String addYear, String latitude, String longitude, String email, String telephone, String website, List<String> roomTags, List<String> roomTypeTags, String hClass, String category) {
-        super(name, address, city, postal_code, state, priceTag, tags, addYear, latitude, longitude, email, telephone, website, category);
-        this.roomTags = roomTags;
-        this.roomTypeTags = roomTypeTags;
-        this.hClass = hClass;
-    }
-
     private List<String> roomTags;
     private List<String> roomTypeTags;
     private String hClass;
@@ -77,8 +70,8 @@ public class Hotel extends Place implements Serializable {
     }
     */
 
-    public Hotel(Place toObject,String hClass, ArrayList<String> roomTags, ArrayList<String> roomTypeTags) {
-        super(toObject.getName(),toObject.getAddress(),toObject.getCity(),toObject.getPostal_code(),toObject.getState(),toObject.getPriceTag(),toObject.getTags(),toObject.getAddYear(), toObject.getLatitude(), toObject.getLongitude(), toObject.getEmail(), toObject.getTelephone(), toObject.getWebsite(), toObject.getCategory());
+    public Hotel(Place toObject,String hClass, ArrayList<String> roomTags, ArrayList<String> roomTypeTags, String docID) {
+        super(toObject.getName(),toObject.getAddress(),toObject.getCity(),toObject.getPostal_code(),toObject.getState(),toObject.getPriceTag(),toObject.getTags(),toObject.getAddYear(), toObject.getLatitude(), toObject.getLongitude(), toObject.getEmail(), toObject.getTelephone(), toObject.getWebsite(), toObject.getCategory(), docID);
         this.hClass=hClass;
         this.roomTags=roomTags;
         this.roomTypeTags=roomTypeTags;

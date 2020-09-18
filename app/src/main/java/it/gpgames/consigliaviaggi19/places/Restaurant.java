@@ -17,11 +17,6 @@ import java.util.List;
 
 public class Restaurant extends Place implements Serializable {
 
-    public Restaurant(String name, String address, String city, String postal_code, String state, String priceTag, List<String> tags, String addYear, String latitude, String longitude, String email, String telephone, String website, ArrayList<String> serviceTags, ArrayList<String> cuisineTags, String category) {
-        super(name, address, city, postal_code, state, priceTag, tags, addYear, latitude, longitude, email, telephone, website, category);
-        this.serviceTags = serviceTags;
-        this.cuisineTags = cuisineTags;
-    }
 
     public Restaurant()
     {
@@ -64,8 +59,8 @@ public class Restaurant extends Place implements Serializable {
     private ArrayList<String> serviceTags;
     private ArrayList<String> cuisineTags;
 
-    public Restaurant(Place toObject, ArrayList<String> cuisineTags, ArrayList<String> serviceTags) {
-        super(toObject.getName(),toObject.getAddress(),toObject.getCity(),toObject.getPostal_code(),toObject.getState(),toObject.getPriceTag(),toObject.getTags(),toObject.getAddYear(), toObject.getLatitude(), toObject.getLongitude(), toObject.getEmail(), toObject.getTelephone(), toObject.getWebsite(), toObject.getCategory());
+    public Restaurant(Place toObject, ArrayList<String> cuisineTags, ArrayList<String> serviceTags, String docID) {
+        super(toObject.getName(),toObject.getAddress(),toObject.getCity(),toObject.getPostal_code(),toObject.getState(),toObject.getPriceTag(),toObject.getTags(),toObject.getAddYear(), toObject.getLatitude(), toObject.getLongitude(), toObject.getEmail(), toObject.getTelephone(), toObject.getWebsite(), toObject.getCategory(), docID);
 
         this.cuisineTags=cuisineTags;
         this.serviceTags=serviceTags;

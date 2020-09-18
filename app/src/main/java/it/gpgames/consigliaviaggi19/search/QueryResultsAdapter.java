@@ -1,8 +1,8 @@
 package it.gpgames.consigliaviaggi19.search;
 
 import android.content.Context;
-import android.content.Intent;
-import android.util.Log;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,13 +11,18 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.List;
 
 import it.gpgames.consigliaviaggi19.R;
+import it.gpgames.consigliaviaggi19.home.slider.HomeSliderItemsGetter;
 import it.gpgames.consigliaviaggi19.places.Place;
-import it.gpgames.consigliaviaggi19.search.place_details.PlaceDetailsActivity;
 
 /** La classe si occupa di adattare i contenuti dei places models ai layout*/
 public class QueryResultsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -25,9 +30,11 @@ public class QueryResultsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private List<Place> placesList;
     private LayoutInflater inflater;
     private Place holdingPlace;
+    private AppCompatActivity activity;
 
-    public QueryResultsAdapter(Context context, List<Place> list) {
+    public QueryResultsAdapter(Context context, List<Place> list, AppCompatActivity activity) {
         this.placesList=list;
+        this.activity=activity;
         inflater = LayoutInflater.from(context);
     }
 
@@ -40,13 +47,41 @@ public class QueryResultsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder h, int position) {
-        ResultsViewHolder holder = (ResultsViewHolder) h;
+        final ResultsViewHolder holder = (ResultsViewHolder) h;
         holdingPlace=placesList.get(position);
 
         holder.title.setText(holdingPlace.getName());
+
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference storageReference = storage.getReference();
+        storageReference.child("Places/Pictures/"+holdingPlace.getDbDocID()+"/main.jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(final Uri uri) {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Bitmap bitmap= HomeSliderItemsGetter.getBitmapFromURL( uri.toString() );
+                        updateQueryImage(bitmap, holder);
+                    }
+                }).start();
+            }
+        });
+
+
         //holder.rating.setNumStars(holdingPlace.get);
         holder.location.setText(holdingPlace.getAddress()+", "+holdingPlace.getCity()+", "+holdingPlace.getState());
     }
+
+    private void updateQueryImage(final Bitmap bitmap, final ResultsViewHolder holder)
+    {
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                holder.image.setImageBitmap(bitmap);
+            }
+        });
+    }
+
 
     @Override
     public int getItemCount() {

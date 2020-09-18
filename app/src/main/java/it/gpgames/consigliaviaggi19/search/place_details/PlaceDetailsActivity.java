@@ -5,43 +5,48 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.icu.text.Edits;
+import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.util.Pair;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.Switch;
 import android.widget.TextView;
 
-import java.lang.reflect.Array;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.ListResult;
+import com.google.firebase.storage.StorageReference;
+import com.smarteist.autoimageslider.IndicatorView.animation.type.IndicatorAnimationType;
+import com.smarteist.autoimageslider.SliderAnimations;
+import com.smarteist.autoimageslider.SliderView;
+
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 import it.gpgames.consigliaviaggi19.R;
 import it.gpgames.consigliaviaggi19.places.Hotel;
 import it.gpgames.consigliaviaggi19.places.Place;
 import it.gpgames.consigliaviaggi19.places.Restaurant;
-import it.gpgames.consigliaviaggi19.search.QueryResultsAdapter;
-import it.gpgames.consigliaviaggi19.search.ResultsActivity;
+import it.gpgames.consigliaviaggi19.search.place_details.slider.PlaceSliderAdapter;
 
 public class PlaceDetailsActivity extends AppCompatActivity {
 
     private Place toShow;
     private TextView title, serviceTags, price, location, since, cuisineTags;
-    private ImageView image,back;
-    private PlaceInformationAdapter adapter;
+    private ImageView back;
+    private PlaceInformationAdapter placeInformationAdapter;
+    private PlaceSliderAdapter sliderAdapter;
+    private SliderView slider;
     private RecyclerView information;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_place_details);
+        slider=findViewById(R.id.PlaceImagesSlider);
         toShow=(Place)getIntent().getSerializableExtra("toShow");
         title=findViewById(R.id.title);
-        image=findViewById(R.id.placeImage);
         information=findViewById(R.id.recyclerInfoView);
         back=findViewById(R.id.back);
         back.setOnClickListener(new View.OnClickListener() {
@@ -56,6 +61,7 @@ public class PlaceDetailsActivity extends AppCompatActivity {
 
     private void init()
     {
+        initPlaceSlider();
         title.setText(toShow.getName());
         List<Pair<Integer,String>> info=new ArrayList<>();
         info.add(new Pair<Integer, String>(PlaceInformationAdapter.POINTER_ID, toShow.getAddress()+", "+toShow.getCity()+", "+toShow.getPostal_code()+", "+toShow.getState()));
@@ -86,12 +92,65 @@ public class PlaceDetailsActivity extends AppCompatActivity {
         if(toShow.getAddYear()!=null && !(toShow.getAddYear().equals("")))
             info.add(new Pair<Integer, String>(PlaceInformationAdapter.CLOCK_ID, toShow.getAddYear()));
 
-        adapter = new PlaceInformationAdapter(PlaceDetailsActivity.this, info);
-        information.setAdapter(adapter);
+        placeInformationAdapter = new PlaceInformationAdapter(PlaceDetailsActivity.this, info);
+        information.setAdapter(placeInformationAdapter);
         information.setLayoutManager(new LinearLayoutManager(PlaceDetailsActivity.this, RecyclerView.VERTICAL, false));
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(information.getContext(),
                 RecyclerView.VERTICAL);
         information.addItemDecoration(dividerItemDecoration);
+    }
+
+    private void initPlaceSlider() {
+
+        final List<String> urls=new ArrayList<String>();
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference storageReference = storage.getReference();
+        storageReference.child("Places/Pictures/" + toShow.getDbDocID()).listAll().addOnSuccessListener(new OnSuccessListener<ListResult>() {
+            @Override
+            public void onSuccess(ListResult listResult) {
+
+                List<StorageReference> list=listResult.getItems();
+                for(StorageReference ref: list)
+                {
+                    if(list.indexOf(ref)==list.size()-1)
+                    {
+                        ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                urls.add(uri.toString());
+                                startSliderAdapter(urls);
+                            }
+                        });
+
+                    }
+                    else
+                    {
+                        ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                urls.add(uri.toString());
+                            }
+                        });
+                    }
+                }
+
+            }
+        });
+
+
+    }
+
+    private void startSliderAdapter(List<String> urls) {
+        sliderAdapter=new PlaceSliderAdapter(getApplicationContext(),urls, toShow.getDbDocID(), PlaceDetailsActivity.this);
+        sliderAdapter.notifyDataSetChanged();
+        slider.setSliderAdapter(sliderAdapter);
+        slider.setIndicatorAnimation(IndicatorAnimationType.WORM); //set indicator animation by using IndicatorAnimationType. :WORM or THIN_WORM or COLOR or DROP or FILL or NONE or SCALE or SCALE_DOWN or SLIDE and SWAP!!
+        slider.setSliderTransformAnimation(SliderAnimations.SIMPLETRANSFORMATION);
+        slider.setAutoCycleDirection(SliderView.AUTO_CYCLE_DIRECTION_BACK_AND_FORTH);
+        slider.setIndicatorSelectedColor(Color.WHITE);
+        slider.setIndicatorUnselectedColor(Color.GRAY);
+        slider.setScrollTimeInSec(4);
+        slider.startAutoCycle();
     }
 
     /**Riceve in input un array di stringhe, e genera una stringa composta dalle stesse parole dell'array, ma splittate con ", "*/

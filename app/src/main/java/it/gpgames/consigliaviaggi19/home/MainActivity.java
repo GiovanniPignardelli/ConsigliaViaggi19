@@ -3,8 +3,6 @@ package it.gpgames.consigliaviaggi19.home;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.ActivityManager;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
@@ -32,17 +30,13 @@ import java.util.List;
 
 import it.gpgames.consigliaviaggi19.Login;
 import it.gpgames.consigliaviaggi19.R;
-import it.gpgames.consigliaviaggi19.home.slider.SliderAdapter;
+import it.gpgames.consigliaviaggi19.home.slider.HomeSliderAdapter;
+import it.gpgames.consigliaviaggi19.home.slider.HomeSliderItemsGetter;
 import it.gpgames.consigliaviaggi19.network.NetworkChangeReceiver;
-import it.gpgames.consigliaviaggi19.network.NoConnectionActivity;
-import it.gpgames.consigliaviaggi19.places.Hotel;
-import it.gpgames.consigliaviaggi19.places.Place;
-import it.gpgames.consigliaviaggi19.places.Restaurant;
 import it.gpgames.consigliaviaggi19.search.ResultsActivity;
 import it.gpgames.consigliaviaggi19.userpanel.UserData;
 import it.gpgames.consigliaviaggi19.userpanel.UserPanelActivity;
-import it.gpgames.consigliaviaggi19.home.slider.SliderItem;
-import it.gpgames.consigliaviaggi19.home.slider.SliderItemsGetter;
+import it.gpgames.consigliaviaggi19.home.slider.HomeSliderItem;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -52,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
     private static final NetworkChangeReceiver networkChangeReceiver=NetworkChangeReceiver.getNetworkChangeReceiverInstance();
 
     private SliderView sliderView;
-    static List<SliderItem> SliderItemToShow = new ArrayList<>();
+    static List<HomeSliderItem> SliderItemToShow = new ArrayList<>();
 
     private ImageView bUserPanel;
     SearchView svSearchPlaces;
@@ -61,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        sliderView=findViewById(R.id.imageSlider);
+        sliderView=findViewById(R.id.PlaceImagesSlider);
         bUserPanel=findViewById(R.id.user);
         svSearchPlaces = findViewById(R.id.searchView);
         checkIfTokenHasExpired();
@@ -152,7 +146,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    /** Inizializza lo slider di immagini nell'activity_main.xml. Nota: vedere SliderItemsGetter e SliderAdapter. */
+    /** Inizializza lo slider di immagini nell'activity_main.xml. Nota: vedere HomeSliderItemsGetter e HomeSliderAdapter. */
     void initSlider(){
         final DatabaseReference sliderImgsRef = dbRef.child("home").child("slider");
         sliderImgsRef.addValueEventListener(new ValueEventListener() {
@@ -170,7 +164,7 @@ public class MainActivity extends AppCompatActivity {
                             uiThread.post(new Runnable() {
                                 @Override
                                 public void run() {
-                                    sliderView.setSliderAdapter(new SliderAdapter(MainActivity.this,SliderItemToShow));
+                                    sliderView.setSliderAdapter(new HomeSliderAdapter(MainActivity.this,SliderItemToShow));
                                     sliderView.setIndicatorAnimation(IndicatorAnimationType.WORM); //set indicator animation by using IndicatorAnimationType. :WORM or THIN_WORM or COLOR or DROP or FILL or NONE or SCALE or SCALE_DOWN or SLIDE and SWAP!!
                                     sliderView.setSliderTransformAnimation(SliderAnimations.SIMPLETRANSFORMATION);
                                     sliderView.setAutoCycleDirection(SliderView.AUTO_CYCLE_DIRECTION_BACK_AND_FORTH);
@@ -184,7 +178,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 };
 
-                Runnable sliderRunnable= new SliderItemsGetter(sliderInitializator,dataSnapshot);
+                Runnable sliderRunnable= new HomeSliderItemsGetter(sliderInitializator,dataSnapshot);
                 sliderInitializator.post(sliderRunnable);
 
             }

@@ -1,11 +1,10 @@
 package it.gpgames.consigliaviaggi19.home.slider;
 
 import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class SliderItem implements Parcelable {
+public class HomeSliderItem implements Parcelable {
 
     String keyword;
     Bitmap img;
@@ -19,7 +18,7 @@ public class SliderItem implements Parcelable {
         this.desc = desc;
     }
 
-    protected SliderItem(Parcel in) {
+    protected HomeSliderItem(Parcel in) {
         keyword = in.readString();
         img = in.readParcelable(Bitmap.class.getClassLoader());
         desc = in.readString();
@@ -39,15 +38,15 @@ public class SliderItem implements Parcelable {
         return 0;
     }
 
-    public static final Creator<SliderItem> CREATOR = new Creator<SliderItem>() {
+    public static final Creator<HomeSliderItem> CREATOR = new Creator<HomeSliderItem>() {
         @Override
-        public SliderItem createFromParcel(Parcel in) {
-            return new SliderItem(in);
+        public HomeSliderItem createFromParcel(Parcel in) {
+            return new HomeSliderItem(in);
         }
 
         @Override
-        public SliderItem[] newArray(int size) {
-            return new SliderItem[size];
+        public HomeSliderItem[] newArray(int size) {
+            return new HomeSliderItem[size];
         }
     };
 
@@ -63,7 +62,7 @@ public class SliderItem implements Parcelable {
 
 
 
-    public SliderItem(Bitmap img, String keyword, String desc, int index){
+    public HomeSliderItem(Bitmap img, String keyword, String desc, int index){
         this.img = img;
         this.keyword = keyword;
         this.index=index;

@@ -137,6 +137,12 @@ public class Place implements Serializable {
     private String state;
     private String priceTag;
 
+    public String getDbDocID() {
+        return dbDocID;
+    }
+
+    private String dbDocID;
+
     public void setCategory(String category) {
         this.category = category;
     }
@@ -169,7 +175,7 @@ public class Place implements Serializable {
         this.pictures = pictures;
     }
 
-    public Place(String name, String address, String city, String postal_code, String state, String priceTag, List<String> tags, String addYear, String latitude, String longitude, String email, String telephone, String website, String category) {
+    public Place(String name, String address, String city, String postal_code, String state, String priceTag, List<String> tags, String addYear, String latitude, String longitude, String email, String telephone, String website, String category, String docID) {
         this.name = name;
         this.address = address;
         this.city = city;
@@ -184,6 +190,29 @@ public class Place implements Serializable {
         this.telephone = telephone;
         this.website = website;
         this.category = category;
+        this.dbDocID=docID;
+    }
+
+    public Place(Place toObject, String docID)
+    {
+        this.dbDocID=docID;
+        this.category=toObject.category;
+        this.address=toObject.address;
+        this.addYear=toObject.addYear;
+        this.city=toObject.city;
+        this.email=toObject.email;
+        this.latitude=toObject.latitude;
+        this.longitude=toObject.longitude;
+        this.name=toObject.name;
+        this.pictures=toObject.pictures;
+        this.postal_code=toObject.postal_code;
+        this.priceTag=toObject.priceTag;
+        this.province=toObject.province;
+        this.region=toObject.region;
+        this.state=toObject.state;
+        this.tags=toObject.tags;
+        this.telephone=toObject.telephone;
+        this.website=toObject.website;
     }
 
     public Place()

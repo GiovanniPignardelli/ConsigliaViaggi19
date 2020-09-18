@@ -35,7 +35,7 @@ import it.gpgames.consigliaviaggi19.R;
 import it.gpgames.consigliaviaggi19.home.MainActivity;
 import it.gpgames.consigliaviaggi19.network.NetworkChangeReceiver;
 
-import static it.gpgames.consigliaviaggi19.home.slider.SliderItemsGetter.*;
+import static it.gpgames.consigliaviaggi19.home.slider.HomeSliderItemsGetter.*;
 
 public class UserPanelActivity extends AppCompatActivity {
 
