@@ -5,6 +5,8 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -14,8 +16,10 @@ import android.os.Looper;
 import android.os.Message;
 import android.util.Pair;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
@@ -34,17 +38,19 @@ import it.gpgames.consigliaviaggi19.home.slider.HomeSliderAdapter;
 import it.gpgames.consigliaviaggi19.places.Hotel;
 import it.gpgames.consigliaviaggi19.places.Place;
 import it.gpgames.consigliaviaggi19.places.Restaurant;
+import it.gpgames.consigliaviaggi19.search.place_details.reviews.WriteReviewActivity;
 import it.gpgames.consigliaviaggi19.search.place_details.slider.PlaceSliderAdapter;
 
 public class PlaceDetailsActivity extends AppCompatActivity {
 
     private Place toShow;
-    private TextView title, serviceTags, price, location, since, cuisineTags;
+    private TextView title;
     private ImageView back;
     private PlaceInformationAdapter placeInformationAdapter;
     private PlaceSliderAdapter sliderAdapter;
     private SliderView slider;
     private RecyclerView information;
+    private Button bWriteReview;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +61,12 @@ public class PlaceDetailsActivity extends AppCompatActivity {
         title=findViewById(R.id.title);
         information=findViewById(R.id.recyclerInfoView);
         back=findViewById(R.id.back);
+        bWriteReview=findViewById(R.id.writeReviewButton);
+
+        init();
+    }
+
+    private void initListeners() {
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -62,12 +74,25 @@ public class PlaceDetailsActivity extends AppCompatActivity {
             }
         });
 
-        init();
+        bWriteReview.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i=new Intent(PlaceDetailsActivity.this, WriteReviewActivity.class);
+                i.putExtra("name", toShow.getName());
+                i.putExtra("id", toShow.getDbDocID());
+                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(i);
+            }
+        });
     }
+
+
 
     private void init()
     {
+        initListeners();
         initPlaceSlider();
+
         title.setText(toShow.getName());
         List<Pair<Integer,String>> info=new ArrayList<>();
         info.add(new Pair<Integer, String>(PlaceInformationAdapter.POINTER_ID, toShow.getAddress()+", "+toShow.getCity()+", "+toShow.getPostal_code()+", "+toShow.getState()));
@@ -133,7 +158,7 @@ public class PlaceDetailsActivity extends AppCompatActivity {
 
     private void startSliderAdapter(List<String> urls) {
         sliderAdapter=new PlaceSliderAdapter(getApplicationContext(),urls, toShow.getDbDocID(), PlaceDetailsActivity.this);
-        sliderAdapter.notifyDataSetChanged();
+        //sliderAdapter.notifyDataSetChanged();
         slider.setSliderAdapter(sliderAdapter);
         slider.setIndicatorAnimation(IndicatorAnimationType.WORM); //set indicator animation by using IndicatorAnimationType. :WORM or THIN_WORM or COLOR or DROP or FILL or NONE or SCALE or SCALE_DOWN or SLIDE and SWAP!!
         slider.setSliderTransformAnimation(SliderAnimations.SIMPLETRANSFORMATION);

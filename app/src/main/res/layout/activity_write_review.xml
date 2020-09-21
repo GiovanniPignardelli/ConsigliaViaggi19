@@ -6,6 +6,21 @@
     android:layout_height="match_parent"
     tools:context=".search.place_details.reviews.WriteReviewActivity">
 
+    <Button
+        android:id="@+id/sendReview"
+        android:layout_width="190dp"
+        android:layout_height="45dp"
+        android:layout_marginStart="110dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="111dp"
+        android:backgroundTint="#FF6D00"
+        android:clickable="true"
+        android:text="INVIA"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/reviewText" />
+
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar6"
         android:layout_width="0dp"
@@ -19,17 +34,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0" />
-
-    <ImageView
-        android:id="@+id/back4"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginTop="4dp"
-        android:layout_marginBottom="4dp"
-        app:layout_constraintBottom_toBottomOf="@+id/toolbar4"
-        app:layout_constraintStart_toStartOf="@+id/toolbar5"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/back" />
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/imageView2"
@@ -61,11 +65,13 @@
         android:layout_width="363dp"
         android:layout_height="247dp"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="24dp"
         android:layout_marginEnd="24dp"
         android:ems="10"
         android:gravity="start|top"
         android:inputType="textMultiLine"
+        android:maxLength="1000"
+        android:maxLines="100"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ratingReview" />
@@ -75,7 +81,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="85dp"
-        android:layout_marginTop="28dp"
+        android:layout_marginTop="24dp"
         android:layout_marginEnd="86dp"
         android:layout_marginBottom="13dp"
         android:max="5"
@@ -98,30 +104,28 @@
         app:layout_constraintStart_toEndOf="@+id/imageView2"
         app:layout_constraintTop_toBottomOf="@+id/toolbar6" />
 
-    <EditText
-        android:id="@+id/dateReview"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="18dp"
-        android:ems="10"
-        android:inputType="date"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/reviewText" />
+    <ImageView
+        android:id="@+id/back4"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
+        app:layout_constraintBottom_toBottomOf="@+id/toolbar4"
+        app:layout_constraintStart_toStartOf="@+id/toolbar5"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/back" />
 
-    <Button
-        android:id="@+id/sendReview"
-        android:layout_width="190dp"
-        android:layout_height="45dp"
-        android:layout_marginStart="110dp"
-        android:layout_marginTop="48dp"
-        android:layout_marginEnd="111dp"
-        android:layout_marginBottom="75dp"
-        android:backgroundTint="#FF6D00"
-        android:text="INVIA"
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/hider"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="#B3000000"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/dateReview" />
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

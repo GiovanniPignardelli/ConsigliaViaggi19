@@ -66,9 +66,6 @@ public class MainActivity extends AppCompatActivity {
             //Place.PlaceGenerator();
         }
         init();
-
-        Intent i = new Intent(MainActivity.this, WriteReviewActivity.class);
-        startActivity(i);
     }
 
     @Override

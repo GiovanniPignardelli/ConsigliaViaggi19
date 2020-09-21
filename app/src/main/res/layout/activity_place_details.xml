@@ -47,6 +47,7 @@
         app:layout_constraintVertical_bias="0.47" />
 
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/nestedScrollView"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="1dp"
@@ -107,10 +108,12 @@
                 app:sliderIndicatorSelectedColor="#5A5A5A"
                 app:sliderIndicatorUnselectedColor="#FFF"
                 app:sliderScrollTimeInSec="1"
-                app:sliderStartAutoCycle="true" />
+                app:sliderStartAutoCycle="true">
+
+            </com.smarteist.autoimageslider.SliderView>
 
             <Button
-                android:id="@+id/button"
+                android:id="@+id/writeReviewButton"
                 android:layout_width="301dp"
                 android:layout_height="46dp"
                 android:layout_marginStart="54dp"
