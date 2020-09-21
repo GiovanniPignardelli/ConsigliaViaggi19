@@ -58,7 +58,6 @@ public class PlaceSliderAdapter extends SliderViewAdapter<PlaceSliderAdapter.Pla
                 activity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-
                         viewHolder.image.setImageBitmap(bitmap);
                     }
                 });

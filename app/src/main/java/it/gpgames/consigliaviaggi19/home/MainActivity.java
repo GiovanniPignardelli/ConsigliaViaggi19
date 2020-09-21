@@ -34,6 +34,7 @@ import it.gpgames.consigliaviaggi19.home.slider.HomeSliderAdapter;
 import it.gpgames.consigliaviaggi19.home.slider.HomeSliderItemsGetter;
 import it.gpgames.consigliaviaggi19.network.NetworkChangeReceiver;
 import it.gpgames.consigliaviaggi19.search.ResultsActivity;
+import it.gpgames.consigliaviaggi19.search.place_details.reviews.WriteReviewActivity;
 import it.gpgames.consigliaviaggi19.userpanel.UserData;
 import it.gpgames.consigliaviaggi19.userpanel.UserPanelActivity;
 import it.gpgames.consigliaviaggi19.home.slider.HomeSliderItem;
@@ -65,6 +66,9 @@ public class MainActivity extends AppCompatActivity {
             //Place.PlaceGenerator();
         }
         init();
+
+        Intent i = new Intent(MainActivity.this, WriteReviewActivity.class);
+        startActivity(i);
     }
 
     @Override

@@ -8,6 +8,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.HandlerThread;
+import android.os.Looper;
+import android.os.Message;
 import android.util.Pair;
 import android.view.View;
 import android.widget.ImageView;
@@ -25,6 +29,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import it.gpgames.consigliaviaggi19.R;
+import it.gpgames.consigliaviaggi19.home.MainActivity;
+import it.gpgames.consigliaviaggi19.home.slider.HomeSliderAdapter;
 import it.gpgames.consigliaviaggi19.places.Hotel;
 import it.gpgames.consigliaviaggi19.places.Place;
 import it.gpgames.consigliaviaggi19.places.Restaurant;
@@ -101,43 +107,28 @@ public class PlaceDetailsActivity extends AppCompatActivity {
     }
 
     private void initPlaceSlider() {
-
         final List<String> urls=new ArrayList<String>();
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageReference = storage.getReference();
         storageReference.child("Places/Pictures/" + toShow.getDbDocID()).listAll().addOnSuccessListener(new OnSuccessListener<ListResult>() {
             @Override
             public void onSuccess(ListResult listResult) {
-
                 List<StorageReference> list=listResult.getItems();
+                final Integer itemsToGet = list.size();
                 for(StorageReference ref: list)
                 {
-                    if(list.indexOf(ref)==list.size()-1)
-                    {
-                        ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                            @Override
-                            public void onSuccess(Uri uri) {
-                                urls.add(uri.toString());
+                    ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            urls.add(uri.toString());
+                            if(urls.size() == itemsToGet){
                                 startSliderAdapter(urls);
                             }
-                        });
-
-                    }
-                    else
-                    {
-                        ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                            @Override
-                            public void onSuccess(Uri uri) {
-                                urls.add(uri.toString());
-                            }
-                        });
-                    }
+                        }
+                    });
                 }
-
             }
         });
-
-
     }
 
     private void startSliderAdapter(List<String> urls) {
