@@ -32,6 +32,7 @@ import it.gpgames.consigliaviaggi19.Login;
 import it.gpgames.consigliaviaggi19.R;
 import it.gpgames.consigliaviaggi19.home.slider.HomeSliderAdapter;
 import it.gpgames.consigliaviaggi19.home.slider.HomeSliderItemsGetter;
+import it.gpgames.consigliaviaggi19.map_search.MapExploreActivity;
 import it.gpgames.consigliaviaggi19.network.NetworkChangeReceiver;
 import it.gpgames.consigliaviaggi19.search.ResultsActivity;
 import it.gpgames.consigliaviaggi19.search.place_details.reviews.WriteReviewActivity;
@@ -47,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
 
     private SliderView sliderView;
     static List<HomeSliderItem> SliderItemToShow = new ArrayList<>();
-
+    private ImageView bMapExplore;
     private ImageView bUserPanel;
     SearchView svSearchPlaces;
 
@@ -58,6 +59,8 @@ public class MainActivity extends AppCompatActivity {
         sliderView=findViewById(R.id.PlaceImagesSlider);
         bUserPanel=findViewById(R.id.user);
         svSearchPlaces = findViewById(R.id.searchView);
+        bMapExplore = findViewById(R.id.mapSearch);
+
         UserData.initiateLocalInstance();
         checkIfTokenHasExpired();
         // Debug-line ADD RESTAURANT PLACE: Restaurant.RestaurantGenerator();
@@ -143,6 +146,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextChange(String newText) {
                 return true;
+            }
+        });
+
+        bMapExplore.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent toExploreMap = new Intent(MainActivity.this, MapExploreActivity.class);
+                startActivity(toExploreMap);
             }
         });
 
