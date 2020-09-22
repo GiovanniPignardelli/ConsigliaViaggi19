@@ -51,6 +51,8 @@ public class QueryResultsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         holdingPlace=placesList.get(position);
 
         holder.title.setText(holdingPlace.getName());
+        holder.nReviews.setText(holdingPlace.getnReview().toString());
+        holder.rating.setRating(holdingPlace.getAvgReview());
 
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageReference = storage.getReference();
@@ -67,8 +69,6 @@ public class QueryResultsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             }
         });
 
-
-        //holder.rating.setNumStars(holdingPlace.get);
         holder.location.setText(holdingPlace.getAddress()+", "+holdingPlace.getCity()+", "+holdingPlace.getState());
     }
 
@@ -103,7 +103,7 @@ public class QueryResultsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             mView = itemView;
             title=itemView.findViewById(R.id.Title);
             location=itemView.findViewById(R.id.addressView);
-            nReviews=itemView.findViewById(R.id.textView10);
+            nReviews=itemView.findViewById(R.id.numRew);
             image=itemView.findViewById(R.id.placeImage);
             rating=itemView.findViewById(R.id.ratingView);
 

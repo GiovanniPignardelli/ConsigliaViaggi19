@@ -22,6 +22,42 @@ public class Place implements Serializable {
     public static final String CATEGORY_PLACE="place";
     public static final String CATEGORY_HOTEL="hotel";
 
+    private String name;
+    private String address;
+    private String city;
+    private String postal_code;
+    private String state;
+    private String priceTag;
+    private String region;
+    private String province;
+    private List<String> tags;
+    private String dbDocID;
+    private List<String> pictures;
+    private String addYear;
+    private String latitude;
+    private String longitude;
+    private String email;
+    private String telephone;
+    private String website;
+    private Integer nReviews;
+    private Float avgReview;
+
+    public Integer getnReview() {
+        return nReviews;
+    }
+
+    public void setnReview(Integer nReview) {
+        this.nReviews = nReview;
+    }
+
+    public Float getAvgReview() {
+        return avgReview;
+    }
+
+    public void setAvgReview(Float avgReview) {
+        this.avgReview = avgReview;
+    }
+
     public String category;
 
     public String getCategory() { return category; }
@@ -130,18 +166,9 @@ public class Place implements Serializable {
         this.website = website;
     }
 
-    private String name;
-    private String address;
-    private String city;
-    private String postal_code;
-    private String state;
-    private String priceTag;
-
     public String getDbDocID() {
         return dbDocID;
     }
-
-    private String dbDocID;
 
     public void setCategory(String category) {
         this.category = category;
@@ -163,10 +190,6 @@ public class Place implements Serializable {
         this.province = province;
     }
 
-    private String region;
-    private String province;
-    private List<String> tags;
-
     public List<String> getPictures() {
         return pictures;
     }
@@ -175,7 +198,7 @@ public class Place implements Serializable {
         this.pictures = pictures;
     }
 
-    public Place(String name, String address, String city, String postal_code, String state, String priceTag, List<String> tags, String addYear, String latitude, String longitude, String email, String telephone, String website, String category, String docID) {
+    public Place(String name, String address, String city, String postal_code, String state, String priceTag, List<String> tags, String addYear, String latitude, String longitude, String email, String telephone, String website, String category, String docID, Integer nReview, Float avgReview) {
         this.name = name;
         this.address = address;
         this.city = city;
@@ -191,6 +214,8 @@ public class Place implements Serializable {
         this.website = website;
         this.category = category;
         this.dbDocID=docID;
+        this.nReviews=nReview;
+        this.avgReview=avgReview;
     }
 
     public Place(Place toObject, String docID)
@@ -213,6 +238,8 @@ public class Place implements Serializable {
         this.tags=toObject.tags;
         this.telephone=toObject.telephone;
         this.website=toObject.website;
+        this.nReviews=toObject.nReviews;
+        this.avgReview=toObject.avgReview;
     }
 
     public Place()
@@ -220,13 +247,6 @@ public class Place implements Serializable {
 
     }
 
-    private List<String> pictures;
-    private String addYear;
-    private String latitude;
-    private String longitude;
-    private String email;
-    private String telephone;
-    private String website;
 
     /*
     public static void PlaceGenerator(){

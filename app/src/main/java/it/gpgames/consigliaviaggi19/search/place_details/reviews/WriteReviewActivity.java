@@ -16,18 +16,24 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import it.gpgames.consigliaviaggi19.R;
+import it.gpgames.consigliaviaggi19.places.Place;
 import it.gpgames.consigliaviaggi19.places.Review;
+import it.gpgames.consigliaviaggi19.userpanel.UserData;
 
 public class WriteReviewActivity extends AppCompatActivity {
 
@@ -110,6 +116,7 @@ public class WriteReviewActivity extends AppCompatActivity {
                         Log.d("UploadReview", "Review caricata.");
                         hider.setVisibility(View.INVISIBLE);
                         bSendReview.setEnabled(true);
+                        refreshStats();
                         Toast.makeText(getApplicationContext(),"Recensione inviata", Toast.LENGTH_LONG).show();
                         finish();
                     }
@@ -123,5 +130,41 @@ public class WriteReviewActivity extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(),"Errore. Recensione non inviata", Toast.LENGTH_LONG).show();
                     }
                 });
+    }
+
+    private void refreshStats() {
+
+        FirebaseFirestore.getInstance().collection("userPool").whereEqualTo("userID", FirebaseAuth.getInstance().getUid()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if(task.isSuccessful())
+                {
+                    UserData user = task.getResult().toObjects(UserData.class).get(0);
+                    int oldNum=user.getnReview();
+                    float oldAvg=user.getAvgReview();
+                    FirebaseFirestore.getInstance().collection("userPool").document(FirebaseAuth.getInstance().getUid()).update("nReview",oldNum+1);
+                    FirebaseFirestore.getInstance().collection("userPool").document(FirebaseAuth.getInstance().getUid()).update("avgReview", (oldAvg+ratingBar.getRating())/oldNum+1);
+                }
+            }
+        });
+
+        FirebaseFirestore.getInstance().collection("places").document(dbDocID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if(task.isSuccessful())
+                {
+                    Place place=task.getResult().toObject(Place.class);
+                    int oldNum=place.getnReview();
+                    float oldAvg=place.getAvgReview().floatValue();
+                    FirebaseFirestore.getInstance().collection("places").document(dbDocID).update("nReviews",oldNum+1);
+                    FirebaseFirestore.getInstance().collection("places").document(dbDocID).update("avgReview", (oldAvg+ratingBar.getRating())/oldNum+1);
+                    Log.d("refresh", "Tutto ok");
+                }
+                else
+                {
+                    Log.d("refresh", "Niente ok");
+                }
+            }
+        });
     }
 }

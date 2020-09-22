@@ -15,10 +15,12 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.Message;
+import android.util.Log;
 import android.util.Pair;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -61,6 +63,8 @@ public class PlaceDetailsActivity extends AppCompatActivity {
     private ReviewsAdapter reviewsAdapter;
     private RecyclerView reviews;
     private Button bWriteReview;
+    private TextView nReview;
+    private RatingBar ratingBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +77,8 @@ public class PlaceDetailsActivity extends AppCompatActivity {
         back=findViewById(R.id.back);
         bWriteReview=findViewById(R.id.writeReviewButton);
         reviews=findViewById(R.id.recyclerReviews);
+        nReview=findViewById(R.id.nReview);
+        ratingBar=findViewById(R.id.ratingBar);
 
         init();
     }
@@ -90,6 +96,7 @@ public class PlaceDetailsActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent i=new Intent(PlaceDetailsActivity.this, WriteReviewActivity.class);
                 i.putExtra("name", toShow.getName());
+                Log.d("id",toShow.getDbDocID());
                 i.putExtra("id", toShow.getDbDocID());
                 i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(i);
@@ -146,6 +153,9 @@ public class PlaceDetailsActivity extends AppCompatActivity {
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(information.getContext(),
                 RecyclerView.VERTICAL);
         information.addItemDecoration(dividerItemDecoration);
+
+        nReview.setText(toShow.getnReview().toString());
+        ratingBar.setRating(toShow.getAvgReview());
     }
 
     private void refreshReviews() {

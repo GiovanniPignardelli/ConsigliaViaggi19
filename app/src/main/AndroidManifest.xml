@@ -18,6 +18,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.DayNight.NoActionBar">
+<<<<<<< Updated upstream
 
         <meta-data android:name="com.google.android.geo.API_KEY"
             android:value="@string/map_key"/>
@@ -30,6 +31,21 @@
         <activity android:name=".userpanel.UserPanelActivity" />
         <activity android:name=".Login" />
         <activity android:name=".Register">
+=======
+        <activity android:name=".search.place_details.reviews.WriteReviewActivity"></activity>
+        <activity android:name=".search.place_details.PlaceDetailsActivity"
+            android:launchMode="singleTask"/>
+        <activity android:name=".search.ResultsActivity"
+            android:launchMode="singleTask"/>
+        <activity android:name=".network.NoConnectionActivity"
+            android:launchMode="singleTask"/>
+        <activity android:name=".userpanel.UserPanelActivity"
+            android:launchMode="singleTask"/>
+        <activity android:name=".Login"
+            android:launchMode="singleTask"/>
+        <activity android:name=".Register"
+            android:launchMode="singleTask">
+>>>>>>> Stashed changes
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

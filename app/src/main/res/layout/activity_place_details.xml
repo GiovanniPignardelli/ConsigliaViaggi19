@@ -84,6 +84,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
                 android:isIndicator="true"
+                android:max="5"
+                android:numStars="5"
+                android:rating="0"
+                android:stepSize="0.5"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.497"
                 app:layout_constraintStart_toStartOf="parent"
@@ -137,6 +141,16 @@
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/writeReviewButton" />
+
+            <TextView
+                android:id="@+id/nReview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="44dp"
+                android:text="0"
+                app:layout_constraintStart_toEndOf="@+id/ratingBar"
+                app:layout_constraintTop_toBottomOf="@+id/recyclerInfoView" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>
