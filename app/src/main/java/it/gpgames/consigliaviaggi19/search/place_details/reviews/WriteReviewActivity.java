@@ -46,7 +46,7 @@ public class WriteReviewActivity extends AppCompatActivity {
         setContentView(R.layout.activity_write_review);
         iPlacePic = findViewById(R.id.placeImage);
         bBack = findViewById(R.id.back4);
-        eReviewText = findViewById(R.id.name);
+        eReviewText = findViewById(R.id.textReview);
         ratingBar = findViewById(R.id.ratingView);
         bSendReview = findViewById(R.id.sendReview);
         eTitle = findViewById(R.id.placeTitle);
