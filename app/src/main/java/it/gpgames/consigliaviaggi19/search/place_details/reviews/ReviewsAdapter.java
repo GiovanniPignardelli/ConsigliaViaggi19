@@ -23,6 +23,7 @@ import java.util.List;
 
 import it.gpgames.consigliaviaggi19.R;
 import it.gpgames.consigliaviaggi19.places.Review;
+import it.gpgames.consigliaviaggi19.userpanel.UserData;
 
 public class ReviewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -40,7 +41,7 @@ public class ReviewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view=inflater.inflate(R.layout.info_row,parent, false);
+        View view=inflater.inflate(R.layout.review_container,parent, false);
         return new ReviewViewHolder(view);
     }
 
@@ -57,7 +58,8 @@ public class ReviewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if(task.isSuccessful())
                 {
-                    holder.userName.setText(task.getResult().toObjects(String.class).get(0));
+
+                    holder.userName.setText(task.getResult().toObjects(UserData.class).get(0).getDisplayName());
                 }
             }
         });
