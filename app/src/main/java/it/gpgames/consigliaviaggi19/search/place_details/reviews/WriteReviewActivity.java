@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -16,7 +15,6 @@ import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.Toolbar;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -46,10 +44,10 @@ public class WriteReviewActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_write_review);
-        iPlacePic = findViewById(R.id.imageView2);
+        iPlacePic = findViewById(R.id.placeImage);
         bBack = findViewById(R.id.back4);
-        eReviewText = findViewById(R.id.reviewText);
-        ratingBar = findViewById(R.id.ratingReview);
+        eReviewText = findViewById(R.id.name);
+        ratingBar = findViewById(R.id.ratingView);
         bSendReview = findViewById(R.id.sendReview);
         eTitle = findViewById(R.id.placeTitle);
         hider=findViewById(R.id.hider);

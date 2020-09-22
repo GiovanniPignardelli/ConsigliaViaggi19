@@ -8,6 +8,23 @@ import java.util.List;
 public class Review {
 
     String placeId;
+    String userId;
+    String text;
+    String date;
+    Integer rating;
+
+    public Review()
+    {
+
+    }
+
+    public Review(String placeId, String userId, String text, String date, Integer rating) {
+        this.placeId = placeId;
+        this.userId = userId;
+        this.text = text;
+        this.date = date;
+        this.rating = rating;
+    }
 
     public String getPlaceId() {
         return placeId;
@@ -25,18 +42,7 @@ public class Review {
         this.date = date;
     }
 
-    public Review(String placeId, String userId, String text, String date, Integer rating) {
-        this.placeId = placeId;
-        this.userId = userId;
-        this.text = text;
-        this.date = date;
-        this.rating = rating;
-    }
 
-    String userId;
-    String text;
-    String date;
-    Integer rating;
 
     public String getUserId() {
         return userId;
@@ -61,6 +67,5 @@ public class Review {
     public void setRating(Integer rating) {
         this.rating = rating;
     }
-
 
 }

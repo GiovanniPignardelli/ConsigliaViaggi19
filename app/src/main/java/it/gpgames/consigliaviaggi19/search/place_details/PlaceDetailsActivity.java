@@ -1,5 +1,6 @@
 package it.gpgames.consigliaviaggi19.search.place_details;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -21,7 +22,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.ListResult;
 import com.google.firebase.storage.StorageReference;
@@ -38,6 +43,9 @@ import it.gpgames.consigliaviaggi19.home.slider.HomeSliderAdapter;
 import it.gpgames.consigliaviaggi19.places.Hotel;
 import it.gpgames.consigliaviaggi19.places.Place;
 import it.gpgames.consigliaviaggi19.places.Restaurant;
+import it.gpgames.consigliaviaggi19.places.Review;
+import it.gpgames.consigliaviaggi19.search.ResultsActivity;
+import it.gpgames.consigliaviaggi19.search.place_details.reviews.ReviewsAdapter;
 import it.gpgames.consigliaviaggi19.search.place_details.reviews.WriteReviewActivity;
 import it.gpgames.consigliaviaggi19.search.place_details.slider.PlaceSliderAdapter;
 
@@ -50,6 +58,8 @@ public class PlaceDetailsActivity extends AppCompatActivity {
     private PlaceSliderAdapter sliderAdapter;
     private SliderView slider;
     private RecyclerView information;
+    private ReviewsAdapter reviewsAdapter;
+    private RecyclerView reviews;
     private Button bWriteReview;
 
     @Override
@@ -62,6 +72,7 @@ public class PlaceDetailsActivity extends AppCompatActivity {
         information=findViewById(R.id.recyclerInfoView);
         back=findViewById(R.id.back);
         bWriteReview=findViewById(R.id.writeReviewButton);
+        reviews=findViewById(R.id.recyclerReviews);
 
         init();
     }
@@ -84,6 +95,12 @@ public class PlaceDetailsActivity extends AppCompatActivity {
                 startActivity(i);
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        refreshReviews();
     }
 
 
@@ -129,6 +146,21 @@ public class PlaceDetailsActivity extends AppCompatActivity {
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(information.getContext(),
                 RecyclerView.VERTICAL);
         information.addItemDecoration(dividerItemDecoration);
+    }
+
+    private void refreshReviews() {
+
+        FirebaseFirestore.getInstance().collection("reviewPool").whereEqualTo("placeId",toShow.getDbDocID()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if(task.isSuccessful())
+                {
+                    reviewsAdapter=new ReviewsAdapter(PlaceDetailsActivity.this,task.getResult().toObjects(Review.class));
+                    reviews.setAdapter(reviewsAdapter);
+                    reviews.setLayoutManager(new LinearLayoutManager(PlaceDetailsActivity.this, RecyclerView.VERTICAL, false));
+                }
+            }
+        });
     }
 
     private void initPlaceSlider() {

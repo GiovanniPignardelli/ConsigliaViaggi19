@@ -19,7 +19,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/reviewText" />
+        app:layout_constraintTop_toBottomOf="@+id/name" />
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar6"
@@ -36,7 +36,7 @@
         app:layout_constraintVertical_bias="0.0" />
 
     <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/imageView2"
+        android:id="@+id/placeImage"
         android:layout_width="75dp"
         android:layout_height="75dp"
         android:layout_marginStart="32dp"
@@ -61,7 +61,7 @@
         app:layout_constraintVertical_bias="0.47" />
 
     <EditText
-        android:id="@+id/reviewText"
+        android:id="@+id/Title"
         android:layout_width="363dp"
         android:layout_height="247dp"
         android:layout_marginStart="24dp"
@@ -74,10 +74,10 @@
         android:maxLines="100"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ratingReview" />
+        app:layout_constraintTop_toBottomOf="@+id/ratingView" />
 
     <RatingBar
-        android:id="@+id/ratingReview"
+        android:id="@+id/ratingView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="85dp"
@@ -86,11 +86,11 @@
         android:layout_marginBottom="13dp"
         android:max="5"
         android:stepSize="1"
-        app:layout_constraintBottom_toTopOf="@+id/reviewText"
+        app:layout_constraintBottom_toTopOf="@+id/name"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView2" />
+        app:layout_constraintTop_toBottomOf="@+id/placeImage" />
 
     <TextView
         android:id="@+id/placeTitle"
@@ -101,7 +101,7 @@
         android:autoText="true"
         android:text="sdas"
         android:textSize="24sp"
-        app:layout_constraintStart_toEndOf="@+id/imageView2"
+        app:layout_constraintStart_toEndOf="@+id/placeImage"
         app:layout_constraintTop_toBottomOf="@+id/toolbar6" />
 
     <ImageView

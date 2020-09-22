@@ -101,10 +101,10 @@ public class QueryResultsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         public ResultsViewHolder(@NonNull View itemView) {
             super(itemView);
             mView = itemView;
-            title=itemView.findViewById(R.id.nameView);
+            title=itemView.findViewById(R.id.Title);
             location=itemView.findViewById(R.id.addressView);
             nReviews=itemView.findViewById(R.id.textView10);
-            image=itemView.findViewById(R.id.imageView2);
+            image=itemView.findViewById(R.id.placeImage);
             rating=itemView.findViewById(R.id.ratingView);
 
             itemView.setOnClickListener(new View.OnClickListener() {

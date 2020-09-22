@@ -4,40 +4,105 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-/**La classe User detiene localmente le informazioni relative all'utente della sessione attuale.
- * Si tratta di una classe singleton (istanziabile una sola volta). L'istanza è ottenibile con il metodo getUserIstance()*/
+/**La classe User detiene localmente le informazioni relative ad un utente.
+ * La classe maniente una propria istanza (LocalInstance), che fa riferimento all'utente corrente.*/
 public class UserData implements Parcelable {
 
     private String displayName;
     private String email;
     private Uri avatar;
     private String userID;
-    private boolean isEmailVerified;
+    private boolean isBlacklisted;
+    private int nReview;
+    private float avgReview;
+    private String registerDate;
+
+    public UserData(String displayName, String email, String userID, boolean isBlacklisted, int nReview, float avgReview, String registerDate) {
+        this.displayName = displayName;
+        this.email = email;
+        this.userID = userID;
+        this.isBlacklisted = isBlacklisted;
+        this.nReview = nReview;
+        this.avgReview = avgReview;
+        this.registerDate = registerDate;
+    }
+
     private static UserData localInstance;
 
-    private UserData()
+    public boolean isBlacklisted() {
+        return isBlacklisted;
+    }
+
+    public void setBlacklisted(boolean blacklisted) {
+        isBlacklisted = blacklisted;
+    }
+
+    public int getnReview() {
+        return nReview;
+    }
+
+    public void setnReview(int nReview) {
+        this.nReview = nReview;
+    }
+
+    public float getAvgReview() {
+        return avgReview;
+    }
+
+    public void setAvgReview(float avgReview) {
+        this.avgReview = avgReview;
+    }
+
+    public String getRegisterDate() {
+        return registerDate;
+    }
+
+    public void setRegisterDate(String registerDate) {
+        this.registerDate = registerDate;
+    }
+
+    public static void setLocalInstance(UserData localInstance) {
+        UserData.localInstance = localInstance;
+    }
+
+
+    public static void initiateLocalInstance()
+    {
+        FirebaseFirestore.getInstance().collection("userPool").whereEqualTo("userID",FirebaseAuth.getInstance().getUid()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if(task.isSuccessful())
+                {
+                    QuerySnapshot result = task.getResult();
+                    localInstance=result.toObjects(UserData.class).get(0);
+                }
+            }
+        });
+    }
+
+
+    public UserData()
     {
 
     }
 
-    public static UserData getUserInstance()
+    public static UserData getLocalInstance()
     {
-        if(localInstance!=null)
-        {
             return localInstance;
-        }
-        else
-        {
-            localInstance = new UserData();
-            return localInstance;
-        }
     }
 
     public UserData(Parcel in) {
@@ -45,7 +110,6 @@ public class UserData implements Parcelable {
         email = in.readString();
         avatar = in.readParcelable(Bitmap.class.getClassLoader());
         userID = in.readString();
-        isEmailVerified = in.readByte() != 0;
     }
 
     public static final Creator<UserData> CREATOR = new Creator<UserData>() {
@@ -71,7 +135,6 @@ public class UserData implements Parcelable {
         dest.writeString(email);
         dest.writeParcelable(avatar, flags);
         dest.writeString(userID);
-        dest.writeByte((byte) (isEmailVerified ? 1 : 0));
     }
 
     /**La classe UserDataUpdate implementa Runnable. Viene avviato su un Thread secondario per
@@ -84,7 +147,6 @@ public class UserData implements Parcelable {
                 setDisplayName(user.getDisplayName());
                 setEmail(user.getEmail());
                 setAvatar(user.getPhotoUrl());
-                setEmailVerified(user.isEmailVerified());
                 setUserID(user.getUid());
             }
         }
@@ -114,14 +176,6 @@ public class UserData implements Parcelable {
         this.avatar = avatar;
     }
 
-    public boolean isEmailVerified() {
-        return isEmailVerified;
-    }
-
-    public void setEmailVerified(boolean emailVerified) {
-        isEmailVerified = emailVerified;
-    }
-
     public String getUserID() {
         return userID;
     }
@@ -142,8 +196,11 @@ public class UserData implements Parcelable {
         email=null;
         avatar=null;
         userID=null;
-        isEmailVerified=false;
         localInstance=null;
+        isBlacklisted=false;
+        nReview=0;
+        avgReview=0;
+        registerDate=null;
     }
 
 }

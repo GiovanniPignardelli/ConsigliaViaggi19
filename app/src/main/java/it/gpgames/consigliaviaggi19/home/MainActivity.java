@@ -42,7 +42,6 @@ import it.gpgames.consigliaviaggi19.home.slider.HomeSliderItem;
 public class MainActivity extends AppCompatActivity {
 
     DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference();
-    UserData userData = UserData.getUserInstance();
 
     private static final NetworkChangeReceiver networkChangeReceiver=NetworkChangeReceiver.getNetworkChangeReceiverInstance();
 
@@ -59,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
         sliderView=findViewById(R.id.PlaceImagesSlider);
         bUserPanel=findViewById(R.id.user);
         svSearchPlaces = findViewById(R.id.searchView);
+        UserData.initiateLocalInstance();
         checkIfTokenHasExpired();
         // Debug-line ADD RESTAURANT PLACE: Restaurant.RestaurantGenerator();
         for(int i=0; i<3;i++){
@@ -95,7 +95,8 @@ public class MainActivity extends AppCompatActivity {
     /**Inizializza localmente i dati utente (classe UserData).*/
     private void initUserData()
     {
-        userData.downloadUserDataFromFirebase();
+        if(UserData.getLocalInstance()!=null)
+        UserData.getLocalInstance().downloadUserDataFromFirebase();
     }
 
     /**Inizializza i listener della activity_main.xml:
@@ -109,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent toUserPanel = new Intent(MainActivity.this, UserPanelActivity.class);
                 Bundle userDataBundle = new Bundle();
-                userDataBundle.putParcelable("UserData", userData);
+                userDataBundle.putParcelable("UserData", UserData.getLocalInstance());
                 toUserPanel.putExtras(userDataBundle);
                 startActivity(toUserPanel);
             }
@@ -121,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 if(FirebaseAuth.getInstance().getCurrentUser()==null)
                 {
-                    userData.cleanLocalUserData();
+                    UserData.getLocalInstance().cleanLocalUserData();
                     startActivity(new Intent(MainActivity.this, Login.class));
                     finish();
                 }

@@ -50,7 +50,7 @@ public class UserPanelActivity extends AppCompatActivity {
     Button bLogout;
     Button bResetPassword;
 
-    UserData currentUserData = UserData.getUserInstance();
+    UserData currentUserData = UserData.getLocalInstance();
 
     FirebaseAuth auth = FirebaseAuth.getInstance();
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();

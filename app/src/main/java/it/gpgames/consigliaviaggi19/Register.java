@@ -1,11 +1,13 @@
 package it.gpgames.consigliaviaggi19;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -18,9 +20,14 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 import it.gpgames.consigliaviaggi19.home.MainActivity;
 import it.gpgames.consigliaviaggi19.network.NetworkChangeReceiver;
+import it.gpgames.consigliaviaggi19.userpanel.UserData;
 
 public class Register extends AppCompatActivity {
     EditText eUser,ePsw,eEmail;
@@ -49,9 +56,9 @@ public class Register extends AppCompatActivity {
         bRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String email=eEmail.getText().toString().trim();
+                final String email=eEmail.getText().toString().trim();
                 final String username=eUser.getText().toString().trim();
-                String password=ePsw.getText().toString().trim();
+                final String password=ePsw.getText().toString().trim();
 
                 if(TextUtils.isEmpty(email))
                 {
@@ -73,6 +80,7 @@ public class Register extends AppCompatActivity {
 
                 fAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(
                         new OnCompleteListener<AuthResult>() {
+                    @RequiresApi(api = Build.VERSION_CODES.O)
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful())
@@ -82,6 +90,13 @@ public class Register extends AppCompatActivity {
                                 .build();
                             fAuth.getCurrentUser().updateProfile(profileUpdates);
 
+                            LocalDate date = LocalDate.now();
+                            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+                            String dateString=date.format(formatter);
+
+                            UserData user=new UserData(username, email, FirebaseAuth.getInstance().getUid(),false,0,0,dateString);
+                            FirebaseFirestore.getInstance().collection("userPool").add(user);
+                            Toast.makeText(getApplicationContext(), "Ricorda di verificare la tua mail.", Toast.LENGTH_LONG).show();
                             startActivity(new Intent(Register.this, MainActivity.class));
                             finish();
                         }

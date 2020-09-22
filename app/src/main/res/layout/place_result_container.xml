@@ -24,21 +24,21 @@
             android:layout_height="wrap_content">
 
             <TextView
-                android:id="@+id/nameView"
+                android:id="@+id/Title"
                 android:layout_width="249dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="11dp"
                 android:layout_marginTop="16dp"
-                android:layout_marginEnd="12dp"
+                android:layout_marginEnd="44dp"
                 android:text="Il ristorante più bello del mondo"
                 android:textSize="18sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.125"
-                app:layout_constraintStart_toEndOf="@+id/imageView2"
+                app:layout_constraintStart_toEndOf="@+id/placeImage"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/imageView2"
+                android:id="@+id/placeImage"
                 android:layout_width="88dp"
                 android:layout_height="102dp"
                 android:layout_marginStart="8dp"
@@ -54,13 +54,10 @@
                 android:id="@+id/ratingView"
                 android:layout_width="235dp"
                 android:layout_height="47dp"
-                android:layout_marginStart="12dp"
+                android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
-                android:layout_marginEnd="109dp"
                 android:isIndicator="true"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toEndOf="@+id/imageView2"
+                app:layout_constraintStart_toEndOf="@+id/placeImage"
                 app:layout_constraintTop_toBottomOf="@+id/addressView" />
 
             <TextView
@@ -68,18 +65,15 @@
                 android:layout_width="247dp"
                 android:layout_height="21dp"
                 android:layout_marginStart="14dp"
-                android:layout_marginTop="2dp"
-                android:layout_marginEnd="208dp"
-                android:layout_marginBottom="5dp"
+                android:layout_marginTop="7dp"
+                android:layout_marginEnd="48dp"
                 android:text="Via Franco 23, Afragola 80021 Napoli Campania Italia"
                 android:textAlignment="textStart"
                 android:textSize="10sp"
-                app:layout_constraintBottom_toTopOf="@+id/ratingView"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toEndOf="@+id/imageView2"
-                app:layout_constraintTop_toBottomOf="@+id/nameView"
-                app:layout_constraintVertical_bias="0.0" />
+                app:layout_constraintStart_toEndOf="@+id/placeImage"
+                app:layout_constraintTop_toBottomOf="@+id/Title" />
 
             <TextView
                 android:id="@+id/textView10"
@@ -93,10 +87,10 @@
                 android:textSize="14sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.386"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toEndOf="@+id/ratingView"
                 app:layout_constraintTop_toBottomOf="@+id/addressView"
-                app:layout_constraintVertical_bias="0.75" />
+                app:layout_constraintVertical_bias="1.0" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.cardview.widget.CardView>
