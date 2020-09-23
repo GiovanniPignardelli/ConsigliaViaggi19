@@ -41,13 +41,14 @@ public class Place implements Serializable {
     private String website;
     private Integer nReviews;
     private Float avgReview;
+    public String category;
 
-    public Integer getnReview() {
+    public Integer getnReviews() {
         return nReviews;
     }
 
-    public void setnReview(Integer nReview) {
-        this.nReviews = nReview;
+    public void setnReviews(Integer nReviews) {
+        this.nReviews = nReviews;
     }
 
     public Float getAvgReview() {
@@ -57,8 +58,6 @@ public class Place implements Serializable {
     public void setAvgReview(Float avgReview) {
         this.avgReview = avgReview;
     }
-
-    public String category;
 
     public String getCategory() { return category; }
 

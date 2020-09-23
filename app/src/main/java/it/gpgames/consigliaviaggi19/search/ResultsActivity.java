@@ -112,5 +112,10 @@ public class ResultsActivity extends AppCompatActivity {
         context.startActivity(intent);
     }
 
+    public RecyclerView getRecyclerView()
+    {
+        return resultQueries;
+    }
+
 
 }

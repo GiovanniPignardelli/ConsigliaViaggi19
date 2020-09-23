@@ -71,7 +71,7 @@ public class Hotel extends Place implements Serializable {
     */
 
     public Hotel(Place toObject,String hClass, ArrayList<String> roomTags, ArrayList<String> roomTypeTags, String docID) {
-        super(toObject.getName(),toObject.getAddress(),toObject.getCity(),toObject.getPostal_code(),toObject.getState(),toObject.getPriceTag(),toObject.getTags(),toObject.getAddYear(), toObject.getLatitude(), toObject.getLongitude(), toObject.getEmail(), toObject.getTelephone(), toObject.getWebsite(), toObject.getCategory(), docID,0, (float) 0);
+        super(toObject.getName(),toObject.getAddress(),toObject.getCity(),toObject.getPostal_code(),toObject.getState(),toObject.getPriceTag(),toObject.getTags(),toObject.getAddYear(), toObject.getLatitude(), toObject.getLongitude(), toObject.getEmail(), toObject.getTelephone(), toObject.getWebsite(), toObject.getCategory(), docID,toObject.getnReviews(), toObject.getAvgReview());
         this.hClass=hClass;
         this.roomTags=roomTags;
         this.roomTypeTags=roomTypeTags;

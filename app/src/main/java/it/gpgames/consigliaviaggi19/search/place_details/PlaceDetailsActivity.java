@@ -154,7 +154,7 @@ public class PlaceDetailsActivity extends AppCompatActivity {
                 RecyclerView.VERTICAL);
         information.addItemDecoration(dividerItemDecoration);
 
-        nReview.setText(toShow.getnReview().toString());
+        nReview.setText(toShow.getnReviews().toString());
         ratingBar.setRating(toShow.getAvgReview());
     }
 

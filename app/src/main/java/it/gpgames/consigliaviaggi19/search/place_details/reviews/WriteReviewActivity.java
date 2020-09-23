@@ -134,36 +134,33 @@ public class WriteReviewActivity extends AppCompatActivity {
 
     private void refreshStats() {
 
-        FirebaseFirestore.getInstance().collection("userPool").whereEqualTo("userID", FirebaseAuth.getInstance().getUid()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        FirebaseFirestore.getInstance().collection("userPool").whereEqualTo("userID", FirebaseAuth.getInstance().getUid()).limit(1).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if(task.isSuccessful())
                 {
                     UserData user = task.getResult().toObjects(UserData.class).get(0);
-                    int oldNum=user.getnReview();
-                    float oldAvg=user.getAvgReview();
-                    FirebaseFirestore.getInstance().collection("userPool").document(FirebaseAuth.getInstance().getUid()).update("nReview",oldNum+1);
-                    FirebaseFirestore.getInstance().collection("userPool").document(FirebaseAuth.getInstance().getUid()).update("avgReview", (oldAvg+ratingBar.getRating())/oldNum+1);
+                    String documentID=task.getResult().getDocuments().get(0).getId();
+                    Integer oldNum=user.getnReview();
+                    Float oldAvg=user.getAvgReview();
+                    FirebaseFirestore.getInstance().collection("userPool").document(documentID).update("nReview",oldNum+1);
+                    FirebaseFirestore.getInstance().collection("userPool").document(documentID).update("avgReview", ((oldAvg+ratingBar.getRating())/(oldNum+1)));
                 }
+                else
+                    Log.d("review","Errore");
             }
         });
 
         FirebaseFirestore.getInstance().collection("places").document(dbDocID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if(task.isSuccessful())
-                {
-                    Place place=task.getResult().toObject(Place.class);
-                    int oldNum=place.getnReview();
-                    float oldAvg=place.getAvgReview().floatValue();
-                    FirebaseFirestore.getInstance().collection("places").document(dbDocID).update("nReviews",oldNum+1);
-                    FirebaseFirestore.getInstance().collection("places").document(dbDocID).update("avgReview", (oldAvg+ratingBar.getRating())/oldNum+1);
-                    Log.d("refresh", "Tutto ok");
-                }
-                else
-                {
-                    Log.d("refresh", "Niente ok");
-                }
+
+                Place place=task.getResult().toObject(Place.class);
+                Integer oldNum=place.getnReviews();
+                Float oldAvg=place.getAvgReview().floatValue();
+                FirebaseFirestore.getInstance().collection("places").document(dbDocID).update("nReviews",oldNum+1);
+                FirebaseFirestore.getInstance().collection("places").document(dbDocID).update("avgReview", (oldAvg+ratingBar.getRating())/(oldNum+1));
+
             }
         });
     }

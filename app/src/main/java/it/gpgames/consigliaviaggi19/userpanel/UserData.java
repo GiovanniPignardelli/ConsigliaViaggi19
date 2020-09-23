@@ -27,11 +27,11 @@ public class UserData implements Parcelable {
     private Uri avatar;
     private String userID;
     private boolean isBlacklisted;
-    private int nReview;
-    private float avgReview;
+    private Integer nReview;
+    private Float avgReview;
     private String registerDate;
 
-    public UserData(String displayName, String email, String userID, boolean isBlacklisted, int nReview, float avgReview, String registerDate) {
+    public UserData(String displayName, String email, String userID, boolean isBlacklisted, Integer nReview, Float avgReview, String registerDate) {
         this.displayName = displayName;
         this.email = email;
         this.userID = userID;
@@ -198,8 +198,8 @@ public class UserData implements Parcelable {
         userID=null;
         localInstance=null;
         isBlacklisted=false;
-        nReview=0;
-        avgReview=0;
+        nReview=null;
+        avgReview=null;
         registerDate=null;
     }
 

@@ -9,7 +9,6 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    AIzaSyCBqzD5IVzyqEs0suigdlU6hEuFXp6DZMs
 
     <application
         android:allowBackup="true"
@@ -18,20 +17,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.DayNight.NoActionBar">
-<<<<<<< Updated upstream
 
         <meta-data android:name="com.google.android.geo.API_KEY"
             android:value="@string/map_key"/>
 
         <activity android:name=".map_search.MapExploreActivity"></activity>
-        <activity android:name=".search.place_details.reviews.WriteReviewActivity" />
-        <activity android:name=".search.place_details.PlaceDetailsActivity" />
-        <activity android:name=".search.ResultsActivity" />
-        <activity android:name=".network.NoConnectionActivity" />
-        <activity android:name=".userpanel.UserPanelActivity" />
-        <activity android:name=".Login" />
-        <activity android:name=".Register">
-=======
         <activity android:name=".search.place_details.reviews.WriteReviewActivity"></activity>
         <activity android:name=".search.place_details.PlaceDetailsActivity"
             android:launchMode="singleTask"/>
@@ -45,7 +35,6 @@
             android:launchMode="singleTask"/>
         <activity android:name=".Register"
             android:launchMode="singleTask">
->>>>>>> Stashed changes
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

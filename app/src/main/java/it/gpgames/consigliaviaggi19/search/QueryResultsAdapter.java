@@ -1,5 +1,6 @@
 package it.gpgames.consigliaviaggi19.search;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -9,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -30,9 +32,11 @@ public class QueryResultsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private List<Place> placesList;
     private LayoutInflater inflater;
     private Place holdingPlace;
-    private AppCompatActivity activity;
+    private ResultsActivity activity;
+    private ListItemOnClickListener listener = new ListItemOnClickListener();
 
-    public QueryResultsAdapter(Context context, List<Place> list, AppCompatActivity activity) {
+
+    public QueryResultsAdapter(Context context, List<Place> list, ResultsActivity activity) {
         this.placesList=list;
         this.activity=activity;
         inflater = LayoutInflater.from(context);
@@ -42,6 +46,7 @@ public class QueryResultsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     @Override
     public ResultsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view=inflater.inflate(R.layout.place_result_container,parent, false);
+        view.setOnClickListener(listener);
         return new ResultsViewHolder(view);
     }
 
@@ -51,7 +56,7 @@ public class QueryResultsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         holdingPlace=placesList.get(position);
 
         holder.title.setText(holdingPlace.getName());
-        holder.nReviews.setText(holdingPlace.getnReview().toString());
+        holder.nReviews.setText(holdingPlace.getnReviews().toString());
         holder.rating.setRating(holdingPlace.getAvgReview());
 
         FirebaseStorage storage = FirebaseStorage.getInstance();
@@ -70,6 +75,7 @@ public class QueryResultsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         });
 
         holder.location.setText(holdingPlace.getAddress()+", "+holdingPlace.getCity()+", "+holdingPlace.getState());
+
     }
 
     private void updateQueryImage(final Bitmap bitmap, final ResultsViewHolder holder)
@@ -106,13 +112,16 @@ public class QueryResultsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             nReviews=itemView.findViewById(R.id.numRew);
             image=itemView.findViewById(R.id.placeImage);
             rating=itemView.findViewById(R.id.ratingView);
+        }
+    }
 
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    ResultsActivity.showDetails(holdingPlace);
-                }
-            });
+    private class ListItemOnClickListener implements View.OnClickListener
+    {
+        @Override
+        public void onClick(final View view) {
+            int itemPosition = activity.getRecyclerView().getChildLayoutPosition(view);
+            Place toShow= placesList.get(itemPosition);
+            ResultsActivity.showDetails(toShow);
         }
     }
 }
