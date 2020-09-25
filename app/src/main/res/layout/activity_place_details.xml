@@ -126,6 +126,7 @@
                 android:layout_marginTop="14dp"
                 android:layout_marginEnd="54dp"
                 android:backgroundTint="#FF6D00"
+                android:enabled="false"
                 android:text="SCRIVI LA TUA RECENSIONE"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

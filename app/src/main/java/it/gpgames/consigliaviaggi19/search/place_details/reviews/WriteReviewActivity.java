@@ -5,6 +5,7 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -31,6 +32,7 @@ import java.time.format.DateTimeFormatter;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import it.gpgames.consigliaviaggi19.R;
+import it.gpgames.consigliaviaggi19.network.NetworkChangeReceiver;
 import it.gpgames.consigliaviaggi19.places.Place;
 import it.gpgames.consigliaviaggi19.places.Review;
 import it.gpgames.consigliaviaggi19.userpanel.UserData;
@@ -45,6 +47,8 @@ public class WriteReviewActivity extends AppCompatActivity {
     private Button bSendReview;
     private String dbDocID;
     private androidx.appcompat.widget.Toolbar hider;
+
+    NetworkChangeReceiver networkChangeReceiver=NetworkChangeReceiver.getNetworkChangeReceiverInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -163,5 +167,20 @@ public class WriteReviewActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
+        registerReceiver(networkChangeReceiver, filter);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(networkChangeReceiver);
     }
 }
