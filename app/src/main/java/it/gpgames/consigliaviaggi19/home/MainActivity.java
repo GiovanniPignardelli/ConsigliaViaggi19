@@ -63,11 +63,6 @@ public class MainActivity extends AppCompatActivity {
 
         UserData.initiateLocalInstance();
         checkIfTokenHasExpired();
-        // Debug-line ADD RESTAURANT PLACE: Restaurant.RestaurantGenerator();
-        for(int i=0; i<3;i++){
-            //Restaurant.RestaurantGenerator();
-            //Place.PlaceGenerator();
-        }
         init();
     }
 
@@ -77,7 +72,6 @@ public class MainActivity extends AppCompatActivity {
         IntentFilter filter = new IntentFilter();
         filter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
         registerReceiver(networkChangeReceiver, filter);
-        initUserData();
     }
 
     /**Controlla se il token d'accesso è scaduto. In tal caso è necessario ri-effettuare l'accesso.*/
@@ -95,13 +89,6 @@ public class MainActivity extends AppCompatActivity {
         initListeners();
     }
 
-    /**Inizializza localmente i dati utente (classe UserData).*/
-    private void initUserData()
-    {
-        if(UserData.getLocalInstance()!=null)
-        UserData.getLocalInstance().downloadUserDataFromFirebase();
-    }
-
     /**Inizializza i listener della activity_main.xml:
      * - OnClickListener(bUserPanel): button per aprire l'UserPanelActivity;
      * - AuthStateListener(FirebaseAuth.getInstance()): gestisce la scadenza del token di accesso.*/
@@ -111,11 +98,9 @@ public class MainActivity extends AppCompatActivity {
         bUserPanel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent toUserPanel = new Intent(MainActivity.this, UserPanelActivity.class);
-                Bundle userDataBundle = new Bundle();
-                userDataBundle.putParcelable("UserData", UserData.getLocalInstance());
-                toUserPanel.putExtras(userDataBundle);
-                startActivity(toUserPanel);
+                Intent i=new Intent(MainActivity.this, UserPanelActivity.class);
+                i.putExtra("Uid",FirebaseAuth.getInstance().getUid());
+                startActivity(i);
             }
         });
 
@@ -125,7 +110,6 @@ public class MainActivity extends AppCompatActivity {
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 if(FirebaseAuth.getInstance().getCurrentUser()==null)
                 {
-                    UserData.getLocalInstance().cleanLocalUserData();
                     startActivity(new Intent(MainActivity.this, Login.class));
                     finish();
                 }

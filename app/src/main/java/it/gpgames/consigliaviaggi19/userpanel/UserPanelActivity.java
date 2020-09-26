@@ -16,18 +16,23 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -45,15 +50,14 @@ public class UserPanelActivity extends AppCompatActivity {
 
     ImageView bBack;
     ImageView iUserPicture;
-    TextView tUserDisplayName;
+    TextView tUserDisplayName,nReviews,avgReviews;
     Button bChangeProfilePicture;
     Button bLogout;
     Button bResetPassword;
 
-    UserData currentUserData = UserData.getLocalInstance();
+    UserData currentUserData;
 
     FirebaseAuth auth = FirebaseAuth.getInstance();
-    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     FirebaseStorage storage = FirebaseStorage.getInstance();
     StorageReference storageReference = storage.getReference();
 
@@ -65,9 +69,31 @@ public class UserPanelActivity extends AppCompatActivity {
         filter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
         registerReceiver(networkChangeReceiver, filter);
 
-        Bundle userDataBundle = getIntent().getExtras();
-        currentUserData = userDataBundle.getParcelable("UserData");
-        loadViewWithUserData();
+        Intent i=getIntent();
+        Bundle bundle=i.getExtras();
+        String uid=(String)bundle.get("Uid");
+        if(uid.equals(auth.getUid()))
+        {
+            bLogout.setVisibility(View.VISIBLE);
+            bResetPassword.setVisibility(View.VISIBLE);
+            bChangeProfilePicture.setVisibility(View.VISIBLE);
+        }
+
+        getUserDataFromUid(uid);
+    }
+
+    private void getUserDataFromUid(String uid) {
+        FirebaseFirestore.getInstance().collection("userPool").whereEqualTo("userID",uid).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if(task.isSuccessful())
+                {
+                    QuerySnapshot result = task.getResult();
+                    currentUserData=result.toObjects(UserData.class).get(0);
+                    loadViewWithUserData();
+                }
+            }
+        });
     }
 
     @Override
@@ -79,8 +105,11 @@ public class UserPanelActivity extends AppCompatActivity {
         bBack=findViewById(R.id.back2);
         bChangeProfilePicture=findViewById(R.id.change_image_button);
         iUserPicture = findViewById(R.id.userPicture);
+        iUserPicture.setImageResource(R.drawable.default_profile_picture);
         tUserDisplayName = findViewById(R.id.userDisplayName);
         bLogout = findViewById(R.id.logout_button);
+        nReviews=findViewById(R.id.n_review_user);
+        avgReviews=findViewById(R.id.avg_review_user);
         initListeners();
     }
 
@@ -94,9 +123,7 @@ public class UserPanelActivity extends AppCompatActivity {
         bBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent toMainActivity=new Intent(UserPanelActivity.this, MainActivity.class);
-                toMainActivity.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(toMainActivity);
+                finish();
             }
         });
 
@@ -111,13 +138,14 @@ public class UserPanelActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 FirebaseAuth.getInstance().signOut();
+                UserData.setLocalInstance(null);
             }
         });
 
         bResetPassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                auth.sendPasswordResetEmail(user.getEmail())
+                auth.sendPasswordResetEmail(FirebaseAuth.getInstance().getCurrentUser().getEmail())
                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
@@ -194,7 +222,7 @@ public class UserPanelActivity extends AppCompatActivity {
                 .setPhotoUri(uri)
                 .build();
 
-        user.updateProfile(profileUpdates)
+        Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).updateProfile(profileUpdates)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
@@ -208,7 +236,24 @@ public class UserPanelActivity extends AppCompatActivity {
                 });
     }
 
-    /**Inizializza le View con i dati ottenuti dall'oggetto UserData. */
+    private void loadViewWithUserData()
+    {
+        FirebaseStorage.getInstance().getReference().child("Users/Avatars/avatar_"+currentUserData.getUserID()+".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                if(uri!=null)
+                    Glide.with(getApplicationContext())
+                            .load(uri.toString())
+                            .into(iUserPicture);
+            }
+        });
+        tUserDisplayName.setText(currentUserData.getDisplayName());
+        nReviews.setText(String.valueOf(currentUserData.getnReview()));
+        avgReviews.setText(String.valueOf(currentUserData.getAvgReview()));
+    }
+
+    /*
+        VECCHIA IMPLEMETAZIONE. DEPRECATA
     private void loadViewWithUserData(){
         ExecutorService executor = Executors.newFixedThreadPool(1);
         // Esegue il Runnable necessario per effettuare la NetworkOperation getBitmapFromURL() su Thread secondario.
@@ -228,18 +273,18 @@ public class UserPanelActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+
                         if(finalIsUserPicLoadable) iUserPicture.setImageBitmap(finalPicToSet);
                         tUserDisplayName.setText(currentUserData.getDisplayName());
+                        nReviews.setText(String.valueOf(currentUserData.getnReview()));
+                        avgReviews.setText(String.valueOf(currentUserData.getAvgReview()));
                     }
                 });
 
             }
         });
     }
-
-    private void resetUserPassword(){
-
-    }
+     */
 
     @Override
     protected void onPause() {

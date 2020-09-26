@@ -24,14 +24,15 @@
                 android:id="@+id/change_image_button"
                 android:layout_width="160dp"
                 android:layout_height="60dp"
-                android:layout_marginStart="131dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginEnd="132dp"
+                android:layout_marginTop="32dp"
                 android:text="Carica Immagine"
                 android:textSize="14sp"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/userPicture" />
+                app:layout_constraintTop_toBottomOf="@+id/show_user_review_button"
+                app:layout_constraintVertical_bias="0.0" />
 
             <Button
                 android:id="@+id/reset_password_button"
@@ -40,8 +41,8 @@
                 android:layout_marginTop="20dp"
                 android:text="Resetta Password"
                 android:textSize="14sp"
+                android:visibility="invisible"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.498"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/change_image_button" />
 
@@ -52,8 +53,8 @@
                 android:layout_marginTop="20dp"
                 android:text="Logout"
                 android:textSize="14sp"
+                android:visibility="invisible"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.498"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/reset_password_button" />
 
@@ -65,7 +66,7 @@
                 android:layout_marginTop="20dp"
                 android:layout_marginEnd="156dp"
                 android:fontFamily="sans-serif-black"
-                android:text="Il mio profilo"
+                android:text="Profilo utente"
                 android:textSize="18sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -83,6 +84,56 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/userDisplayName"
                 app:srcCompat="@drawable/default_profile_picture" />
+
+            <TextView
+                android:id="@+id/textView12"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Numero di recensioni:"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/userPicture" />
+
+            <TextView
+                android:id="@+id/textView13"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Media recensioni:"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView12" />
+
+            <TextView
+                android:id="@+id/n_review_user"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="16dp"
+                android:text="1"
+                app:layout_constraintStart_toEndOf="@+id/textView12"
+                app:layout_constraintTop_toBottomOf="@+id/userPicture" />
+
+            <TextView
+                android:id="@+id/avg_review_user"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="16dp"
+                android:text="2"
+                app:layout_constraintStart_toEndOf="@+id/textView13"
+                app:layout_constraintTop_toBottomOf="@+id/n_review_user" />
+
+            <Button
+                android:id="@+id/show_user_review_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:text="Mostra recensioni"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView13" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
 

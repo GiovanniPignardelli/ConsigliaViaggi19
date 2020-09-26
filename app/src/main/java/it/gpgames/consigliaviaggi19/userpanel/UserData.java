@@ -190,17 +190,4 @@ public class UserData implements Parcelable {
         executor.execute(new UserDataUpdater());
     }
 
-    public void cleanLocalUserData()
-    {
-        displayName=null;
-        email=null;
-        avatar=null;
-        userID=null;
-        localInstance=null;
-        isBlacklisted=false;
-        nReview=null;
-        avgReview=null;
-        registerDate=null;
-    }
-
 }

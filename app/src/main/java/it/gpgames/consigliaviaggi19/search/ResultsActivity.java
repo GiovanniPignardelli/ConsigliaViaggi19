@@ -6,21 +6,15 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import com.google.api.Context;
-
 import java.util.List;
-
 import it.gpgames.consigliaviaggi19.R;
 import it.gpgames.consigliaviaggi19.network.NetworkChangeReceiver;
 import it.gpgames.consigliaviaggi19.places.Place;
-import it.gpgames.consigliaviaggi19.places.Restaurant;
 import it.gpgames.consigliaviaggi19.search.place_details.PlaceDetailsActivity;
 
 /** Activity che si occupa di visualizzare i risultati di una query.

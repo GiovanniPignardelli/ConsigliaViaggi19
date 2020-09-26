@@ -9,7 +9,7 @@
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
-        android:layout_width="441dp"
+        android:layout_width="0dp"
         android:layout_height="59dp"
         android:background="#FF6D00"
         android:minHeight="?attr/actionBarSize"

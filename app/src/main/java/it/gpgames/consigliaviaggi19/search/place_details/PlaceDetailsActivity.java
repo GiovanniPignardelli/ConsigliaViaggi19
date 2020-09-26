@@ -56,6 +56,7 @@ import it.gpgames.consigliaviaggi19.search.ResultsActivity;
 import it.gpgames.consigliaviaggi19.search.place_details.reviews.ReviewsAdapter;
 import it.gpgames.consigliaviaggi19.search.place_details.reviews.WriteReviewActivity;
 import it.gpgames.consigliaviaggi19.search.place_details.slider.PlaceSliderAdapter;
+import it.gpgames.consigliaviaggi19.userpanel.UserPanelActivity;
 
 /** Activity che si occupa di mostrare i dettagli di una struttura selezionata da ResultsActivity.*/
 public class PlaceDetailsActivity extends AppCompatActivity {
@@ -269,7 +270,7 @@ public class PlaceDetailsActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if(task.isSuccessful())
                 {
-                    reviewsAdapter=new ReviewsAdapter(PlaceDetailsActivity.this,task.getResult().toObjects(Review.class));
+                    reviewsAdapter=new ReviewsAdapter(PlaceDetailsActivity.this,task.getResult().toObjects(Review.class), PlaceDetailsActivity.this);
                     reviews.setAdapter(reviewsAdapter);
                     reviews.setLayoutManager(new LinearLayoutManager(PlaceDetailsActivity.this, RecyclerView.VERTICAL, false));
                 }
@@ -328,5 +329,16 @@ public class PlaceDetailsActivity extends AppCompatActivity {
         }
 
         return result.substring(0,result.length()-2);
+    }
+
+    public RecyclerView getReviewsRecyclerView()
+    {
+        return reviews;
+    }
+
+    public void showUser(String userUid) {
+        Intent i=new Intent(this, UserPanelActivity.class);
+        i.putExtra("Uid",userUid);
+        startActivity(i);
     }
 }

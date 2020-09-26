@@ -1,6 +1,8 @@
 package it.gpgames.consigliaviaggi19.search.place_details.reviews;
 
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,26 +26,35 @@ import com.google.firebase.storage.StorageReference;
 import java.util.List;
 
 import it.gpgames.consigliaviaggi19.R;
+import it.gpgames.consigliaviaggi19.home.MainActivity;
+import it.gpgames.consigliaviaggi19.places.Place;
 import it.gpgames.consigliaviaggi19.places.Review;
+import it.gpgames.consigliaviaggi19.search.ResultsActivity;
+import it.gpgames.consigliaviaggi19.search.place_details.PlaceDetailsActivity;
 import it.gpgames.consigliaviaggi19.userpanel.UserData;
+import it.gpgames.consigliaviaggi19.userpanel.UserPanelActivity;
 
 public class ReviewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private LayoutInflater inflater;
     List<Review> reviewsList;
     Context context;
+    private PlaceDetailsActivity activity;
+    UserOnClickListener listener=new UserOnClickListener();
 
-    public ReviewsAdapter(Context context, List<Review> list)
+    public ReviewsAdapter(Context context, List<Review> list, PlaceDetailsActivity activity)
     {
         inflater= LayoutInflater.from(context);
         this.reviewsList=list;
         this.context=context;
+        this.activity=activity;
     }
 
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view=inflater.inflate(R.layout.review_container,parent, false);
+        view.setOnClickListener(listener);
         return new ReviewViewHolder(view);
     }
 
@@ -69,6 +80,7 @@ public class ReviewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         FirebaseStorage.getInstance().getReference().child("Users/Avatars/avatar_"+actualReview.getUserId()+".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(Uri uri) {
+               if(uri!=null)
                 Glide.with(context)
                         .load(uri)
                         .into(holder.userImage);
@@ -103,8 +115,19 @@ public class ReviewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             reviewDate=itemView.findViewById(R.id.reviewDate);
             reviewText=itemView.findViewById(R.id.reviewText);
             userImage=itemView.findViewById(R.id.userRatingImage);
+            userImage.setImageResource(R.drawable.default_profile_picture);
             userName=itemView.findViewById(R.id.reviewUsername);
             reviewRating=itemView.findViewById(R.id.reviewRatingBar);
+        }
+    }
+
+    private class UserOnClickListener implements View.OnClickListener
+    {
+        @Override
+        public void onClick(final View view) {
+            int itemPosition = activity.getReviewsRecyclerView().getChildLayoutPosition(view);
+            String userUid= reviewsList.get(itemPosition).getUserId();
+            activity.showUser(userUid);
         }
     }
 }
