@@ -1,6 +1,8 @@
 package it.gpgames.consigliaviaggi19.map_search;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,6 +13,7 @@ import android.widget.ImageView;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
 
 import it.gpgames.consigliaviaggi19.R;
 import it.gpgames.consigliaviaggi19.home.MainActivity;
@@ -18,14 +21,16 @@ import it.gpgames.consigliaviaggi19.home.MainActivity;
 public class MapExploreActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private ImageView bBack;
-    private MapView vMapView;
+    SupportMapFragment fMap;
+    GoogleMap mMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map_explore);
         bBack = findViewById(R.id.back3);
-        vMapView = findViewById(R.id.mapView);
+        FragmentManager fm = getSupportFragmentManager();
+        fMap = (SupportMapFragment) fm.findFragmentById(R.id.map);
         initListeners();
         initMapView();
     }
@@ -41,12 +46,12 @@ public class MapExploreActivity extends AppCompatActivity implements OnMapReadyC
     }
 
     private void initMapView(){
-        vMapView.getMapAsync(this);
+        fMap.getMapAsync(this);
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-
+        mMap = googleMap;
     }
 
     @Override

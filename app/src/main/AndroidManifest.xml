@@ -18,7 +18,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.DayNight.NoActionBar">
 
-        <meta-data android:name="com.google.android.geo.API_KEY"
+        <meta-data android:name="com.google.android.maps.v2.API_KEY"
             android:value="@string/map_key"/>
 
         <activity android:name=".map_search.MapExploreActivity"></activity>
