@@ -4,13 +4,19 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
 import android.view.View;
+<<<<<<< Updated upstream
 import android.widget.Button;
+=======
+import android.widget.ActionMenuView;
+>>>>>>> Stashed changes
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -18,6 +24,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import it.gpgames.consigliaviaggi19.R;
+import it.gpgames.consigliaviaggi19.home.MainActivity;
 import it.gpgames.consigliaviaggi19.network.NetworkChangeReceiver;
 import it.gpgames.consigliaviaggi19.places.Place;
 import it.gpgames.consigliaviaggi19.search.place_details.PlaceDetailsActivity;
@@ -36,6 +43,7 @@ public class ResultsActivity extends AppCompatActivity {
     private List<Place> lastQuery;
     private static final NetworkChangeReceiver networkChangeReceiver=NetworkChangeReceiver.getNetworkChangeReceiverInstance();
 
+
     /** Il metodo si occupa anche di generare il primo QueryExecutor.*/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,12 +57,15 @@ public class ResultsActivity extends AppCompatActivity {
         initListeners();
 
         context=this.getApplicationContext();
+<<<<<<< Updated upstream
 
         String querySearchString = getIntent().getStringExtra("searchString");
         titleText.setText("Ecco cosa abbiamo trovato per "+"\""+querySearchString+"\"");
 
         QueryExecutor executor=new QueryExecutor(parseString(querySearchString, " "),this);
         executor.executeQuery();
+=======
+>>>>>>> Stashed changes
     }
 
     @Override
@@ -79,6 +90,12 @@ public class ResultsActivity extends AppCompatActivity {
         IntentFilter filter = new IntentFilter();
         filter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
         registerReceiver(networkChangeReceiver, filter);
+
+        String querySearchString = MainActivity.getLastSearchString();
+        titleText.setText("Ecco cosa abbiamo trovato per "+"\""+querySearchString+"\"");
+        QueryExecutor executor=new QueryExecutor(parseString(querySearchString, " "),this);
+        Log.d("query", "Executor creato. La query sta per partire.");
+        executor.executeQuery();
     }
 
     /** Quando si ottengono i risultati di una query, si passano le liste ottenute a questo metodo che si occupa
@@ -119,10 +136,11 @@ public class ResultsActivity extends AppCompatActivity {
     public static void showDetails(Place toShow)
     {
         Intent intent = new Intent(context, PlaceDetailsActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra("toShow", toShow);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
     }
+
 
     public RecyclerView getRecyclerView()
     {

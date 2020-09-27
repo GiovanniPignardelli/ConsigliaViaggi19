@@ -12,10 +12,6 @@ import android.content.IntentFilter;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.HandlerThread;
-import android.os.Looper;
-import android.os.Message;
 import android.util.Log;
 import android.util.Pair;
 import android.view.View;
@@ -31,6 +27,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -45,21 +42,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import it.gpgames.consigliaviaggi19.R;
-import it.gpgames.consigliaviaggi19.home.MainActivity;
-import it.gpgames.consigliaviaggi19.home.slider.HomeSliderAdapter;
 import it.gpgames.consigliaviaggi19.network.NetworkChangeReceiver;
 import it.gpgames.consigliaviaggi19.places.Hotel;
 import it.gpgames.consigliaviaggi19.places.Place;
 import it.gpgames.consigliaviaggi19.places.Restaurant;
 import it.gpgames.consigliaviaggi19.places.Review;
-import it.gpgames.consigliaviaggi19.search.ResultsActivity;
 import it.gpgames.consigliaviaggi19.search.place_details.reviews.ReviewsAdapter;
 import it.gpgames.consigliaviaggi19.search.place_details.reviews.WriteReviewActivity;
 import it.gpgames.consigliaviaggi19.search.place_details.slider.PlaceSliderAdapter;
 import it.gpgames.consigliaviaggi19.userpanel.UserPanelActivity;
 
 /** Activity che si occupa di mostrare i dettagli di una struttura selezionata da ResultsActivity.*/
-public class PlaceDetailsActivity extends AppCompatActivity {
+public class PlaceDetailsActivity extends AppCompatActivity implements ReviewsAdapter.recyclerGetter{
 
     /** Holder del Place da mostrare. Viene passato come extra all'activity.*/
     private Place toShow;
@@ -69,7 +63,7 @@ public class PlaceDetailsActivity extends AppCompatActivity {
     private PlaceSliderAdapter sliderAdapter;
     private ReviewsAdapter reviewsAdapter;
 
-    private TextView title, avgReview;
+    private TextView title, ratingInfo;
     private ImageView back, orderArrow;
     private SliderView slider;
     private RecyclerView information, reviews;
@@ -90,6 +84,8 @@ public class PlaceDetailsActivity extends AppCompatActivity {
 
     private boolean alreadyWritten=false;
 
+    public static final int REVIEW_BACK_CODE=1;
+
     NetworkChangeReceiver networkChangeReceiver=NetworkChangeReceiver.getNetworkChangeReceiverInstance();
 
     @Override
@@ -97,22 +93,29 @@ public class PlaceDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_place_details);
 
-        actualOrder=ORDER_ASC;
-        actualSort=SORT_DATE;
+        actualOrder=ORDER_DESC;
+        actualSort=SORT_STAR;
 
         slider=findViewById(R.id.PlaceImagesSlider);
-        toShow=(Place)getIntent().getSerializableExtra("toShow");
         title=findViewById(R.id.title);
         information=findViewById(R.id.recyclerInfoView);
         back=findViewById(R.id.back);
         bWriteReview=findViewById(R.id.writeReviewButton);
         reviews=findViewById(R.id.recyclerReviews);
-        avgReview=findViewById(R.id.nReview);
+        ratingInfo=findViewById(R.id.infoRating);
         ratingBar=findViewById(R.id.ratingBar);
         switcher=findViewById(R.id.orderswitcher);
         orderArrow=findViewById(R.id.orderArrow);
 
-        init();
+        toShow=(Place)getIntent().getSerializableExtra("toShow");
+        if(toShow!=null)
+            init();
+        else
+        {
+            Log.d("place", "Errore caricamento");
+            Toast.makeText(getApplicationContext(),"Errore nel caricamento della struttura. Riprovare.", Toast.LENGTH_LONG);
+        }
+
     }
 
     private void initListeners() {
@@ -129,11 +132,10 @@ public class PlaceDetailsActivity extends AppCompatActivity {
                 if(!alreadyWritten)
                 {
                     Intent i=new Intent(PlaceDetailsActivity.this, WriteReviewActivity.class);
-                    i.putExtra("name", toShow.getName());
-                    Log.d("id",toShow.getDbDocID());
-                    i.putExtra("id", toShow.getDbDocID());
+                    i.putExtra("toShow", toShow);
                     i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(i);
+                    finish();
                 }
                 else
                     Toast.makeText(getApplicationContext(),"Hai già scritto una recensione per questa struttura.",Toast.LENGTH_LONG).show();
@@ -172,13 +174,13 @@ public class PlaceDetailsActivity extends AppCompatActivity {
         });
     }
 
+
     @Override
     protected void onResume() {
         super.onResume();
         IntentFilter filter = new IntentFilter();
         filter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
         registerReceiver(networkChangeReceiver, filter);
-        refreshReviews();
     }
 
     @Override
@@ -191,7 +193,9 @@ public class PlaceDetailsActivity extends AppCompatActivity {
     {
         initListeners();
         initPlaceSlider();
+        refreshReviews();
         checkIfReviewExists();
+
 
         title.setText(toShow.getName());
         List<Pair<Integer,String>> info=new ArrayList<>();
@@ -230,9 +234,11 @@ public class PlaceDetailsActivity extends AppCompatActivity {
                 RecyclerView.VERTICAL);
         information.addItemDecoration(dividerItemDecoration);
 
-        avgReview.setText(toShow.getAvgReview().toString());
+        ratingInfo.setText(String.format("%.2f", toShow.getAvgReview())+"\n("+toShow.getnReviews()+")");
+
         ratingBar.setRating(toShow.getAvgReview());
     }
+
 
     private void checkIfReviewExists() {
         FirebaseFirestore.getInstance().collection("reviewPool").whereEqualTo("placeId",toShow.getDbDocID()).whereEqualTo("userId", FirebaseAuth.getInstance().getUid()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -257,20 +263,20 @@ public class PlaceDetailsActivity extends AppCompatActivity {
     private void refreshReviews() {
         Query query=FirebaseFirestore.getInstance().collection("reviewPool").whereEqualTo("placeId", toShow.getDbDocID());
         if(actualSort==SORT_DATE && actualOrder==ORDER_ASC)
-            query=query.orderBy("date", Query.Direction.ASCENDING);
+            query=query.orderBy("year", Query.Direction.ASCENDING).orderBy("month", Query.Direction.ASCENDING).orderBy("day", Query.Direction.ASCENDING);
         else if(actualSort==SORT_DATE && actualOrder==ORDER_DESC)
-            query=query.orderBy("date", Query.Direction.DESCENDING);
+            query=query.orderBy("year", Query.Direction.DESCENDING).orderBy("month", Query.Direction.DESCENDING).orderBy("day", Query.Direction.DESCENDING);
         else if(actualSort==SORT_STAR && actualOrder==ORDER_ASC)
-            query=query.orderBy("rating", Query.Direction.ASCENDING);
+            query=query.orderBy("rating", Query.Direction.ASCENDING).orderBy("year", Query.Direction.ASCENDING).orderBy("month", Query.Direction.ASCENDING).orderBy("day", Query.Direction.ASCENDING);
         else
-            query=query.orderBy("rating", Query.Direction.DESCENDING);
+            query=query.orderBy("rating", Query.Direction.DESCENDING).orderBy("year", Query.Direction.ASCENDING).orderBy("month", Query.Direction.ASCENDING).orderBy("day", Query.Direction.ASCENDING);
 
         query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if(task.isSuccessful())
                 {
-                    reviewsAdapter=new ReviewsAdapter(PlaceDetailsActivity.this,task.getResult().toObjects(Review.class), PlaceDetailsActivity.this);
+                    reviewsAdapter=new ReviewsAdapter(PlaceDetailsActivity.this,task.getResult().toObjects(Review.class), PlaceDetailsActivity.this, ReviewsAdapter.FLAG_USER);
                     reviews.setAdapter(reviewsAdapter);
                     reviews.setLayoutManager(new LinearLayoutManager(PlaceDetailsActivity.this, RecyclerView.VERTICAL, false));
                 }

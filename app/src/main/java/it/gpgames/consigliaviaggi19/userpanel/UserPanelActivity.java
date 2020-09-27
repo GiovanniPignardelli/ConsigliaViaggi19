@@ -51,9 +51,7 @@ public class UserPanelActivity extends AppCompatActivity {
     ImageView bBack;
     ImageView iUserPicture;
     TextView tUserDisplayName,nReviews,avgReviews;
-    Button bChangeProfilePicture;
-    Button bLogout;
-    Button bResetPassword;
+    Button bChangeProfilePicture,bLogout,bResetPassword,bShowReviews;
 
     UserData currentUserData;
 
@@ -110,6 +108,7 @@ public class UserPanelActivity extends AppCompatActivity {
         bLogout = findViewById(R.id.logout_button);
         nReviews=findViewById(R.id.n_review_user);
         avgReviews=findViewById(R.id.avg_review_user);
+        bShowReviews=findViewById(R.id.show_user_review_button);
         initListeners();
     }
 
@@ -154,6 +153,17 @@ public class UserPanelActivity extends AppCompatActivity {
                                 }
                             }
                         });
+            }
+        });
+
+        bShowReviews.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View v) {
+                Intent i=new Intent(getApplicationContext(),ShowUserReviewsActivity.class);
+                i.putExtra("id", currentUserData.getUserID());
+                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(i);
             }
         });
     }
@@ -251,40 +261,6 @@ public class UserPanelActivity extends AppCompatActivity {
         nReviews.setText(String.valueOf(currentUserData.getnReview()));
         avgReviews.setText(String.valueOf(currentUserData.getAvgReview()));
     }
-
-    /*
-        VECCHIA IMPLEMETAZIONE. DEPRECATA
-    private void loadViewWithUserData(){
-        ExecutorService executor = Executors.newFixedThreadPool(1);
-        // Esegue il Runnable necessario per effettuare la NetworkOperation getBitmapFromURL() su Thread secondario.
-        executor.execute(new Runnable(){
-            @Override
-            public void run() {
-                Uri picURI = currentUserData.getAvatar();
-                boolean isUserPicLoadable = false;
-                Bitmap picToSet = null;
-                if(picURI !=null) {
-                    picToSet = getBitmapFromURL(picURI.toString());
-                    isUserPicLoadable = true;
-                }
-                final boolean finalIsUserPicLoadable = isUserPicLoadable;
-                final Bitmap finalPicToSet = picToSet;
-                // Effettuare le modifiche sull'UIThread.
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-
-                        if(finalIsUserPicLoadable) iUserPicture.setImageBitmap(finalPicToSet);
-                        tUserDisplayName.setText(currentUserData.getDisplayName());
-                        nReviews.setText(String.valueOf(currentUserData.getnReview()));
-                        avgReviews.setText(String.valueOf(currentUserData.getAvgReview()));
-                    }
-                });
-
-            }
-        });
-    }
-     */
 
     @Override
     protected void onPause() {

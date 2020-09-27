@@ -49,7 +49,13 @@ public class MainActivity extends AppCompatActivity {
     static List<HomeSliderItem> SliderItemToShow = new ArrayList<>();
     private ImageView bMapExplore;
     private ImageView bUserPanel;
-    SearchView svSearchPlaces;
+    private SearchView svSearchPlaces;
+
+    private static String lastSearchString;
+
+    public static String getLastSearchString() {
+        return lastSearchString;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,10 +124,8 @@ public class MainActivity extends AppCompatActivity {
         svSearchPlaces.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+                lastSearchString=query;
                 Intent iShowResults = new Intent(MainActivity.this, ResultsActivity.class);
-                iShowResults.putExtra("searchString",query);
-                iShowResults.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
                 startActivity(iShowResults);
                 return true;
             }

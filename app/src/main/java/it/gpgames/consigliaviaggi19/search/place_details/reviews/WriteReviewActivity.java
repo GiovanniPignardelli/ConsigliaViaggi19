@@ -4,8 +4,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,6 +19,7 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -26,6 +29,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -35,6 +39,7 @@ import it.gpgames.consigliaviaggi19.R;
 import it.gpgames.consigliaviaggi19.network.NetworkChangeReceiver;
 import it.gpgames.consigliaviaggi19.places.Place;
 import it.gpgames.consigliaviaggi19.places.Review;
+import it.gpgames.consigliaviaggi19.search.place_details.PlaceDetailsActivity;
 import it.gpgames.consigliaviaggi19.userpanel.UserData;
 
 public class WriteReviewActivity extends AppCompatActivity {
@@ -45,8 +50,10 @@ public class WriteReviewActivity extends AppCompatActivity {
     private RatingBar ratingBar;
     private TextView eTitle;
     private Button bSendReview;
-    private String dbDocID;
     private androidx.appcompat.widget.Toolbar hider;
+
+    private Place toShow;
+    private String dbDocID;
 
     NetworkChangeReceiver networkChangeReceiver=NetworkChangeReceiver.getNetworkChangeReceiverInstance();
 
@@ -65,16 +72,33 @@ public class WriteReviewActivity extends AppCompatActivity {
     }
 
     private void init() {
-        Intent i=getIntent();
-        eTitle.setText(i.getStringExtra("name"));
-        dbDocID=i.getStringExtra("id");
+        toShow=(Place)getIntent().getSerializableExtra("toShow");
+        eTitle.setText(toShow.getName());
+        dbDocID=toShow.getDbDocID();
+        initPlaceImage();
         initListeners();
+    }
+
+    private void initPlaceImage() {
+        FirebaseStorage.getInstance().getReference().child("Places").child("Pictures").child(dbDocID).child("main.jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                if(uri!=null)
+                    Glide.with(getApplicationContext()).load(uri).into(iPlacePic);
+                else
+                    Log.d("write_review","Impossibile caricare l'immagine. ");
+            }
+        });
+
     }
 
     private void initListeners(){
         bBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), PlaceDetailsActivity.class);
+                intent.putExtra("toShow", toShow);
+                startActivity(intent);
                 finish();
             }
         });
@@ -98,18 +122,21 @@ public class WriteReviewActivity extends AppCompatActivity {
                 LocalDate date = LocalDate.now();
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
                 String dateString=date.format(formatter);
+                String day=dateString.substring(0,2);
+                String month=dateString.substring(3,5);
+                String year=dateString.substring(6);
 
                 String reviewString=eReviewText.getText().toString();
 
                 int rating=(int)ratingBar.getRating();
 
-                sendReview(reviewString, rating, dateString);
+                sendReview(reviewString, rating, day,month,year);
             }
         });
     }
 
-    private void sendReview(String reviewString, int rating, String dateString) {
-        Review review=new Review(dbDocID, FirebaseAuth.getInstance().getUid(),reviewString,dateString, rating);
+    private void sendReview(String reviewString, int rating, String day, String month, String year) {
+        Review review=new Review(dbDocID, FirebaseAuth.getInstance().getUid(),reviewString,year,month,day, rating);
         FirebaseFirestore dbRef=FirebaseFirestore.getInstance();
 
         dbRef.collection("reviewPool")
@@ -118,11 +145,8 @@ public class WriteReviewActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(DocumentReference documentReference) {
                         Log.d("UploadReview", "Review caricata.");
-                        hider.setVisibility(View.INVISIBLE);
-                        bSendReview.setEnabled(true);
                         refreshStats();
                         Toast.makeText(getApplicationContext(),"Recensione inviata", Toast.LENGTH_LONG).show();
-                        finish();
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -136,8 +160,8 @@ public class WriteReviewActivity extends AppCompatActivity {
                 });
     }
 
-    private void refreshStats() {
 
+    private void refreshStats() {
         FirebaseFirestore.getInstance().collection("userPool").whereEqualTo("userID", FirebaseAuth.getInstance().getUid()).limit(1).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -155,16 +179,29 @@ public class WriteReviewActivity extends AppCompatActivity {
             }
         });
 
+
         FirebaseFirestore.getInstance().collection("places").document(dbDocID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
 
                 Place place=task.getResult().toObject(Place.class);
                 Integer oldNum=place.getnReviews();
-                Float oldAvg=place.getAvgReview().floatValue();
-                FirebaseFirestore.getInstance().collection("places").document(dbDocID).update("nReviews",oldNum+1);
-                FirebaseFirestore.getInstance().collection("places").document(dbDocID).update("avgReview", (oldAvg+ratingBar.getRating())/(oldNum+1));
+                Float oldAvg=place.getAvgReview();
 
+                Float newAvg=(oldAvg+ratingBar.getRating())/(oldNum+1);
+
+                Log.d("avg",newAvg.toString());
+
+                FirebaseFirestore.getInstance().collection("places").document(dbDocID).update("nReviews",oldNum+1);
+                FirebaseFirestore.getInstance().collection("places").document(dbDocID).update("avgReview", newAvg);
+
+                toShow.setnReviews(oldNum+1);
+                toShow.setAvgReview(newAvg);
+                Intent intent = new Intent(getApplicationContext(), PlaceDetailsActivity.class);
+                intent.putExtra("toShow", toShow);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                finish();
             }
         });
     }

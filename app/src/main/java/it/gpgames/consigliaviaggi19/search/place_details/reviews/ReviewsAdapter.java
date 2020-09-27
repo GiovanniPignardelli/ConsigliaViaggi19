@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,7 @@ import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
@@ -37,17 +39,21 @@ import it.gpgames.consigliaviaggi19.userpanel.UserPanelActivity;
 public class ReviewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private LayoutInflater inflater;
-    List<Review> reviewsList;
-    Context context;
+    private List<Review> reviewsList;
+    private Context context;
     private PlaceDetailsActivity activity;
-    UserOnClickListener listener=new UserOnClickListener();
+    private UserOnClickListener listener=new UserOnClickListener();
 
-    public ReviewsAdapter(Context context, List<Review> list, PlaceDetailsActivity activity)
+    public static final int FLAG_PLACE=1,FLAG_USER=0;
+    private int actualFlag;
+
+    public ReviewsAdapter(Context context, List<Review> list, PlaceDetailsActivity activity, int flag)
     {
         inflater= LayoutInflater.from(context);
         this.reviewsList=list;
         this.context=context;
         this.activity=activity;
+        this.actualFlag=flag;
     }
 
     @NonNull
@@ -61,33 +67,57 @@ public class ReviewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder h, int position) {
         final ReviewViewHolder holder = (ReviewViewHolder) h;
-        Review actualReview=reviewsList.get(position);
+        final Review actualReview=reviewsList.get(position);
 
         holder.reviewRating.setRating(actualReview.getRating());
         holder.reviewText.setText(actualReview.getText());
 
-        FirebaseFirestore.getInstance().collection("userPool").whereEqualTo("userID",actualReview.getUserId()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if(task.isSuccessful())
-                {
+        switch(actualFlag)
+        {
+            case FLAG_PLACE:
+                FirebaseFirestore.getInstance().collection("places").document(actualReview.getPlaceId()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if(task.isSuccessful())
+                        {
+                            holder.userName.setText(task.getResult().toObject(Place.class).getName());
+                        }
+                    }
+                });
 
-                    holder.userName.setText(task.getResult().toObjects(UserData.class).get(0).getDisplayName());
-                }
-            }
-        });
+                FirebaseStorage.getInstance().getReference().child("Places").child("Pictures").child(actualReview.getPlaceId()).child("main.jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        if(uri!=null)
+                            Glide.with(context).load(uri).into(holder.userImage);
+                    }
+                });
+                break;
 
-        FirebaseStorage.getInstance().getReference().child("Users/Avatars/avatar_"+actualReview.getUserId()+".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-            @Override
-            public void onSuccess(Uri uri) {
-               if(uri!=null)
-                Glide.with(context)
-                        .load(uri)
-                        .into(holder.userImage);
-            }
-        });
+            case FLAG_USER:
+                FirebaseFirestore.getInstance().collection("userPool").whereEqualTo("userID",actualReview.getUserId()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if(task.isSuccessful())
+                        {
 
+                            holder.userName.setText(task.getResult().toObjects(UserData.class).get(0).getDisplayName());
+                        }
+                    }
+                });
 
+                FirebaseStorage.getInstance().getReference().child("Users/Avatars/avatar_"+actualReview.getUserId()+".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        if(uri!=null)
+                            Glide.with(context)
+                                    .load(uri)
+                                    .into(holder.userImage);
+                    }
+                });
+
+                break;
+        }
 
         holder.reviewDate.setText(actualReview.getDate());
     }
@@ -129,6 +159,11 @@ public class ReviewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             String userUid= reviewsList.get(itemPosition).getUserId();
             activity.showUser(userUid);
         }
+    }
+
+    public interface recyclerGetter
+    {
+        public RecyclerView getReviewsRecyclerView();
     }
 }
 

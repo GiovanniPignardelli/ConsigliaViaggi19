@@ -121,6 +121,7 @@ public class QueryResultsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         public void onClick(final View view) {
             int itemPosition = activity.getRecyclerView().getChildLayoutPosition(view);
             Place toShow= placesList.get(itemPosition);
+
             ResultsActivity.showDetails(toShow);
         }
     }

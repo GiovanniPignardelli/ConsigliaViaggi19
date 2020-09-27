@@ -10,21 +10,57 @@ public class Review {
     String placeId;
     String userId;
     String text;
-    String date;
+    String year;
+    String month;
+    String day;
     Integer rating;
+
+
+    public String getYear() {
+        return year;
+    }
+
+    public void setYear(String year) {
+        this.year = year;
+    }
+
+    public String getMonth() {
+        return month;
+    }
+
+    public void setMonth(String month) {
+        this.month = month;
+    }
+
+    public String getDay() {
+        return day;
+    }
+
+    public void setDay(String day) {
+        this.day = day;
+    }
+
+    public Review(String placeId, String userId, String text, String year, String month, String day, Integer rating) {
+        this.placeId = placeId;
+        this.userId = userId;
+        this.text = text;
+        this.year = year;
+        this.month = month;
+        this.day = day;
+        this.rating = rating;
+    }
+
 
     public Review()
     {
 
     }
 
-    public Review(String placeId, String userId, String text, String date, Integer rating) {
-        this.placeId = placeId;
-        this.userId = userId;
-        this.text = text;
-        this.date = date;
-        this.rating = rating;
+    public String getDate()
+    {
+        return day+"/"+month+"/"+year;
     }
+
 
     public String getPlaceId() {
         return placeId;
@@ -33,16 +69,6 @@ public class Review {
     public void setPlaceId(String placeId) {
         this.placeId = placeId;
     }
-
-    public String getDate() {
-        return date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
-    }
-
-
 
     public String getUserId() {
         return userId;
