@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".map_search.MapExploreActivity">
+    tools:context=".search.place_map.MapExploreActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar7"
@@ -40,6 +40,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbar7"
-        tools:context=".map_search.MapExploreActivity" />
+        tools:context=".search.place_map.MapExploreActivity" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

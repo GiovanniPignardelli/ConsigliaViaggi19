@@ -35,6 +35,7 @@
         android:id="@+id/resultQueries"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginTop="45dp"
         android:backgroundTint="#C5C5C5"
         android:foregroundTint="#C5C5C5"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -57,5 +58,18 @@
         app:layout_constraintStart_toEndOf="@+id/back2"
         app:layout_constraintTop_toTopOf="@id/toolbar4"
         app:layout_constraintVertical_bias="0.533" />
+
+    <Button
+        android:id="@+id/mapExplore"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:layout_marginBottom="24dp"
+        android:backgroundTint="#FF6D00"
+        android:text="ESPLORA MAPPA"
+        app:layout_constraintBottom_toTopOf="@+id/resultQueries"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar4"
+        app:layout_constraintVertical_bias="0.542"
+        tools:layout_editor_absoluteX="137dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
