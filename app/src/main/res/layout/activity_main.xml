@@ -167,8 +167,8 @@
 
                     <ImageView
                         android:id="@+id/imageView3"
-                        android:layout_width="50"
-                        android:layout_height="50"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
                         android:layout_marginStart="16dp"
                         android:foregroundTint="#F12424"
                         android:foregroundTintMode="screen"
@@ -217,8 +217,8 @@
 
                     <ImageView
                         android:id="@+id/imageView4"
-                        android:layout_width="50"
-                        android:layout_height="50"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
                         android:layout_marginStart="16dp"
                         android:layout_marginTop="8dp"
                         android:tint="#83BA44"
@@ -264,8 +264,8 @@
 
                     <ImageView
                         android:id="@+id/imageView5"
-                        android:layout_width="50"
-                        android:layout_height="50"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
                         android:layout_marginStart="16dp"
                         android:tint="#5EBECA"
                         app:layout_constraintBottom_toBottomOf="parent"

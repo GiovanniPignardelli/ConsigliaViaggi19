@@ -34,8 +34,7 @@ public class Place implements Serializable {
     private String dbDocID;
     private List<String> pictures;
     private String addYear;
-    private String latitude;
-    private String longitude;
+
     private String email;
     private String telephone;
     private String website;
@@ -125,22 +124,6 @@ public class Place implements Serializable {
         this.addYear = addYear;
     }
 
-    public String getLatitude() {
-        return latitude;
-    }
-
-    public void setLatitude(String latitude) {
-        this.latitude = latitude;
-    }
-
-    public String getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(String longitude) {
-        this.longitude = longitude;
-    }
-
     public String getEmail() {
         return email;
     }
@@ -197,7 +180,7 @@ public class Place implements Serializable {
         this.pictures = pictures;
     }
 
-    public Place(String name, String address, String city, String postal_code, String state, String priceTag, List<String> tags, String addYear, String latitude, String longitude, String email, String telephone, String website, String category, String docID, Integer nReview, Float avgReview) {
+    public Place(String name, String address, String city, String postal_code, String state, String priceTag, List<String> tags, String addYear, String email, String telephone, String website, String category, String docID, Integer nReview, Float avgReview) {
         this.name = name;
         this.address = address;
         this.city = city;
@@ -206,8 +189,6 @@ public class Place implements Serializable {
         this.priceTag = priceTag;
         this.tags = tags;
         this.addYear = addYear;
-        this.latitude = latitude;
-        this.longitude = longitude;
         this.email = email;
         this.telephone = telephone;
         this.website = website;
@@ -225,8 +206,6 @@ public class Place implements Serializable {
         this.addYear=toObject.addYear;
         this.city=toObject.city;
         this.email=toObject.email;
-        this.latitude=toObject.latitude;
-        this.longitude=toObject.longitude;
         this.name=toObject.name;
         this.pictures=toObject.pictures;
         this.postal_code=toObject.postal_code;

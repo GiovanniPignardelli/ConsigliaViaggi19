@@ -14,6 +14,8 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.firebase.geofire.GeoLocation;
+import com.firebase.geofire.LocationCallback;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -26,6 +28,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DatabaseError;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -44,36 +47,46 @@ public class MapExploreActivity extends AppCompatActivity implements OnMapReadyC
         private List<Place> results = resultsToShow;
 
         public void startAdapter(){
-            List<Marker> resultMarkers = new ArrayList<>();
             for(Place p : results){
-                resultMarkers.add(createResultMarker(p));
+               createResultMarker(p);
             }
         }
 
-        public Marker createResultMarker(Place p){
-            LatLng currentLatLng = new LatLng(Double.parseDouble(p.getLatitude()),Double.parseDouble(p.getLongitude()));
-            MarkerOptions markerOptions = new MarkerOptions().position(currentLatLng).title(p.getName()).snippet("Media recens.: "+p.getAvgReview().toString());
-            switch(p.getCategory()){
-                case "hotel": markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.hotelmarker));
-                    break;
-                case "place": markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.placemarker));
-                    break;
-                case "restaurant": markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.foodmarker));
-                    break;
-            }
-            Marker placeMarker = mMap.addMarker(markerOptions);
-            placeMarker.setTag(p);
-            mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+        public void createResultMarker(final Place p){
+            MainActivity.getGeofire().getLocation(p.getDbDocID(), new LocationCallback() {
                 @Override
-                public void onInfoWindowClick(Marker marker) {
-                    Intent intent = new Intent(MapExploreActivity.this, PlaceDetailsActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    intent.putExtra("toShow", (Place) marker.getTag());
-                    MapExploreActivity.this.startActivity(intent);
+                public void onLocationResult(String key, GeoLocation location) {
+                    LatLng currentLatLng = new LatLng(location.latitude,location.longitude);
+                    MarkerOptions markerOptions = new MarkerOptions().position(currentLatLng).title(p.getName()).snippet("Media recens.: "+p.getAvgReview().toString());
+                    switch(p.getCategory()){
+                        case "hotel": markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.hotelmarker));
+                            break;
+                        case "place": markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.placemarker));
+                            break;
+                        case "restaurant": markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.foodmarker));
+                            break;
+                    }
+                    Marker placeMarker = mMap.addMarker(markerOptions);
+                    placeMarker.setTag(p);
+                    mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+                        @Override
+                        public void onInfoWindowClick(Marker marker) {
+                            Intent intent = new Intent(MapExploreActivity.this, PlaceDetailsActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            intent.putExtra("toShow", (Place) marker.getTag());
+                            MapExploreActivity.this.startActivity(intent);
+                        }
+                    });
+                    placeMarker.showInfoWindow();
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    Toast.makeText(MapExploreActivity.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                    finish();
                 }
             });
-                    placeMarker.showInfoWindow();
-            return placeMarker;
+
         }
     }
 

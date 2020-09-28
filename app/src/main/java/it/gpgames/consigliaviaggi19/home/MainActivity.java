@@ -15,18 +15,29 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.SearchView;
 
+import com.firebase.geofire.GeoFire;
+import com.firebase.geofire.GeoLocation;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.smarteist.autoimageslider.IndicatorView.animation.type.IndicatorAnimationType;
 import com.smarteist.autoimageslider.SliderAnimations;
 import com.smarteist.autoimageslider.SliderView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import it.gpgames.consigliaviaggi19.Login;
 import it.gpgames.consigliaviaggi19.R;
@@ -51,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
     private ImageView bUserPanel;
     private SearchView svSearchPlaces;
     private static String lastSearchString;
+    private static GeoFire geoFire = null;
 
     public static String getLastSearchString() {
         return lastSearchString;
@@ -203,4 +215,14 @@ public class MainActivity extends AppCompatActivity {
     public static NetworkChangeReceiver getNetworkChangeReceiver() {
         return networkChangeReceiver;
     }
+
+    /**Inizializza il riferimento a GeoFire al relativo pool del RealtimeDatabase (/geofire)*/
+    public static GeoFire getGeofire(){
+        if(geoFire == null){
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("geofire");
+            geoFire = new GeoFire(ref);
+        }
+        return geoFire;
+    }
+
 }
