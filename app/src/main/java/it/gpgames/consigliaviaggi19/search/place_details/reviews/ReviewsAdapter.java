@@ -41,13 +41,14 @@ public class ReviewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private LayoutInflater inflater;
     private List<Review> reviewsList;
     private Context context;
-    private PlaceDetailsActivity activity;
-    private UserOnClickListener listener=new UserOnClickListener();
+    private RecyclerGetter activity;
+    private UserOnClickListener userClickListener=new UserOnClickListener();
+    private PlaceOnClickListener placeOnClickListener=new PlaceOnClickListener();
 
     public static final int FLAG_PLACE=1,FLAG_USER=0;
     private int actualFlag;
 
-    public ReviewsAdapter(Context context, List<Review> list, PlaceDetailsActivity activity, int flag)
+    public ReviewsAdapter(Context context, List<Review> list, RecyclerGetter activity, int flag)
     {
         inflater= LayoutInflater.from(context);
         this.reviewsList=list;
@@ -60,7 +61,18 @@ public class ReviewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view=inflater.inflate(R.layout.review_container,parent, false);
-        view.setOnClickListener(listener);
+
+        switch(actualFlag)
+        {
+            case FLAG_USER:
+                view.setOnClickListener(userClickListener);
+                break;
+            case FLAG_PLACE:
+                view.setOnClickListener(placeOnClickListener);
+                break;
+            default:
+                Log.d("switch", "Errore flag in reviewsadapter");
+        }
         return new ReviewViewHolder(view);
     }
 
@@ -157,13 +169,25 @@ public class ReviewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         public void onClick(final View view) {
             int itemPosition = activity.getReviewsRecyclerView().getChildLayoutPosition(view);
             String userUid= reviewsList.get(itemPosition).getUserId();
-            activity.showUser(userUid);
+            activity.show(userUid);
         }
     }
 
-    public interface recyclerGetter
+    private class PlaceOnClickListener implements View.OnClickListener
+    {
+
+        @Override
+        public void onClick(View v) {
+            int itemPosition = activity.getReviewsRecyclerView().getChildAdapterPosition(v);
+            String placeID = reviewsList.get(itemPosition).getPlaceId();
+            activity.show(placeID);
+        }
+    }
+
+    public interface RecyclerGetter
     {
         public RecyclerView getReviewsRecyclerView();
+        public void show(String id);
     }
 }
 

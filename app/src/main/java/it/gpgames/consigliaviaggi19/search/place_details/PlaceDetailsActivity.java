@@ -53,7 +53,7 @@ import it.gpgames.consigliaviaggi19.search.place_details.slider.PlaceSliderAdapt
 import it.gpgames.consigliaviaggi19.userpanel.UserPanelActivity;
 
 /** Activity che si occupa di mostrare i dettagli di una struttura selezionata da ResultsActivity.*/
-public class PlaceDetailsActivity extends AppCompatActivity implements ReviewsAdapter.recyclerGetter{
+public class PlaceDetailsActivity extends AppCompatActivity implements ReviewsAdapter.RecyclerGetter{
 
     /** Holder del Place da mostrare. Viene passato come extra all'activity.*/
     private Place toShow;
@@ -342,7 +342,7 @@ public class PlaceDetailsActivity extends AppCompatActivity implements ReviewsAd
         return reviews;
     }
 
-    public void showUser(String userUid) {
+    public void show(String userUid) {
         Intent i=new Intent(this, UserPanelActivity.class);
         i.putExtra("Uid",userUid);
         startActivity(i);
