@@ -50,7 +50,6 @@ public class MainActivity extends AppCompatActivity {
     private ImageView bMapExplore;
     private ImageView bUserPanel;
     private SearchView svSearchPlaces;
-
     private static String lastSearchString;
 
     public static String getLastSearchString() {
@@ -126,6 +125,7 @@ public class MainActivity extends AppCompatActivity {
             public boolean onQueryTextSubmit(String query) {
                 lastSearchString=query;
                 Intent iShowResults = new Intent(MainActivity.this, ResultsActivity.class);
+                iShowResults.putExtra("searchString",lastSearchString);
                 startActivity(iShowResults);
                 return true;
             }

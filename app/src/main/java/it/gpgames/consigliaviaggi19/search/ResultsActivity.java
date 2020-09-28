@@ -12,11 +12,8 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
 import android.view.View;
-<<<<<<< Updated upstream
 import android.widget.Button;
-=======
 import android.widget.ActionMenuView;
->>>>>>> Stashed changes
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -53,19 +50,8 @@ public class ResultsActivity extends AppCompatActivity {
         bMapExplore = findViewById(R.id.mapExplore);
         titleText= findViewById(R.id.titleResultText);
         resultQueries = findViewById(R.id.resultQueries);
-
         initListeners();
-
         context=this.getApplicationContext();
-<<<<<<< Updated upstream
-
-        String querySearchString = getIntent().getStringExtra("searchString");
-        titleText.setText("Ecco cosa abbiamo trovato per "+"\""+querySearchString+"\"");
-
-        QueryExecutor executor=new QueryExecutor(parseString(querySearchString, " "),this);
-        executor.executeQuery();
-=======
->>>>>>> Stashed changes
     }
 
     @Override

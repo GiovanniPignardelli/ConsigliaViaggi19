@@ -63,17 +63,16 @@ public class MapExploreActivity extends AppCompatActivity implements OnMapReadyC
             }
             Marker placeMarker = mMap.addMarker(markerOptions);
             placeMarker.setTag(p);
-            mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
                 @Override
-                public boolean onMarkerClick(Marker m) {
+                public void onInfoWindowClick(Marker marker) {
                     Intent intent = new Intent(MapExploreActivity.this, PlaceDetailsActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    intent.putExtra("toShow", (Place) m.getTag());
+                    intent.putExtra("toShow", (Place) marker.getTag());
                     MapExploreActivity.this.startActivity(intent);
-                    return true;
                 }
             });
-            placeMarker.showInfoWindow();
+                    placeMarker.showInfoWindow();
             return placeMarker;
         }
     }
@@ -137,11 +136,9 @@ public class MapExploreActivity extends AppCompatActivity implements OnMapReadyC
                     MarkerOptions markerOptions = new MarkerOptions().position(currentLatLng).title("Sei qui!").icon(BitmapDescriptorFactory.fromResource(R.drawable.currentpos)).snippet(UserData.getLocalInstance().getDisplayName());
                     mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng,10));
                     Marker userMarker = mMap.addMarker(markerOptions);
-                    setupResultMarkerAdapter();
+
                 }
-                else{
-                    finish();
-                }
+                setupResultMarkerAdapter();
             }
         });
     }
@@ -151,10 +148,7 @@ public class MapExploreActivity extends AppCompatActivity implements OnMapReadyC
             if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
                 checkLocationPermissions();
             }
-            else{
-                Toast.makeText(this,"Autorizza la localizzazione prima di continuare.", Toast.LENGTH_LONG).show();
-                finish();
-            }
+            setupResultMarkerAdapter();
         }
     }
 
