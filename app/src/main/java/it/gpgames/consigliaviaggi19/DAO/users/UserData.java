@@ -1,10 +1,9 @@
-package it.gpgames.consigliaviaggi19.userpanel;
+package it.gpgames.consigliaviaggi19.DAO.users;
 
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 

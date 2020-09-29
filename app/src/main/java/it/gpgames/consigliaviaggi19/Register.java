@@ -6,7 +6,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -27,7 +26,7 @@ import java.time.format.DateTimeFormatter;
 
 import it.gpgames.consigliaviaggi19.home.MainActivity;
 import it.gpgames.consigliaviaggi19.network.NetworkChangeReceiver;
-import it.gpgames.consigliaviaggi19.userpanel.UserData;
+import it.gpgames.consigliaviaggi19.DAO.users.UserData;
 
 public class Register extends AppCompatActivity {
     EditText eUser,ePsw,eEmail;

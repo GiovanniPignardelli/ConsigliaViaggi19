@@ -23,11 +23,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import it.gpgames.consigliaviaggi19.R;
-import it.gpgames.consigliaviaggi19.places.Hotel;
-import it.gpgames.consigliaviaggi19.places.Place;
-import it.gpgames.consigliaviaggi19.places.Restaurant;
-import it.gpgames.consigliaviaggi19.places.Review;
-import it.gpgames.consigliaviaggi19.search.ResultsActivity;
+import it.gpgames.consigliaviaggi19.DAO.places.Hotel;
+import it.gpgames.consigliaviaggi19.DAO.places.Place;
+import it.gpgames.consigliaviaggi19.DAO.places.Restaurant;
+import it.gpgames.consigliaviaggi19.DAO.places.Review;
 import it.gpgames.consigliaviaggi19.search.place_details.PlaceDetailsActivity;
 import it.gpgames.consigliaviaggi19.search.place_details.reviews.ReviewsAdapter;
 

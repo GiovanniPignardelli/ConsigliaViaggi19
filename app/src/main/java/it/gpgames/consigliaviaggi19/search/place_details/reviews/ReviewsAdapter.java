@@ -1,8 +1,6 @@
 package it.gpgames.consigliaviaggi19.search.place_details.reviews;
 
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,18 +21,13 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 
 import java.util.List;
 
 import it.gpgames.consigliaviaggi19.R;
-import it.gpgames.consigliaviaggi19.home.MainActivity;
-import it.gpgames.consigliaviaggi19.places.Place;
-import it.gpgames.consigliaviaggi19.places.Review;
-import it.gpgames.consigliaviaggi19.search.ResultsActivity;
-import it.gpgames.consigliaviaggi19.search.place_details.PlaceDetailsActivity;
-import it.gpgames.consigliaviaggi19.userpanel.UserData;
-import it.gpgames.consigliaviaggi19.userpanel.UserPanelActivity;
+import it.gpgames.consigliaviaggi19.DAO.places.Place;
+import it.gpgames.consigliaviaggi19.DAO.places.Review;
+import it.gpgames.consigliaviaggi19.DAO.users.UserData;
 
 public class ReviewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 

@@ -4,26 +4,23 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ActionMenuView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
+
+import it.gpgames.consigliaviaggi19.DAO.QueryExecutor;
 import it.gpgames.consigliaviaggi19.R;
 import it.gpgames.consigliaviaggi19.home.MainActivity;
 import it.gpgames.consigliaviaggi19.network.NetworkChangeReceiver;
-import it.gpgames.consigliaviaggi19.places.Place;
+import it.gpgames.consigliaviaggi19.DAO.places.Place;
 import it.gpgames.consigliaviaggi19.search.place_details.PlaceDetailsActivity;
 import it.gpgames.consigliaviaggi19.search.place_map.MapExploreActivity;
 
@@ -92,11 +89,6 @@ public class ResultsActivity extends AppCompatActivity {
         resultQueries.setAdapter(adapter);
         resultQueries.setLayoutManager(new LinearLayoutManager(ResultsActivity.this, RecyclerView.VERTICAL, false));
         bMapExplore.setEnabled(true);
-    }
-
-/** Splitta una stringa con un dato pivot. Restituisce un array delle dimensioni del numero di parole della stringa.*/
-    public static String[] parseString(String in, String pivot){
-        return in.split(pivot);
     }
 
     private void initListeners(){

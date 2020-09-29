@@ -46,7 +46,7 @@ import it.gpgames.consigliaviaggi19.home.slider.HomeSliderItemsGetter;
 import it.gpgames.consigliaviaggi19.search.place_map.MapExploreActivity;
 import it.gpgames.consigliaviaggi19.network.NetworkChangeReceiver;
 import it.gpgames.consigliaviaggi19.search.ResultsActivity;
-import it.gpgames.consigliaviaggi19.userpanel.UserData;
+import it.gpgames.consigliaviaggi19.DAO.users.UserData;
 import it.gpgames.consigliaviaggi19.userpanel.UserPanelActivity;
 import it.gpgames.consigliaviaggi19.home.slider.HomeSliderItem;
 

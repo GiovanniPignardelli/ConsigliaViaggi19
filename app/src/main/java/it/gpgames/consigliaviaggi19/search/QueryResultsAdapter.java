@@ -1,6 +1,5 @@
 package it.gpgames.consigliaviaggi19.search;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -10,10 +9,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -24,7 +21,7 @@ import java.util.List;
 
 import it.gpgames.consigliaviaggi19.R;
 import it.gpgames.consigliaviaggi19.home.slider.HomeSliderItemsGetter;
-import it.gpgames.consigliaviaggi19.places.Place;
+import it.gpgames.consigliaviaggi19.DAO.places.Place;
 
 /** La classe si occupa di adattare i contenuti dei places models ai layout*/
 public class QueryResultsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {

@@ -9,10 +9,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.firebase.geofire.GeoLocation;
 import com.firebase.geofire.LocationCallback;
@@ -30,15 +28,13 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseError;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
 import it.gpgames.consigliaviaggi19.R;
-import it.gpgames.consigliaviaggi19.home.MainActivity;
-import it.gpgames.consigliaviaggi19.places.Place;
+import it.gpgames.consigliaviaggi19.DAO.places.Place;
 import it.gpgames.consigliaviaggi19.search.place_details.PlaceDetailsActivity;
-import it.gpgames.consigliaviaggi19.userpanel.UserData;
+import it.gpgames.consigliaviaggi19.DAO.users.UserData;
 
 public class MapExploreActivity extends AppCompatActivity implements OnMapReadyCallback {
 

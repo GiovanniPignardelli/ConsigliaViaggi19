@@ -1,4 +1,4 @@
-package it.gpgames.consigliaviaggi19.search;
+package it.gpgames.consigliaviaggi19.DAO;
 
 import android.util.Log;
 import android.widget.Toast;
@@ -15,13 +15,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import it.gpgames.consigliaviaggi19.places.Hotel;
-import it.gpgames.consigliaviaggi19.places.Place;
-import it.gpgames.consigliaviaggi19.places.Restaurant;
+import it.gpgames.consigliaviaggi19.DAO.places.Hotel;
+import it.gpgames.consigliaviaggi19.DAO.places.Place;
+import it.gpgames.consigliaviaggi19.DAO.places.Restaurant;
+import it.gpgames.consigliaviaggi19.search.ResultsActivity;
 
 /** Si occupa di eseguire le query. Ha due costruttori: uno pubblico, uno privato. Se la stringa di ricerca
  * ha più di una parola, vengono generati ricorsivamente tanti QueryExecutor quante sono le parole di ricerca.*/
 public class QueryExecutor {
+
     /** La stringa di ricerca è stata precedentemente splittata in parole*/
     String[] parsedString;
 
@@ -29,7 +31,7 @@ public class QueryExecutor {
     int currentIndex;
 
     /** Riferimento all'activity che attende i risultati della query*/
-    ResultsActivity waitingForResults;
+    DatabaseDAO.DatabaseCallback waitingForResults;
 
     FirebaseFirestore dbRef = FirebaseFirestore.getInstance();
 
@@ -39,22 +41,22 @@ public class QueryExecutor {
     List<Place> topList;
 
     /** Costruttore pubblico che inizializza i parametri */
-    public QueryExecutor(String[] parsed, ResultsActivity activity)
+    public QueryExecutor(String[] parsed, DatabaseDAO.DatabaseCallback callback)
     {
         this.parsedString=parsed;
         this.currentIndex=0;
-        this.waitingForResults=activity;
+        this.waitingForResults=callback;
         this.weakList=null;
         this.topList=null;
     }
 
     /** Costruttore privato. Esso viene utilizzato all'interno della classe stessa per generare nuovi QueryExecutor. A queste nuove istanze
      * verranno passati i dati ottenuti fino ad adesso, e l'indice della posizione dell'array (incrementato di 1)*/
-    private QueryExecutor(int currentIndex, String[] parsedString, ResultsActivity activity, List<Place> weakList, List<Place> topList)
+    private QueryExecutor(int currentIndex, String[] parsedString, DatabaseDAO.DatabaseCallback callback, List<Place> weakList, List<Place> topList)
     {
         this.currentIndex=currentIndex;
         this.parsedString=parsedString;
-        this.waitingForResults=activity;
+        this.waitingForResults=callback;
         this.weakList=weakList;
         this.topList=topList;
     }
@@ -113,18 +115,15 @@ public class QueryExecutor {
                             }
                             else
                             {
-                                waitingForResults.setUpRecycleView(weakList,topList);
+                                waitingForResults.showResults(weakList, topList);
                             }
-
-
                         }
                         else
                         {
                             Log.d("query", "Error getting documents: ", task.getException());
-                            Toast.makeText(waitingForResults,"E' stato riscontrato un errore.", Toast.LENGTH_LONG).show();
+                            waitingForResults.manageError(task.getException());
                         }
                     }
                 });
     }
-
 }

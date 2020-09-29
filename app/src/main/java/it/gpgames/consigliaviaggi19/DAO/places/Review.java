@@ -1,9 +1,5 @@
-package it.gpgames.consigliaviaggi19.places;
+package it.gpgames.consigliaviaggi19.DAO.places;
 
-
-import java.time.Year;
-import java.util.Date;
-import java.util.List;
 
 public class Review {
 
