@@ -1,7 +1,6 @@
-package it.gpgames.consigliaviaggi19.DAO;
+package it.gpgames.consigliaviaggi19.DAO.firebaseDAO;
 
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
@@ -15,14 +14,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import it.gpgames.consigliaviaggi19.DAO.places.Hotel;
-import it.gpgames.consigliaviaggi19.DAO.places.Place;
-import it.gpgames.consigliaviaggi19.DAO.places.Restaurant;
-import it.gpgames.consigliaviaggi19.search.ResultsActivity;
+import it.gpgames.consigliaviaggi19.DAO.DatabaseCallback;
+import it.gpgames.consigliaviaggi19.DAO.models.places.Hotel;
+import it.gpgames.consigliaviaggi19.DAO.models.places.Place;
+import it.gpgames.consigliaviaggi19.DAO.models.places.Restaurant;
 
 /** Si occupa di eseguire le query. Ha due costruttori: uno pubblico, uno privato. Se la stringa di ricerca
  * ha più di una parola, vengono generati ricorsivamente tanti QueryExecutor quante sono le parole di ricerca.*/
-public class QueryExecutor {
+public class FirebaseQueryExecutor {
+
+    int callbackCode;
 
     /** La stringa di ricerca è stata precedentemente splittata in parole*/
     String[] parsedString;
@@ -31,7 +32,7 @@ public class QueryExecutor {
     int currentIndex;
 
     /** Riferimento all'activity che attende i risultati della query*/
-    DatabaseDAO.DatabaseCallback waitingForResults;
+    DatabaseCallback waitingForResults;
 
     FirebaseFirestore dbRef = FirebaseFirestore.getInstance();
 
@@ -41,19 +42,21 @@ public class QueryExecutor {
     List<Place> topList;
 
     /** Costruttore pubblico che inizializza i parametri */
-    public QueryExecutor(String[] parsed, DatabaseDAO.DatabaseCallback callback)
+    public FirebaseQueryExecutor(String[] parsed, DatabaseCallback callback, int callbackCode)
     {
         this.parsedString=parsed;
         this.currentIndex=0;
         this.waitingForResults=callback;
+        this.callbackCode = callbackCode;
         this.weakList=null;
         this.topList=null;
     }
 
     /** Costruttore privato. Esso viene utilizzato all'interno della classe stessa per generare nuovi QueryExecutor. A queste nuove istanze
      * verranno passati i dati ottenuti fino ad adesso, e l'indice della posizione dell'array (incrementato di 1)*/
-    private QueryExecutor(int currentIndex, String[] parsedString, DatabaseDAO.DatabaseCallback callback, List<Place> weakList, List<Place> topList)
+    private FirebaseQueryExecutor(int currentIndex, String[] parsedString, DatabaseCallback callback, int callbackCode, List<Place> weakList, List<Place> topList)
     {
+        this.callbackCode = callbackCode;
         this.currentIndex=currentIndex;
         this.parsedString=parsedString;
         this.waitingForResults=callback;
@@ -110,18 +113,18 @@ public class QueryExecutor {
                             }
                             if(currentIndex+1 < parsedString.length-1)
                             {
-                                QueryExecutor executor=new QueryExecutor(currentIndex+1,parsedString,waitingForResults,weakList,topList);
+                                FirebaseQueryExecutor executor=new FirebaseQueryExecutor(currentIndex+1,parsedString,waitingForResults,callbackCode,weakList,topList);
                                 executor.executeQuery();
                             }
                             else
                             {
-                                waitingForResults.showResults(weakList, topList);
+                                waitingForResults.callback(weakList, topList, callbackCode);
                             }
                         }
                         else
                         {
                             Log.d("query", "Error getting documents: ", task.getException());
-                            waitingForResults.manageError(task.getException());
+                            waitingForResults.manageError(task.getException(), callbackCode);
                         }
                     }
                 });

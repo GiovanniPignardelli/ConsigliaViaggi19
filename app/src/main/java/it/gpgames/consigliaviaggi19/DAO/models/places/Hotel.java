@@ -1,4 +1,4 @@
-package it.gpgames.consigliaviaggi19.DAO.places;
+package it.gpgames.consigliaviaggi19.DAO.models.places;
 
 import java.io.Serializable;
 import java.util.ArrayList;

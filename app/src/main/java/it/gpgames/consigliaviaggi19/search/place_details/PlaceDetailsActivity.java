@@ -27,7 +27,6 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.ListResult;
@@ -39,19 +38,23 @@ import com.smarteist.autoimageslider.SliderView;
 import java.util.ArrayList;
 import java.util.List;
 
+import it.gpgames.consigliaviaggi19.DAO.DAOFactory;
+import it.gpgames.consigliaviaggi19.DAO.DatabaseCallback;
+import it.gpgames.consigliaviaggi19.DAO.ReviewDAO;
+import it.gpgames.consigliaviaggi19.DAO.models.users.User;
 import it.gpgames.consigliaviaggi19.R;
 import it.gpgames.consigliaviaggi19.network.NetworkChangeReceiver;
-import it.gpgames.consigliaviaggi19.DAO.places.Hotel;
-import it.gpgames.consigliaviaggi19.DAO.places.Place;
-import it.gpgames.consigliaviaggi19.DAO.places.Restaurant;
-import it.gpgames.consigliaviaggi19.DAO.places.Review;
+import it.gpgames.consigliaviaggi19.DAO.models.places.Hotel;
+import it.gpgames.consigliaviaggi19.DAO.models.places.Place;
+import it.gpgames.consigliaviaggi19.DAO.models.places.Restaurant;
+import it.gpgames.consigliaviaggi19.DAO.models.reviews.Review;
 import it.gpgames.consigliaviaggi19.search.place_details.reviews.ReviewsAdapter;
 import it.gpgames.consigliaviaggi19.search.place_details.reviews.WriteReviewActivity;
 import it.gpgames.consigliaviaggi19.search.place_details.slider.PlaceSliderAdapter;
 import it.gpgames.consigliaviaggi19.userpanel.UserPanelActivity;
 
 /** Activity che si occupa di mostrare i dettagli di una struttura selezionata da ResultsActivity.*/
-public class PlaceDetailsActivity extends AppCompatActivity implements ReviewsAdapter.RecyclerGetter{
+public class PlaceDetailsActivity extends AppCompatActivity implements ReviewsAdapter.RecyclerGetter, DatabaseCallback {
 
     /** Holder del Place da mostrare. Viene passato come extra all'activity.*/
     private Place toShow;
@@ -70,10 +73,10 @@ public class PlaceDetailsActivity extends AppCompatActivity implements ReviewsAd
     private RatingBar ratingBar;
 
     //interi statici che indicano l'attuale ordine delle rewiews (per ordine si intende criterio di ordinamento e direzione)
-    private final static int ORDER_ASC=1;
-    private final static int ORDER_DESC=0;
-    private final static int SORT_DATE=1;
-    private final static int SORT_STAR=0;
+    public final static int ORDER_ASC=1;
+    public final static int ORDER_DESC=0;
+    public final static int SORT_DATE=1;
+    public final static int SORT_STAR=0;
 
     //intero che indica la direzione (asc o desc).
     private int actualOrder;
@@ -84,6 +87,7 @@ public class PlaceDetailsActivity extends AppCompatActivity implements ReviewsAd
 
     public static final int REVIEW_BACK_CODE=1;
 
+    private ReviewDAO reviewDao = DAOFactory.getDAOInstance().getReviewDAO();
     NetworkChangeReceiver networkChangeReceiver=NetworkChangeReceiver.getNetworkChangeReceiverInstance();
 
     @Override
@@ -112,6 +116,7 @@ public class PlaceDetailsActivity extends AppCompatActivity implements ReviewsAd
         {
             Log.d("place", "Errore caricamento");
             Toast.makeText(getApplicationContext(),"Errore nel caricamento della struttura. Riprovare.", Toast.LENGTH_LONG);
+            finish();
         }
 
     }
@@ -239,51 +244,12 @@ public class PlaceDetailsActivity extends AppCompatActivity implements ReviewsAd
 
 
     private void checkIfReviewExists() {
-        FirebaseFirestore.getInstance().collection("reviewPool").whereEqualTo("placeId",toShow.getDbDocID()).whereEqualTo("userId", FirebaseAuth.getInstance().getUid()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if(task.isSuccessful())
-                {
-                    if(task.getResult().isEmpty())
-                        alreadyWritten=false;
-                    else
-                        alreadyWritten=true;
-
-                    bWriteReview.setEnabled(true);
-                }
-                else
-                    Log.d("query", "Errore nella ricerca della corrispondenza utente-recensione-struttura");
-            }
-        });
+        reviewDao.getReviewsByPlaceIDAndUserID(toShow.getDbDocID(),FirebaseAuth.getInstance().getUid(),this,1);
     }
 
     /**Metodo che aggiorna le review relative alla struttura. Esegue un controllo sui valori attuali degli attributi actualOrder e actualSort per effettuare la query*/
     private void refreshReviews() {
-        Query query=FirebaseFirestore.getInstance().collection("reviewPool").whereEqualTo("placeId", toShow.getDbDocID());
-        if(actualSort==SORT_DATE && actualOrder==ORDER_ASC)
-            query=query.orderBy("year", Query.Direction.ASCENDING).orderBy("month", Query.Direction.ASCENDING).orderBy("day", Query.Direction.ASCENDING);
-        else if(actualSort==SORT_DATE && actualOrder==ORDER_DESC)
-            query=query.orderBy("year", Query.Direction.DESCENDING).orderBy("month", Query.Direction.DESCENDING).orderBy("day", Query.Direction.DESCENDING);
-        else if(actualSort==SORT_STAR && actualOrder==ORDER_ASC)
-            query=query.orderBy("rating", Query.Direction.ASCENDING).orderBy("year", Query.Direction.ASCENDING).orderBy("month", Query.Direction.ASCENDING).orderBy("day", Query.Direction.ASCENDING);
-        else
-            query=query.orderBy("rating", Query.Direction.DESCENDING).orderBy("year", Query.Direction.ASCENDING).orderBy("month", Query.Direction.ASCENDING).orderBy("day", Query.Direction.ASCENDING);
-
-        query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if(task.isSuccessful())
-                {
-                    reviewsAdapter=new ReviewsAdapter(PlaceDetailsActivity.this,task.getResult().toObjects(Review.class), PlaceDetailsActivity.this, ReviewsAdapter.FLAG_USER);
-                    reviews.setAdapter(reviewsAdapter);
-                    reviews.setLayoutManager(new LinearLayoutManager(PlaceDetailsActivity.this, RecyclerView.VERTICAL, false));
-                }
-                else
-                {
-                    Log.d("query", "Errore nel caricamento delle review: "+task.getException().getMessage());
-                }
-            }
-        });
+        reviewDao.getReviewsByPlaceID(toShow.getDbDocID(),PlaceDetailsActivity.this, actualSort, actualOrder, 0);
     }
 
     /**Inizializza lo slider delle immagini della struttura recuperandole dal database*/
@@ -340,9 +306,74 @@ public class PlaceDetailsActivity extends AppCompatActivity implements ReviewsAd
         return reviews;
     }
 
+    @Override
+    public void show(String id, int flag) {
+
+    }
+
     public void show(String userUid) {
         Intent i=new Intent(this, UserPanelActivity.class);
         i.putExtra("Uid",userUid);
         startActivity(i);
+    }
+
+    @Override
+    public void callback(int callbackCode) {
+
+    }
+
+    @Override
+    public void callback(Place place, int callbackCode) {
+
+    }
+
+    @Override
+    public void callback(Place place, ReviewsAdapter.ReviewViewHolder holder, int callbackCode) {
+
+    }
+
+    @Override
+    public void callback(User user, int callbackCode) {
+
+    }
+
+    @Override
+    public void callback(User user, ReviewsAdapter.ReviewViewHolder holder, int callbackCode) {
+
+    }
+
+    @Override
+    public void callback(List<Review> reviewsList, int callbackCode) {
+        switch(callbackCode){
+            case 0:
+                reviewsAdapter=new ReviewsAdapter(PlaceDetailsActivity.this,reviewsList, PlaceDetailsActivity.this, ReviewsAdapter.FLAG_USER);
+                reviews.setAdapter(reviewsAdapter);
+                reviews.setLayoutManager(new LinearLayoutManager(PlaceDetailsActivity.this, RecyclerView.VERTICAL, false));
+                break;
+            case 1:
+                if(!reviewsList.isEmpty())
+                    alreadyWritten=true;
+                else{
+                    alreadyWritten=false;
+                    bWriteReview.setEnabled(true);
+                }
+                break;
+        }
+
+    }
+
+    @Override
+    public void callback(List<Place> weakList, List<Place> topList, int callbackCode) {
+
+    }
+
+    @Override
+    public void showMessage(String message, int callbackCode) {
+
+    }
+
+    @Override
+    public void manageError(Exception e, int callbackCode) {
+        Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
     }
 }

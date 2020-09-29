@@ -14,22 +14,21 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 
 import java.util.List;
 
+import it.gpgames.consigliaviaggi19.DAO.DAOFactory;
+import it.gpgames.consigliaviaggi19.DAO.DatabaseCallback;
+import it.gpgames.consigliaviaggi19.DAO.PlaceDAO;
+import it.gpgames.consigliaviaggi19.DAO.UserDAO;
 import it.gpgames.consigliaviaggi19.R;
-import it.gpgames.consigliaviaggi19.DAO.places.Place;
-import it.gpgames.consigliaviaggi19.DAO.places.Review;
-import it.gpgames.consigliaviaggi19.DAO.users.UserData;
+import it.gpgames.consigliaviaggi19.DAO.models.places.Place;
+import it.gpgames.consigliaviaggi19.DAO.models.reviews.Review;
+import it.gpgames.consigliaviaggi19.DAO.models.users.User;
 
-public class ReviewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class ReviewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements DatabaseCallback {
 
     private LayoutInflater inflater;
     private List<Review> reviewsList;
@@ -37,6 +36,8 @@ public class ReviewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private RecyclerGetter activity;
     private UserOnClickListener userClickListener=new UserOnClickListener();
     private PlaceOnClickListener placeOnClickListener=new PlaceOnClickListener();
+    private UserDAO userDao = DAOFactory.getDAOInstance().getUserDAO();
+    private PlaceDAO placeDao = DAOFactory.getDAOInstance().getPlaceDAO();
 
     public static final int FLAG_PLACE=1,FLAG_USER=0;
     private int actualFlag;
@@ -80,15 +81,7 @@ public class ReviewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         switch(actualFlag)
         {
             case FLAG_PLACE:
-                FirebaseFirestore.getInstance().collection("places").document(actualReview.getPlaceId()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if(task.isSuccessful())
-                        {
-                            holder.userName.setText(task.getResult().toObject(Place.class).getName());
-                        }
-                    }
-                });
+                placeDao.getPlaceByID(actualReview.getPlaceId(), ReviewsAdapter.this, holder,0);
 
                 FirebaseStorage.getInstance().getReference().child("Places").child("Pictures").child(actualReview.getPlaceId()).child("main.jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                     @Override
@@ -100,16 +93,7 @@ public class ReviewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 break;
 
             case FLAG_USER:
-                FirebaseFirestore.getInstance().collection("userPool").whereEqualTo("userID",actualReview.getUserId()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if(task.isSuccessful())
-                        {
-
-                            holder.userName.setText(task.getResult().toObjects(UserData.class).get(0).getDisplayName());
-                        }
-                    }
-                });
+                userDao.getUserByID(actualReview.getUserId(),this,holder, 0);
 
                 FirebaseStorage.getInstance().getReference().child("Users/Avatars/avatar_"+actualReview.getUserId()+".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                     @Override
@@ -130,6 +114,51 @@ public class ReviewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     @Override
     public int getItemCount() {
         return reviewsList.size();
+    }
+
+    @Override
+    public void callback(int callbackCode) {
+
+    }
+
+    @Override
+    public void callback(Place place, int callbackCode) {
+
+    }
+
+    @Override
+    public void callback(Place place, ReviewViewHolder holder, int callbackCode) {
+        holder.userName.setText(place.getName());
+    }
+
+    @Override
+    public void callback(User user, int callbackCode) {
+
+    }
+
+    @Override
+    public void callback(User user, ReviewViewHolder holder, int callbackCode) {
+        holder.userName.setText(user.getDisplayName());
+    }
+
+    @Override
+    public void callback(List<Review> reviews, int callbackCode) {
+
+    }
+
+    @Override
+    public void callback(List<Place> weakList, List<Place> topList, int callbackCode) {
+
+    }
+
+    @Override
+    public void showMessage(String message, int callbackCode) {
+
+    }
+
+    @Override
+    public void manageError(Exception e, int callbackCode) {
+
     }
 
     public class ReviewViewHolder extends RecyclerView.ViewHolder {
@@ -161,8 +190,8 @@ public class ReviewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         @Override
         public void onClick(final View view) {
             int itemPosition = activity.getReviewsRecyclerView().getChildLayoutPosition(view);
-            String userUid= reviewsList.get(itemPosition).getUserId();
-            activity.show(userUid);
+            String userID= reviewsList.get(itemPosition).getUserId();
+            activity.show(userID, FLAG_USER);
         }
     }
 
@@ -173,14 +202,14 @@ public class ReviewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         public void onClick(View v) {
             int itemPosition = activity.getReviewsRecyclerView().getChildAdapterPosition(v);
             String placeID = reviewsList.get(itemPosition).getPlaceId();
-            activity.show(placeID);
+            activity.show(placeID, FLAG_PLACE);
         }
     }
 
     public interface RecyclerGetter
     {
         public RecyclerView getReviewsRecyclerView();
-        public void show(String id);
+        public void show(String id, int flag);
     }
 }
 

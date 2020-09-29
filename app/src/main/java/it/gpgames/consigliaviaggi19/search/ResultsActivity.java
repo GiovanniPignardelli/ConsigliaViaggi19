@@ -7,7 +7,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -16,17 +15,23 @@ import android.widget.TextView;
 import java.io.Serializable;
 import java.util.List;
 
-import it.gpgames.consigliaviaggi19.DAO.QueryExecutor;
+import it.gpgames.consigliaviaggi19.DAO.DAOFactory;
+import it.gpgames.consigliaviaggi19.DAO.DatabaseCallback;
+import it.gpgames.consigliaviaggi19.DAO.PlaceDAO;
+import it.gpgames.consigliaviaggi19.DAO.firebaseDAO.PlaceFirebaseDAO;
+import it.gpgames.consigliaviaggi19.DAO.models.reviews.Review;
+import it.gpgames.consigliaviaggi19.DAO.models.users.User;
 import it.gpgames.consigliaviaggi19.R;
 import it.gpgames.consigliaviaggi19.home.MainActivity;
 import it.gpgames.consigliaviaggi19.network.NetworkChangeReceiver;
-import it.gpgames.consigliaviaggi19.DAO.places.Place;
+import it.gpgames.consigliaviaggi19.DAO.models.places.Place;
 import it.gpgames.consigliaviaggi19.search.place_details.PlaceDetailsActivity;
+import it.gpgames.consigliaviaggi19.search.place_details.reviews.ReviewsAdapter;
 import it.gpgames.consigliaviaggi19.search.place_map.MapExploreActivity;
 
 /** Activity che si occupa di visualizzare i risultati di una query.
  * A questa activity viene anche passata la stringa di ricerca tramite intent*/
-public class ResultsActivity extends AppCompatActivity {
+public class ResultsActivity extends AppCompatActivity implements DatabaseCallback {
 
     private static android.content.Context context;
     private TextView titleText;
@@ -36,6 +41,7 @@ public class ResultsActivity extends AppCompatActivity {
     private QueryResultsAdapter adapter;
     private List<Place> lastQuery;
     private static final NetworkChangeReceiver networkChangeReceiver=NetworkChangeReceiver.getNetworkChangeReceiverInstance();
+    private PlaceDAO placeDao = DAOFactory.getDAOInstance().getPlaceDAO();
 
 
     /** Il metodo si occupa anche di generare il primo QueryExecutor.*/
@@ -49,6 +55,9 @@ public class ResultsActivity extends AppCompatActivity {
         resultQueries = findViewById(R.id.resultQueries);
         initListeners();
         context=this.getApplicationContext();
+
+        List<Place> results = (List<Place>) getIntent().getSerializableExtra("query");
+        setUpRecycleView(null, results); // weakList not implemented yet.
     }
 
     @Override
@@ -73,12 +82,6 @@ public class ResultsActivity extends AppCompatActivity {
         IntentFilter filter = new IntentFilter();
         filter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
         registerReceiver(networkChangeReceiver, filter);
-
-        String querySearchString = MainActivity.getLastSearchString();
-        titleText.setText("Ecco cosa abbiamo trovato per "+"\""+querySearchString+"\"");
-        QueryExecutor executor=new QueryExecutor(parseString(querySearchString, " "),this);
-        Log.d("query", "Executor creato. La query sta per partire.");
-        executor.executeQuery();
     }
 
     /** Quando si ottengono i risultati di una query, si passano le liste ottenute a questo metodo che si occupa
@@ -118,12 +121,53 @@ public class ResultsActivity extends AppCompatActivity {
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
     }
-
-
     public RecyclerView getRecyclerView()
     {
         return resultQueries;
     }
 
+    @Override
+    public void callback(int callbackCode) {
+        placeDao.getPlaceByTags(MainActivity.getLastSearchString(),this, 0);
+    }
 
+    @Override
+    public void callback(Place place, int callbackCode) {
+
+    }
+
+    @Override
+    public void callback(Place place, ReviewsAdapter.ReviewViewHolder holder, int callbackCode) {
+
+    }
+
+    @Override
+    public void callback(User user, int callbackCode) {
+
+    }
+
+    @Override
+    public void callback(User user, ReviewsAdapter.ReviewViewHolder holder, int callbackCode) {
+
+    }
+
+    @Override
+    public void callback(List<Review> reviews, int callbackCode) {
+
+    }
+
+    @Override
+    public void callback(List<Place> weakList, List<Place> topList, int callbackCode) {
+        setUpRecycleView(null,topList);
+    }
+
+    @Override
+    public void showMessage(String message, int callbackCode) {
+
+    }
+
+    @Override
+    public void manageError(Exception e, int callbackCode) {
+
+    }
 }

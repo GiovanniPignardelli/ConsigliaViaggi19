@@ -21,7 +21,7 @@ import java.util.List;
 
 import it.gpgames.consigliaviaggi19.R;
 import it.gpgames.consigliaviaggi19.home.slider.HomeSliderItemsGetter;
-import it.gpgames.consigliaviaggi19.DAO.places.Place;
+import it.gpgames.consigliaviaggi19.DAO.models.places.Place;
 
 /** La classe si occupa di adattare i contenuti dei places models ai layout*/
 public class QueryResultsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -118,7 +118,6 @@ public class QueryResultsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         public void onClick(final View view) {
             int itemPosition = activity.getRecyclerView().getChildLayoutPosition(view);
             Place toShow= placesList.get(itemPosition);
-
             ResultsActivity.showDetails(toShow);
         }
     }

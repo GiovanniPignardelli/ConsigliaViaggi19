@@ -26,7 +26,7 @@ import java.time.format.DateTimeFormatter;
 
 import it.gpgames.consigliaviaggi19.home.MainActivity;
 import it.gpgames.consigliaviaggi19.network.NetworkChangeReceiver;
-import it.gpgames.consigliaviaggi19.DAO.users.UserData;
+import it.gpgames.consigliaviaggi19.DAO.models.users.User;
 
 public class Register extends AppCompatActivity {
     EditText eUser,ePsw,eEmail;
@@ -93,7 +93,7 @@ public class Register extends AppCompatActivity {
                             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
                             String dateString=date.format(formatter);
 
-                            UserData user=new UserData(username, email, FirebaseAuth.getInstance().getUid(),false,new Integer(0),new Float(0),dateString);
+                            User user=new User(username, email, FirebaseAuth.getInstance().getUid(),false,new Integer(0),new Float(0),dateString);
                             FirebaseFirestore.getInstance().collection("userPool").add(user);
                             Toast.makeText(getApplicationContext(), "Ricorda di verificare la tua mail.", Toast.LENGTH_LONG).show();
                             startActivity(new Intent(Register.this, MainActivity.class));

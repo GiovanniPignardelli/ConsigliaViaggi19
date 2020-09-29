@@ -1,4 +1,4 @@
-package it.gpgames.consigliaviaggi19.DAO.users;
+package it.gpgames.consigliaviaggi19.DAO.models.users;
 
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -19,18 +19,18 @@ import java.util.concurrent.Executors;
 
 /**La classe User detiene localmente le informazioni relative ad un utente.
  * La classe maniente una propria istanza (LocalInstance), che fa riferimento all'utente corrente.*/
-public class UserData implements Parcelable {
+public class User implements Parcelable {
 
     private String displayName;
     private String email;
-    private Uri avatar;
+    private String avatar;
     private String userID;
     private boolean isBlacklisted;
     private Integer nReview;
     private Float avgReview;
     private String registerDate;
 
-    public UserData(String displayName, String email, String userID, boolean isBlacklisted, Integer nReview, Float avgReview, String registerDate) {
+    public User(String displayName, String email, String userID, boolean isBlacklisted, Integer nReview, Float avgReview, String registerDate) {
         this.displayName = displayName;
         this.email = email;
         this.userID = userID;
@@ -40,7 +40,7 @@ public class UserData implements Parcelable {
         this.registerDate = registerDate;
     }
 
-    private static UserData localInstance;
+    private static User localInstance;
 
     public boolean isBlacklisted() {
         return isBlacklisted;
@@ -74,8 +74,8 @@ public class UserData implements Parcelable {
         this.registerDate = registerDate;
     }
 
-    public static void setLocalInstance(UserData localInstance) {
-        UserData.localInstance = localInstance;
+    public static void setLocalInstance(User localInstance) {
+        User.localInstance = localInstance;
     }
 
 
@@ -84,42 +84,44 @@ public class UserData implements Parcelable {
         FirebaseFirestore.getInstance().collection("userPool").whereEqualTo("userID",FirebaseAuth.getInstance().getUid()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if(task.isSuccessful())
+                if(task.isSuccessful() && task.getResult().size()>1)
                 {
                     QuerySnapshot result = task.getResult();
-                    localInstance=result.toObjects(UserData.class).get(0);
+                    localInstance=result.toObjects(User.class).get(0);
                 }
             }
         });
     }
 
 
-    public UserData()
+    public User()
     {
 
     }
 
-    public static UserData getLocalInstance()
+    public static User getLocalInstance()
     {
             return localInstance;
     }
 
-    public UserData(Parcel in) {
+    public User(Parcel in) {
         displayName = in.readString();
         email = in.readString();
-        avatar = in.readParcelable(Bitmap.class.getClassLoader());
+        avatar = in.readString();
         userID = in.readString();
+        nReview = in.readInt();
+        avgReview = in.readFloat();
     }
 
-    public static final Creator<UserData> CREATOR = new Creator<UserData>() {
+    public static final Creator<User> CREATOR = new Creator<User>() {
         @Override
-        public UserData createFromParcel(Parcel in) {
-            return new UserData(in);
+        public User createFromParcel(Parcel in) {
+            return new User(in);
         }
 
         @Override
-        public UserData[] newArray(int size) {
-            return new UserData[size];
+        public User[] newArray(int size) {
+            return new User[size];
         }
     };
 
@@ -132,8 +134,10 @@ public class UserData implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(displayName);
         dest.writeString(email);
-        dest.writeParcelable(avatar, flags);
+        dest.writeString(avatar);
         dest.writeString(userID);
+        dest.writeInt(nReview);
+        dest.writeFloat(avgReview);
     }
 
     /**La classe UserDataUpdate implementa Runnable. Viene avviato su un Thread secondario per
@@ -145,7 +149,7 @@ public class UserData implements Parcelable {
             if (user != null) {
                 setDisplayName(user.getDisplayName());
                 setEmail(user.getEmail());
-                setAvatar(user.getPhotoUrl());
+                setAvatar(user.getPhotoUrl().toString());
                 setUserID(user.getUid());
             }
         }
@@ -167,11 +171,11 @@ public class UserData implements Parcelable {
         this.email = email;
     }
 
-    public Uri getAvatar() {
+    public String getAvatar() {
         return avatar;
     }
 
-    public void setAvatar(Uri avatar) {
+    public void setAvatar(String avatar) {
         this.avatar = avatar;
     }
 

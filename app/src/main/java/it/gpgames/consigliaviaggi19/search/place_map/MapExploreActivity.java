@@ -11,6 +11,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.firebase.geofire.GeoLocation;
 import com.firebase.geofire.LocationCallback;
@@ -28,13 +29,13 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseError;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import it.gpgames.consigliaviaggi19.R;
-import it.gpgames.consigliaviaggi19.DAO.places.Place;
+import it.gpgames.consigliaviaggi19.DAO.models.places.Place;
+import it.gpgames.consigliaviaggi19.home.MainActivity;
 import it.gpgames.consigliaviaggi19.search.place_details.PlaceDetailsActivity;
-import it.gpgames.consigliaviaggi19.DAO.users.UserData;
+import it.gpgames.consigliaviaggi19.DAO.models.users.User;
 
 public class MapExploreActivity extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -55,11 +56,11 @@ public class MapExploreActivity extends AppCompatActivity implements OnMapReadyC
                     LatLng currentLatLng = new LatLng(location.latitude,location.longitude);
                     MarkerOptions markerOptions = new MarkerOptions().position(currentLatLng).title(p.getName()).snippet("Media recens.: "+p.getAvgReview().toString());
                     switch(p.getCategory()){
-                        case "hotel": markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.hotelmarker));
+                        case Place.CATEGORY_HOTEL: markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.hotelmarker));
                             break;
-                        case "place": markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.placemarker));
+                        case Place.CATEGORY_PLACE: markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.placemarker));
                             break;
-                        case "restaurant": markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.foodmarker));
+                        case Place.CATEGORY_RESTAURANT: markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.foodmarker));
                             break;
                     }
                     Marker placeMarker = mMap.addMarker(markerOptions);
@@ -142,7 +143,7 @@ public class MapExploreActivity extends AppCompatActivity implements OnMapReadyC
             public void onSuccess(Location location) {
                 if(location != null) {
                     LatLng currentLatLng = new LatLng(location.getLatitude(),location.getLongitude());
-                    MarkerOptions markerOptions = new MarkerOptions().position(currentLatLng).title("Sei qui!").icon(BitmapDescriptorFactory.fromResource(R.drawable.currentpos)).snippet(UserData.getLocalInstance().getDisplayName());
+                    MarkerOptions markerOptions = new MarkerOptions().position(currentLatLng).title("Sei qui!").icon(BitmapDescriptorFactory.fromResource(R.drawable.currentpos)).snippet(User.getLocalInstance().getDisplayName());
                     mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng,10));
                     Marker userMarker = mMap.addMarker(markerOptions);
 

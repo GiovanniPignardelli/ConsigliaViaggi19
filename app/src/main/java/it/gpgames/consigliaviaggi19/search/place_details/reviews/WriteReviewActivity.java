@@ -1,6 +1,5 @@
 package it.gpgames.consigliaviaggi19.search.place_details.reviews;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -19,29 +18,26 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import it.gpgames.consigliaviaggi19.DAO.DAOFactory;
+import it.gpgames.consigliaviaggi19.DAO.DatabaseCallback;
+import it.gpgames.consigliaviaggi19.DAO.ReviewDAO;
 import it.gpgames.consigliaviaggi19.R;
 import it.gpgames.consigliaviaggi19.network.NetworkChangeReceiver;
-import it.gpgames.consigliaviaggi19.DAO.places.Place;
-import it.gpgames.consigliaviaggi19.DAO.places.Review;
+import it.gpgames.consigliaviaggi19.DAO.models.places.Place;
+import it.gpgames.consigliaviaggi19.DAO.models.reviews.Review;
 import it.gpgames.consigliaviaggi19.search.place_details.PlaceDetailsActivity;
-import it.gpgames.consigliaviaggi19.DAO.users.UserData;
+import it.gpgames.consigliaviaggi19.DAO.models.users.User;
 
-public class WriteReviewActivity extends AppCompatActivity {
+public class WriteReviewActivity extends AppCompatActivity implements DatabaseCallback {
 
     private CircleImageView iPlacePic;
     private ImageView bBack;
@@ -55,6 +51,7 @@ public class WriteReviewActivity extends AppCompatActivity {
     private String dbDocID;
 
     NetworkChangeReceiver networkChangeReceiver=NetworkChangeReceiver.getNetworkChangeReceiverInstance();
+    private ReviewDAO reviewDao = DAOFactory.getDAOInstance().getReviewDAO();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -136,74 +133,11 @@ public class WriteReviewActivity extends AppCompatActivity {
 
     private void sendReview(String reviewString, int rating, String day, String month, String year) {
         Review review=new Review(dbDocID, FirebaseAuth.getInstance().getUid(),reviewString,year,month,day, rating);
-        FirebaseFirestore dbRef=FirebaseFirestore.getInstance();
-
-        dbRef.collection("reviewPool")
-                .add(review)
-                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                    @Override
-                    public void onSuccess(DocumentReference documentReference) {
-                        Log.d("UploadReview", "Review caricata.");
-                        refreshStats();
-                        Toast.makeText(getApplicationContext(),"Recensione inviata", Toast.LENGTH_LONG).show();
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.d("UploadReview", "Qualcosa è andato storto");
-                        hider.setVisibility(View.INVISIBLE);
-                        bSendReview.setEnabled(true);
-                        Toast.makeText(getApplicationContext(),"Errore. Recensione non inviata", Toast.LENGTH_LONG).show();
-                    }
-                });
+        reviewDao.createReview(review,this,0);
     }
 
 
-    private void refreshStats() {
-        FirebaseFirestore.getInstance().collection("userPool").whereEqualTo("userID", FirebaseAuth.getInstance().getUid()).limit(1).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if(task.isSuccessful())
-                {
-                    UserData user = task.getResult().toObjects(UserData.class).get(0);
-                    String documentID=task.getResult().getDocuments().get(0).getId();
-                    Integer oldNum=user.getnReview();
-                    Float oldAvg=user.getAvgReview();
-                    FirebaseFirestore.getInstance().collection("userPool").document(documentID).update("nReview",oldNum+1);
-                    FirebaseFirestore.getInstance().collection("userPool").document(documentID).update("avgReview", ((oldAvg+ratingBar.getRating())/(oldNum+1)));
-                }
-                else
-                    Log.d("review","Errore");
-            }
-        });
 
-
-        FirebaseFirestore.getInstance().collection("places").document(dbDocID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-
-                Place place=task.getResult().toObject(Place.class);
-                Integer oldNum=place.getnReviews();
-                Float oldAvg=place.getAvgReview();
-
-                Float newAvg=(oldAvg+ratingBar.getRating())/(oldNum+1);
-
-                Log.d("avg",newAvg.toString());
-
-                FirebaseFirestore.getInstance().collection("places").document(dbDocID).update("nReviews",oldNum+1);
-                FirebaseFirestore.getInstance().collection("places").document(dbDocID).update("avgReview", newAvg);
-
-                toShow.setnReviews(oldNum+1);
-                toShow.setAvgReview(newAvg);
-                Intent intent = new Intent(getApplicationContext(), PlaceDetailsActivity.class);
-                intent.putExtra("toShow", toShow);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-                finish();
-            }
-        });
-    }
 
     @Override
     protected void onResume()
@@ -218,5 +152,56 @@ public class WriteReviewActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         unregisterReceiver(networkChangeReceiver);
+    }
+
+    @Override
+    public void callback(int callbackCode) {
+
+    }
+
+    @Override
+    public void callback(Place place, int callbackCode) {
+        Intent intent = new Intent(getApplicationContext(), PlaceDetailsActivity.class);
+        intent.putExtra("toShow", place);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+        finish();
+    }
+
+    @Override
+    public void callback(Place place, ReviewsAdapter.ReviewViewHolder holder, int callbackCode) {
+
+    }
+
+    @Override
+    public void callback(User user, int callbackCode) {
+
+    }
+
+    @Override
+    public void callback(User user, ReviewsAdapter.ReviewViewHolder holder, int callbackCode) {
+
+    }
+
+    @Override
+    public void callback(List<Review> reviews, int callbackCode) {
+
+    }
+
+    @Override
+    public void callback(List<Place> weakList, List<Place> topList, int callbackCode) {
+
+    }
+
+    @Override
+    public void showMessage(String message, int callbackCode) {
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void manageError(Exception e, int callbackCode) {
+        Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+        hider.setVisibility(View.INVISIBLE);
+        bSendReview.setEnabled(true);
     }
 }

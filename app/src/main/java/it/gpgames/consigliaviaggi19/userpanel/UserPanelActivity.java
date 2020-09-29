@@ -7,9 +7,9 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -17,84 +17,63 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.UserProfileChangeRequest;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Objects;
+import java.io.Serializable;
+import java.util.List;
 
-import it.gpgames.consigliaviaggi19.DAO.users.UserData;
+import it.gpgames.consigliaviaggi19.DAO.DAOFactory;
+import it.gpgames.consigliaviaggi19.DAO.DatabaseCallback;
+import it.gpgames.consigliaviaggi19.DAO.PlaceDAO;
+import it.gpgames.consigliaviaggi19.DAO.ReviewDAO;
+import it.gpgames.consigliaviaggi19.DAO.UserDAO;
+import it.gpgames.consigliaviaggi19.DAO.models.places.Place;
+import it.gpgames.consigliaviaggi19.DAO.models.reviews.Review;
+import it.gpgames.consigliaviaggi19.DAO.models.users.User;
 import it.gpgames.consigliaviaggi19.R;
-import it.gpgames.consigliaviaggi19.home.MainActivity;
 import it.gpgames.consigliaviaggi19.network.NetworkChangeReceiver;
+import it.gpgames.consigliaviaggi19.search.place_details.reviews.ReviewsAdapter;
 
-public class UserPanelActivity extends AppCompatActivity {
+public class UserPanelActivity extends AppCompatActivity implements DatabaseCallback {
 
     public static final int IMGPRV=1;
 
     private static final NetworkChangeReceiver networkChangeReceiver=NetworkChangeReceiver.getNetworkChangeReceiverInstance();
 
-    ImageView bBack;
-    ImageView iUserPicture;
-    TextView tUserDisplayName,nReviews,avgReviews;
-    Button bChangeProfilePicture,bLogout,bResetPassword,bShowReviews;
-
-    UserData currentUserData;
-
-    FirebaseAuth auth = FirebaseAuth.getInstance();
-    FirebaseStorage storage = FirebaseStorage.getInstance();
-    StorageReference storageReference = storage.getReference();
+    private ImageView bBack;
+    private ImageView iUserPicture;
+    private TextView tUserDisplayName,nReviews,avgReviews;
+    private Button bChangeProfilePicture,bLogout,bResetPassword,bShowReviews;
+    private User currentUser;
+    private FirebaseAuth auth = FirebaseAuth.getInstance();
+    private UserDAO userDao = DAOFactory.getDAOInstance().getUserDAO();
+    private PlaceDAO placeDao = DAOFactory.getDAOInstance().getPlaceDAO();
+    private ReviewDAO reviewDao = DAOFactory.getDAOInstance().getReviewDAO();
 
     @Override
     protected void onResume() {
         super.onResume();
-
         IntentFilter filter = new IntentFilter();
         filter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
         registerReceiver(networkChangeReceiver, filter);
-
-        Intent i=getIntent();
-        Bundle bundle=i.getExtras();
-        String uid=(String)bundle.get("Uid");
-        if(uid.equals(auth.getUid()))
+        currentUser = getIntent().getParcelableExtra("userToShow");
+        if(currentUser.getUserID().equals(auth.getUid()))
         {
             bLogout.setVisibility(View.VISIBLE);
             bResetPassword.setVisibility(View.VISIBLE);
             bChangeProfilePicture.setVisibility(View.VISIBLE);
         }
-
-        getUserDataFromUid(uid);
-    }
-
-    private void getUserDataFromUid(String uid) {
-        FirebaseFirestore.getInstance().collection("userPool").whereEqualTo("userID",uid).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if(task.isSuccessful())
-                {
-                    QuerySnapshot result = task.getResult();
-                    currentUserData=result.toObjects(UserData.class).get(0);
-                    loadViewWithUserData();
-                }
-            }
-        });
+        loadCurrentUserOnView();
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_panel);
-
         bResetPassword = findViewById(R.id.reset_password_button);
         bBack=findViewById(R.id.back2);
         bChangeProfilePicture=findViewById(R.id.change_image_button);
@@ -133,7 +112,7 @@ public class UserPanelActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 FirebaseAuth.getInstance().signOut();
-                UserData.setLocalInstance(null);
+                User.setLocalInstance(null);
             }
         });
 
@@ -153,15 +132,17 @@ public class UserPanelActivity extends AppCompatActivity {
         });
 
         bShowReviews.setOnClickListener(new View.OnClickListener(){
-
             @Override
             public void onClick(View v) {
-                Intent i=new Intent(getApplicationContext(),ShowUserReviewsActivity.class);
-                i.putExtra("id", currentUserData.getUserID());
-                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(i);
+                reviewDao.getReviewsByUserID(currentUser.getUserID(),UserPanelActivity.this, 0);
             }
         });
+    }
+
+    private void loadCurrentUserOnView(){
+        tUserDisplayName.setText(currentUser.getDisplayName());
+        nReviews.setText(String.valueOf(currentUser.getnReview()));
+        avgReviews.setText(String.valueOf(currentUser.getAvgReview()));
     }
 
     @Override
@@ -179,83 +160,17 @@ public class UserPanelActivity extends AppCompatActivity {
             }
     }
 
-    /**Carica il media selezionato dalla galleria (in jpeg) sul FirebaseStorage.*/
+    /**Passa il media ottenuto dalla galleria (onActivityResult) all'UserDAO per l'update.*/
     private void uploadUserPicture(Bitmap pic)
     {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         pic.compress(Bitmap.CompressFormat.JPEG, 100, baos);
         byte[] data = baos.toByteArray();
-        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        final StorageReference userProfileImagesRef = storageReference.child("Users/Avatars/avatar_"+
-                uid+".jpg");
-
         bChangeProfilePicture.setEnabled(false);
         bResetPassword.setEnabled(false);
         bLogout.setEnabled(false);
-
-        UploadTask uploadTask = userProfileImagesRef.putBytes(data);
-
-        Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
-            @Override
-            public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
-                if (!task.isSuccessful()) {
-                    Toast.makeText(getApplicationContext(),"Si prega di riprovare, l'upload non è andato a buon fine!",Toast.LENGTH_SHORT).show();
-                    throw task.getException();
-                }
-                return userProfileImagesRef.getDownloadUrl();
-            }
-        }).addOnCompleteListener(new OnCompleteListener<Uri>() {
-            @Override
-            public void onComplete(@NonNull Task<Uri> task) {
-                if (task.isSuccessful()) {
-                    Uri downloadUri = task.getResult();
-                    if (downloadUri == null){
-                        Toast.makeText(getApplicationContext(), "Si prega di riprovare, l'upload non è andato a buon fine!", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                    else {
-                        updateUserPictureAfterUpload(downloadUri);
-
-                    }
-                }
-            }
-        });
-    }
-
-    /**Aggiorna l'immagine dell'utente dall'URI del FirebaseStorage dopo averla reimpostata.*/
-    private void updateUserPictureAfterUpload(Uri uri){
-        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                .setPhotoUri(uri)
-                .build();
-
-        Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).updateProfile(profileUpdates)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            Toast.makeText(UserPanelActivity.this, "La tua foto profilo è stata aggiornata!", Toast.LENGTH_SHORT).show();
-                            Intent backToMain = new Intent(getApplicationContext(), MainActivity.class);
-                            startActivity(backToMain);
-                            finish();
-                        }
-                    }
-                });
-    }
-
-    private void loadViewWithUserData()
-    {
-        FirebaseStorage.getInstance().getReference().child("Users/Avatars/avatar_"+currentUserData.getUserID()+".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-            @Override
-            public void onSuccess(Uri uri) {
-                if(uri!=null)
-                    Glide.with(getApplicationContext())
-                            .load(uri.toString())
-                            .into(iUserPicture);
-            }
-        });
-        tUserDisplayName.setText(currentUserData.getDisplayName());
-        nReviews.setText(String.valueOf(currentUserData.getnReview()));
-        avgReviews.setText(String.valueOf(currentUserData.getAvgReview()));
+        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        userDao.setAvatarByID(uid, data, this, 0);
     }
 
     @Override
@@ -264,4 +179,55 @@ public class UserPanelActivity extends AppCompatActivity {
         unregisterReceiver(networkChangeReceiver);
     }
 
+    @Override
+    public void callback(int callbackCode) {
+        finish();
+    }
+
+    @Override
+    public void callback(Place place, int callbackCode) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void callback(Place place, ReviewsAdapter.ReviewViewHolder holder, int callbackCode) {
+    }
+
+    @Override
+    public void callback(User user, int callbackCode) {
+        String uri = user.getAvatar();
+        Log.d("papeo",uri);
+        if(uri!=null) Glide.with(getApplicationContext())
+                .load(uri)
+                .into(iUserPicture);
+    }
+
+    @Override
+    public void callback(User user, ReviewsAdapter.ReviewViewHolder holder, int callbackCode) {
+
+    }
+
+    @Override
+    public void callback(List<Review> reviews, int callbackCode) {
+        Intent i=new Intent(getApplicationContext(),ShowUserReviewsActivity.class);
+        i.putExtra("reviewsToShow",(Serializable) reviews);
+        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(i);
+    }
+
+    @Override
+    public void showMessage(String message, int callbackCode) {
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void callback(List<Place> weakList, List<Place> topList, int callbackCode) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void manageError(Exception e, int callbackCode) {
+        Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+        finish();
+    }
 }

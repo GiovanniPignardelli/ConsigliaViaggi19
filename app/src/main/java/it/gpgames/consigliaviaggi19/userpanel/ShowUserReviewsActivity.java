@@ -1,40 +1,37 @@
 package it.gpgames.consigliaviaggi19.userpanel;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QuerySnapshot;
-
-import java.util.ArrayList;
 import java.util.List;
 
+import it.gpgames.consigliaviaggi19.DAO.DAOFactory;
+import it.gpgames.consigliaviaggi19.DAO.DatabaseCallback;
+import it.gpgames.consigliaviaggi19.DAO.PlaceDAO;
+import it.gpgames.consigliaviaggi19.DAO.UserDAO;
+import it.gpgames.consigliaviaggi19.DAO.models.users.User;
 import it.gpgames.consigliaviaggi19.R;
-import it.gpgames.consigliaviaggi19.DAO.places.Hotel;
-import it.gpgames.consigliaviaggi19.DAO.places.Place;
-import it.gpgames.consigliaviaggi19.DAO.places.Restaurant;
-import it.gpgames.consigliaviaggi19.DAO.places.Review;
+import it.gpgames.consigliaviaggi19.DAO.models.places.Place;
+import it.gpgames.consigliaviaggi19.DAO.models.reviews.Review;
 import it.gpgames.consigliaviaggi19.search.place_details.PlaceDetailsActivity;
 import it.gpgames.consigliaviaggi19.search.place_details.reviews.ReviewsAdapter;
 
-public class ShowUserReviewsActivity extends AppCompatActivity implements ReviewsAdapter.RecyclerGetter{
-    RecyclerView recyclerView;
-    ReviewsAdapter reviewsAdapter;
-    String userID;
-    ImageView back;
+public class ShowUserReviewsActivity extends AppCompatActivity implements ReviewsAdapter.RecyclerGetter, DatabaseCallback {
+
+    private RecyclerView recyclerView;
+    private ReviewsAdapter reviewsAdapter;
+    private String userID;
+    private ImageView back;
+    private UserDAO userDao = DAOFactory.getDAOInstance().getUserDAO();
+    private PlaceDAO placeDao = DAOFactory.getDAOInstance().getPlaceDAO();
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,29 +43,10 @@ public class ShowUserReviewsActivity extends AppCompatActivity implements Review
 
     private void init()
     {
-        userID=getIntent().getStringExtra("id");
-        if(userID==null)
-        {
-            Toast.makeText(getApplicationContext(),"Errore nel caricamento delle reviews. Riprovare.", Toast.LENGTH_LONG).show();
-            finish();
-        }
-
-        Log.d("query", "sto per cercare l'utente con id:"+userID);
-        FirebaseFirestore.getInstance().collection("reviewPool").whereEqualTo("userId",userID).orderBy("year", Query.Direction.ASCENDING).orderBy("month", Query.Direction.ASCENDING).orderBy("day", Query.Direction.ASCENDING).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if(task.isSuccessful())
-                {
-                    List<Review> reviewList=task.getResult().toObjects(Review.class);
-
-                    reviewsAdapter=new ReviewsAdapter(ShowUserReviewsActivity.this, reviewList, ShowUserReviewsActivity.this, ReviewsAdapter.FLAG_PLACE);
-                    recyclerView.setAdapter(reviewsAdapter);
-                    recyclerView.setLayoutManager(new LinearLayoutManager(ShowUserReviewsActivity.this, RecyclerView.VERTICAL, false));
-                }
-                else
-                    Log.d("query","Errore query in ShowUserReviewsActivity. "+task.getException().getMessage());
-            }
-        });
+        List<Review> reviews = (List<Review>) getIntent().getSerializableExtra("reviewsToShow");
+        reviewsAdapter=new ReviewsAdapter(ShowUserReviewsActivity.this, reviews, ShowUserReviewsActivity.this, ReviewsAdapter.FLAG_PLACE);
+        recyclerView.setAdapter(reviewsAdapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(ShowUserReviewsActivity.this, RecyclerView.VERTICAL, false));
 
         back.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -84,43 +62,67 @@ public class ShowUserReviewsActivity extends AppCompatActivity implements Review
     }
 
     @Override
-    public void show(String id) {
+    public void show(String id, int flag) {
 
-        FirebaseFirestore.getInstance().collection("places").document(id).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if(task.isSuccessful())
-                {
-                    Place toShow;
-                    DocumentSnapshot document=task.getResult();
-                    if(document.toObject(Place.class).getCategory().equals(Place.CATEGORY_RESTAURANT))
-                    {
-                        Log.d("gen", "sto generando ristorante");
-                        Restaurant rest=new Restaurant(document.toObject(Place.class), (ArrayList<String>) document.get("cuisineTags"),(ArrayList<String>)document.get("serviceTags"), document.getId());
-                        toShow=rest;
-                    }
-                    else if(document.toObject(Place.class).getCategory().equals(Place.CATEGORY_HOTEL))
-                    {
-                        Log.d("gen", "sto generando hotel");
-                        Hotel hotel=new Hotel(document.toObject(Place.class),  document.get("hClass").toString(), (ArrayList<String>) document.get("roomTags"), (ArrayList<String>) document.get("roomTypeTags"),document.getId());
-                        toShow=hotel;
-                    }
-                    else
-                    {
-                        Log.d("gen", "sto generando place");
-                        Place place=new Place(document.toObject(Place.class), document.getId());
-                        toShow=place;
-                    }
+        switch(flag) {
+            case ReviewsAdapter.FLAG_PLACE:
+                placeDao.getPlaceByID(id, this, 0);
+                break;
 
-                    Intent intent = new Intent(getApplicationContext(), PlaceDetailsActivity.class);
-                    intent.putExtra("toShow", toShow);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    getApplicationContext().startActivity(intent);
-                }
-                else
-                    Log.d("query","Errore query in ShowUserReviewsActivity");
-            }
-        });
+            case ReviewsAdapter.FLAG_USER:
+                userDao.getUserByID(id, this, 0);
+                break;
+        }
+    }
+
+    @Override
+    public void callback(int callbackCode) {
+
+    }
+
+    @Override
+    public void callback(Place place, int callbackCode) {
+        Intent intent = new Intent(getApplicationContext(), PlaceDetailsActivity.class);
+        intent.putExtra("toShow", place);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        getApplicationContext().startActivity(intent);
+    }
+
+    @Override
+    public void callback(Place place, ReviewsAdapter.ReviewViewHolder holder, int callbackCode) {
+
+    }
+
+    @Override
+    public void callback(User user, int callbackCode) {
+        Intent intent = new Intent(getApplicationContext(), UserPanelActivity.class);
+        intent.putExtra("userToShow", user);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        getApplicationContext().startActivity(intent);
+    }
+
+    @Override
+    public void callback(User user, ReviewsAdapter.ReviewViewHolder holder, int callbackCode) {
+
+    }
+
+    @Override
+    public void callback(List<Review> reviews, int callbackCode) {
+
+    }
+
+    @Override
+    public void callback(List<Place> weakList, List<Place> topList, int callbackCode) {
+
+    }
+
+    @Override
+    public void showMessage(String message, int callbackCode) {
+
+    }
+
+    @Override
+    public void manageError(Exception e, int callbackCode) {
 
     }
 }
