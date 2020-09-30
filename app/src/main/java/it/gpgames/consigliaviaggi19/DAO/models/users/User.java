@@ -30,7 +30,7 @@ public class User implements Parcelable {
     private Float avgReview;
     private String registerDate;
 
-    public User(String displayName, String email, String userID, boolean isBlacklisted, Integer nReview, Float avgReview, String registerDate) {
+    public User(String displayName, String email, String userID, boolean isBlacklisted, Integer nReview, Float avgReview, String registerDate,String avatar) {
         this.displayName = displayName;
         this.email = email;
         this.userID = userID;
@@ -38,6 +38,7 @@ public class User implements Parcelable {
         this.nReview = nReview;
         this.avgReview = avgReview;
         this.registerDate = registerDate;
+        this.avatar=avatar;
     }
 
     private static User localInstance;
@@ -111,6 +112,7 @@ public class User implements Parcelable {
         userID = in.readString();
         nReview = in.readInt();
         avgReview = in.readFloat();
+        avatar=in.readString();
     }
 
     public static final Creator<User> CREATOR = new Creator<User>() {
@@ -138,6 +140,7 @@ public class User implements Parcelable {
         dest.writeString(userID);
         dest.writeInt(nReview);
         dest.writeFloat(avgReview);
+        dest.writeString(avatar);
     }
 
     /**La classe UserDataUpdate implementa Runnable. Viene avviato su un Thread secondario per
@@ -185,12 +188,6 @@ public class User implements Parcelable {
 
     void setUserID(String userID) {
         this.userID = userID;
-    }
-
-
-    public void downloadUserDataFromFirebase(){
-        ExecutorService executor = Executors.newFixedThreadPool(1);
-        executor.execute(new UserDataUpdater());
     }
 
 }

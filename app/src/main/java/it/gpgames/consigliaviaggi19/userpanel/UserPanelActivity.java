@@ -55,22 +55,6 @@ public class UserPanelActivity extends AppCompatActivity implements DatabaseCall
     private ReviewDAO reviewDao = DAOFactory.getDAOInstance().getReviewDAO();
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        IntentFilter filter = new IntentFilter();
-        filter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
-        registerReceiver(networkChangeReceiver, filter);
-        currentUser = getIntent().getParcelableExtra("userToShow");
-        if(currentUser.getUserID().equals(auth.getUid()))
-        {
-            bLogout.setVisibility(View.VISIBLE);
-            bResetPassword.setVisibility(View.VISIBLE);
-            bChangeProfilePicture.setVisibility(View.VISIBLE);
-        }
-        loadCurrentUserOnView();
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_panel);
@@ -86,6 +70,25 @@ public class UserPanelActivity extends AppCompatActivity implements DatabaseCall
         bShowReviews=findViewById(R.id.show_user_review_button);
         initListeners();
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
+        registerReceiver(networkChangeReceiver, filter);
+
+        currentUser = getIntent().getParcelableExtra("userToShow");
+        if(currentUser.getUserID().equals(auth.getUid()))
+        {
+            bLogout.setVisibility(View.VISIBLE);
+            bResetPassword.setVisibility(View.VISIBLE);
+            bChangeProfilePicture.setVisibility(View.VISIBLE);
+        }
+        loadCurrentUserOnView();
+    }
+
+
 
     /**Inizializza i Listeners dell'UserPanelActivity:
      * OnClickListener(bBack): button per tornare alla MainActivity;
@@ -143,6 +146,10 @@ public class UserPanelActivity extends AppCompatActivity implements DatabaseCall
         tUserDisplayName.setText(currentUser.getDisplayName());
         nReviews.setText(String.valueOf(currentUser.getnReview()));
         avgReviews.setText(String.valueOf(currentUser.getAvgReview()));
+        if(currentUser.getAvatar()!=null) Glide.with(getApplicationContext())
+                .load(currentUser.getAvatar())
+                .into(iUserPicture);
+
     }
 
     @Override
@@ -191,20 +198,17 @@ public class UserPanelActivity extends AppCompatActivity implements DatabaseCall
 
     @Override
     public void callback(Place place, ReviewsAdapter.ReviewViewHolder holder, int callbackCode) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public void callback(User user, int callbackCode) {
-        String uri = user.getAvatar();
-        Log.d("papeo",uri);
-        if(uri!=null) Glide.with(getApplicationContext())
-                .load(uri)
-                .into(iUserPicture);
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public void callback(User user, ReviewsAdapter.ReviewViewHolder holder, int callbackCode) {
-
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override

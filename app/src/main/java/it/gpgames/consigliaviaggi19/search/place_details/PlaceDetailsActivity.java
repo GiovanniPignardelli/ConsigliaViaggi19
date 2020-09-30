@@ -40,7 +40,9 @@ import java.util.List;
 
 import it.gpgames.consigliaviaggi19.DAO.DAOFactory;
 import it.gpgames.consigliaviaggi19.DAO.DatabaseCallback;
+import it.gpgames.consigliaviaggi19.DAO.PlaceDAO;
 import it.gpgames.consigliaviaggi19.DAO.ReviewDAO;
+import it.gpgames.consigliaviaggi19.DAO.UserDAO;
 import it.gpgames.consigliaviaggi19.DAO.models.users.User;
 import it.gpgames.consigliaviaggi19.R;
 import it.gpgames.consigliaviaggi19.network.NetworkChangeReceiver;
@@ -88,7 +90,8 @@ public class PlaceDetailsActivity extends AppCompatActivity implements ReviewsAd
     public static final int REVIEW_BACK_CODE=1;
 
     private ReviewDAO reviewDao = DAOFactory.getDAOInstance().getReviewDAO();
-    NetworkChangeReceiver networkChangeReceiver=NetworkChangeReceiver.getNetworkChangeReceiverInstance();
+    private UserDAO userDao = DAOFactory.getDAOInstance().getUserDAO();
+    private NetworkChangeReceiver networkChangeReceiver=NetworkChangeReceiver.getNetworkChangeReceiverInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -308,13 +311,12 @@ public class PlaceDetailsActivity extends AppCompatActivity implements ReviewsAd
 
     @Override
     public void show(String id, int flag) {
-
-    }
-
-    public void show(String userUid) {
-        Intent i=new Intent(this, UserPanelActivity.class);
-        i.putExtra("Uid",userUid);
-        startActivity(i);
+        switch (flag)
+        {
+            case ReviewsAdapter.FLAG_USER:
+                userDao.getUserByID(id,this,null,0);
+                break;
+        }
     }
 
     @Override
@@ -334,7 +336,10 @@ public class PlaceDetailsActivity extends AppCompatActivity implements ReviewsAd
 
     @Override
     public void callback(User user, int callbackCode) {
-
+        Intent i=new Intent(this, UserPanelActivity.class);
+        i.putExtra("userToShow",user);
+        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(i);
     }
 
     @Override

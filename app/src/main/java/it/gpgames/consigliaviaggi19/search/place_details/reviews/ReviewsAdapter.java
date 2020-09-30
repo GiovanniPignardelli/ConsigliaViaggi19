@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -123,7 +124,7 @@ public class ReviewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     @Override
     public void callback(Place place, int callbackCode) {
-
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
@@ -133,7 +134,7 @@ public class ReviewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     @Override
     public void callback(User user, int callbackCode) {
-
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
@@ -143,22 +144,22 @@ public class ReviewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     @Override
     public void callback(List<Review> reviews, int callbackCode) {
-
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public void callback(List<Place> weakList, List<Place> topList, int callbackCode) {
-
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public void showMessage(String message, int callbackCode) {
-
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public void manageError(Exception e, int callbackCode) {
-
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     public class ReviewViewHolder extends RecyclerView.ViewHolder {
@@ -191,6 +192,7 @@ public class ReviewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         public void onClick(final View view) {
             int itemPosition = activity.getReviewsRecyclerView().getChildLayoutPosition(view);
             String userID= reviewsList.get(itemPosition).getUserId();
+
             activity.show(userID, FLAG_USER);
         }
     }
@@ -202,14 +204,15 @@ public class ReviewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         public void onClick(View v) {
             int itemPosition = activity.getReviewsRecyclerView().getChildAdapterPosition(v);
             String placeID = reviewsList.get(itemPosition).getPlaceId();
+            Log.d("click","Sto per mostrare una struttura");
             activity.show(placeID, FLAG_PLACE);
         }
     }
 
     public interface RecyclerGetter
     {
-        public RecyclerView getReviewsRecyclerView();
-        public void show(String id, int flag);
+        RecyclerView getReviewsRecyclerView();
+        void show(String id, int flag);
     }
 }
 

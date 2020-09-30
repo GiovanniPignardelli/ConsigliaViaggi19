@@ -47,7 +47,7 @@ public class PlaceFirebaseDAO implements PlaceDAO {
         });
     }
 
-    Place generatePlace(DocumentSnapshot result) {
+    static Place generatePlace(DocumentSnapshot result) {
         Place toObject=result.toObject(Place.class);
         if(toObject.getCategory().equals(Place.CATEGORY_RESTAURANT))
             return new Restaurant(toObject, (ArrayList<String>) result.get("cuisineTags"),(ArrayList<String>)result.get("serviceTags"), result.getId());

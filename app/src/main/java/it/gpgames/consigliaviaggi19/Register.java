@@ -93,7 +93,7 @@ public class Register extends AppCompatActivity {
                             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
                             String dateString=date.format(formatter);
 
-                            User user=new User(username, email, FirebaseAuth.getInstance().getUid(),false,new Integer(0),new Float(0),dateString);
+                            User user=new User(username, email, FirebaseAuth.getInstance().getUid(),false,new Integer(0),new Float(0),dateString,null);
                             FirebaseFirestore.getInstance().collection("userPool").add(user);
                             Toast.makeText(getApplicationContext(), "Ricorda di verificare la tua mail.", Toast.LENGTH_LONG).show();
                             startActivity(new Intent(Register.this, MainActivity.class));

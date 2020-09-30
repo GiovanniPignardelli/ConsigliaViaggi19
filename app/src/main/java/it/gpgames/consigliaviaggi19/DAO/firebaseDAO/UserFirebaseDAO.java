@@ -39,6 +39,7 @@ public class UserFirebaseDAO implements UserDAO {
                 {
                     if(task.getResult().size()>1)   Log.d("query", "E' stato trovato più di un utente con id: "+userID+". Verrà restituito il primo.");
                     User toShow=task.getResult().toObjects(User.class).get(0);
+                    Log.d("query", "ho trovato un utente");
                     if(holder!=null) callback.callback(toShow, holder, callbackCode);
                     else callback.callback(toShow, callbackCode);
                 }

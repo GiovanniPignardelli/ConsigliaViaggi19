@@ -21,6 +21,7 @@ import java.util.List;
 import it.gpgames.consigliaviaggi19.DAO.DAOFactory;
 import it.gpgames.consigliaviaggi19.DAO.DatabaseCallback;
 import it.gpgames.consigliaviaggi19.DAO.DatabaseUtilities;
+import it.gpgames.consigliaviaggi19.DAO.PlaceDAO;
 import it.gpgames.consigliaviaggi19.DAO.ReviewDAO;
 import it.gpgames.consigliaviaggi19.DAO.models.places.Place;
 import it.gpgames.consigliaviaggi19.DAO.models.reviews.Review;
@@ -84,39 +85,54 @@ public class ReviewFirebaseDAO implements ReviewDAO {
 
 
     public void createReview(final Review review, final DatabaseCallback callback, final int callbackCode){
-        dbRef.collection("reviewPool")
-                .add(review)
-                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                    @Override
-                    public void onSuccess(DocumentReference documentReference) {
-                        Log.d("UploadReview", "Review caricata.");
-                        refreshStats(review, callback, callbackCode);
-                        callback.showMessage("Recensione inviata", callbackCode);
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.d("UploadReview", "Qualcosa è andato storto");
-                        callback.manageError(e, callbackCode);
-                    }
-                });
+        dbRef.collection("reviewPool").add(review).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentReference> task) {
+                if(task.isSuccessful())
+                {
+                    Log.d("UploadReview", "Review caricata.");
+                    refreshStats(review, callback, callbackCode);
+                    callback.showMessage("Recensione inviata", callbackCode);
+                }
+                else
+                {
+                    Log.d("UploadReview", "Qualcosa è andato storto");
+                    callback.manageError(task.getException(), callbackCode);
+                }
+            }
+        });
     }
 
     private void refreshStats(final Review review, final DatabaseCallback callback, final int callbackCode) {
         FirebaseFirestore.getInstance().collection("userPool").whereEqualTo("userID", FirebaseAuth.getInstance().getUid()).limit(1).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if(task.isSuccessful())
-                {
+                if (task.isSuccessful()) {
                     User user = task.getResult().toObjects(User.class).get(0);
-                    String documentID=task.getResult().getDocuments().get(0).getId();
-                    Integer oldNum=user.getnReview();
-                    Float oldAvg=user.getAvgReview();
-                    FirebaseFirestore.getInstance().collection("userPool").document(documentID).update("nReview",oldNum+1);
-                    FirebaseFirestore.getInstance().collection("userPool").document(documentID).update("avgReview", ((oldAvg+review.getRating())/(oldNum+1)));
-                }
+                    final String documentID = task.getResult().getDocuments().get(0).getId();
+                    final Integer oldNum = user.getnReview();
+                    FirebaseFirestore.getInstance().collection("userPool").document(documentID).update("nReview", oldNum + 1);
 
+                    FirebaseFirestore.getInstance().collection("reviewPool").whereEqualTo("userId", user.getUserID()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if(task.isSuccessful())
+                            {
+                                int sum = 0;
+                                for (QueryDocumentSnapshot doc : task.getResult()) {
+                                    sum += doc.toObject(Review.class).getRating();
+                                }
+                                FirebaseFirestore.getInstance().collection("userPool").document(documentID).update("avgReview", sum / (oldNum + 1));
+                            }
+                            else
+                                Log.d("query",task.getException().getMessage());
+
+                        }
+                    });
+
+                }
+                else
+                    Log.d("query",task.getException().getMessage());
             }
         });
 
@@ -124,22 +140,54 @@ public class ReviewFirebaseDAO implements ReviewDAO {
         FirebaseFirestore.getInstance().collection("places").document(review.getPlaceId()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if(task.isSuccessful()) {
+                if (task.isSuccessful()) {
                     PlaceFirebaseDAO placeFDao = (PlaceFirebaseDAO) DAOFactory.getDAOInstance().getPlaceDAO();
-                    Place place = placeFDao.generatePlace(task.getResult());
-                    Integer oldNum = place.getnReviews();
-                    Float oldAvg = place.getAvgReview();
-                    Float newAvg = (oldAvg + review.getRating()) / (oldNum + 1);
-                    Log.d("Fratello",oldNum.toString());
-                    Log.d("Fratello",oldAvg.toString());
-                    Log.d("Fratello",newAvg.toString());
+                    final Place place = PlaceFirebaseDAO.generatePlace(task.getResult());
+                    final Integer oldNum = place.getnReviews();
                     FirebaseFirestore.getInstance().collection("places").document(place.getDbDocID()).update("nReviews", oldNum + 1);
-                    FirebaseFirestore.getInstance().collection("places").document(place.getDbDocID()).update("avgReview", newAvg);
-                    callback.callback(place, callbackCode);
+
+                    FirebaseFirestore.getInstance().collection("reviewPool").whereEqualTo("placeId", place.getDbDocID()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if(task.isSuccessful()) {
+                                int sum = 0;
+                                for (QueryDocumentSnapshot doc : task.getResult()) {
+                                    Log.d("sum", doc.toObject(Review.class).getRating().toString());
+                                    sum += doc.toObject(Review.class).getRating();
+                                }
+                                Log.d("sum_", String.valueOf(oldNum + 1));
+                                FirebaseFirestore.getInstance().collection("places").document(place.getDbDocID()).update("avgReview", sum / (oldNum + 1)).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if (task.isSuccessful()) {
+                                            FirebaseFirestore.getInstance().collection("places").document(place.getDbDocID()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                    Place toShow = PlaceFirebaseDAO.generatePlace(task.getResult());
+                                                    callback.callback(toShow, callbackCode);
+                                                }
+                                            });
+
+                                        } else {
+                                            Log.d("query", task.getException().getMessage());
+                                            callback.manageError(task.getException(), 0);
+                                        }
+
+                                    }
+                                });
+
+
+                            }
+                            else
+                            {
+                                Log.d("query",task.getException().getMessage());
+                            }
+                        }
+                    }
+                    );
                 }
-                else{
-                    callback.manageError(task.getException(),0);
-                }
+                else
+                Log.d("query",task.getException().getMessage());
             }
         });
     }
@@ -150,9 +198,6 @@ public class ReviewFirebaseDAO implements ReviewDAO {
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if(task.isSuccessful())
                 {
-                    for(QueryDocumentSnapshot doc : task.getResult()){
-                        Log.d("fratm",doc.toObject(Review.class).getPlaceId());
-                    }
                     callback.callback(task.getResult().toObjects(Review.class),1);
                 }
                 else
