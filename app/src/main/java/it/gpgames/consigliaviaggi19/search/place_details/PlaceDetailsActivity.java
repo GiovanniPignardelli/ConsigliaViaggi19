@@ -22,8 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.storage.FirebaseStorage;
+
 import com.google.firebase.storage.ListResult;
 import com.google.firebase.storage.StorageReference;
 import com.smarteist.autoimageslider.IndicatorView.animation.type.IndicatorAnimationType;
@@ -191,10 +190,9 @@ public class PlaceDetailsActivity extends AppCompatActivity implements ReviewsAd
     private void init()
     {
         initListeners();
-        initPlaceSlider();
+        startSliderAdapter(toShow.getPictures());
         refreshReviews();
         checkIfReviewExists();
-
 
         title.setText(toShow.getName());
         List<Pair<Integer,String>> info=new ArrayList<>();
@@ -246,32 +244,6 @@ public class PlaceDetailsActivity extends AppCompatActivity implements ReviewsAd
     /**Metodo che aggiorna le review relative alla struttura. Esegue un controllo sui valori attuali degli attributi actualOrder e actualSort per effettuare la query*/
     private void refreshReviews() {
         reviewDao.getReviewsByPlaceID(toShow.getDbDocID(),PlaceDetailsActivity.this, actualSort, actualOrder, CALLBACK_REFRESH_REVIEWS);
-    }
-
-    /**Inizializza lo slider delle immagini della struttura recuperandole dal database*/
-    private void initPlaceSlider() {
-        final List<String> urls=new ArrayList<String>();
-        FirebaseStorage storage = FirebaseStorage.getInstance();
-        StorageReference storageReference = storage.getReference();
-        storageReference.child("Places/Pictures/" + toShow.getDbDocID()).listAll().addOnSuccessListener(new OnSuccessListener<ListResult>() {
-            @Override
-            public void onSuccess(ListResult listResult) {
-                List<StorageReference> list=listResult.getItems();
-                final Integer itemsToGet = list.size();
-                for(StorageReference ref: list)
-                {
-                    ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                        @Override
-                        public void onSuccess(Uri uri) {
-                            urls.add(uri.toString());
-                            if(urls.size() == itemsToGet){
-                                startSliderAdapter(urls);
-                            }
-                        }
-                    });
-                }
-            }
-        });
     }
 
     /** Avvia lo slider per le immagini della struttura visualizzata.*/

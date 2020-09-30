@@ -18,7 +18,6 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -49,7 +48,6 @@ public class UserPanelActivity extends AppCompatActivity implements DatabaseCall
     private TextView tUserDisplayName,nReviews,avgReviews;
     private Button bChangeProfilePicture,bLogout,bResetPassword,bShowReviews;
     private User currentUser;
-    private FirebaseAuth auth = FirebaseAuth.getInstance();
     private UserDAO userDao = DAOFactory.getDAOInstance().getUserDAO();
     private PlaceDAO placeDao = DAOFactory.getDAOInstance().getPlaceDAO();
     private ReviewDAO reviewDao = DAOFactory.getDAOInstance().getReviewDAO();
@@ -80,7 +78,7 @@ public class UserPanelActivity extends AppCompatActivity implements DatabaseCall
         registerReceiver(networkChangeReceiver, filter);
 
         currentUser = getIntent().getParcelableExtra("userToShow");
-        if(currentUser.getUserID().equals(auth.getUid()))
+        if(currentUser.getUserID().equals(User.getLocalInstance().getUserID()))
         {
             bLogout.setVisibility(View.VISIBLE);
             bResetPassword.setVisibility(View.VISIBLE);
@@ -122,15 +120,7 @@ public class UserPanelActivity extends AppCompatActivity implements DatabaseCall
         bResetPassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                auth.sendPasswordResetEmail(User.getLocalInstance().getEmail())
-                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if (task.isSuccessful()) {
-                                    Toast.makeText(getApplicationContext(),"Richiesto reset della password. Controlla la casella di posta elettronica.",Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        });
+                loginDao.resetPasswordRequest(UserPanelActivity.this,2);
             }
         });
 
@@ -194,6 +184,9 @@ public class UserPanelActivity extends AppCompatActivity implements DatabaseCall
                 break;
             case 1:
                 User.setLocalInstance(null);
+                break;
+            case 2:
+                Toast.makeText(getApplicationContext(),"Reset Password: controlla la casella di posta elettronica.",Toast.LENGTH_SHORT).show();
                 break;
         }
     }

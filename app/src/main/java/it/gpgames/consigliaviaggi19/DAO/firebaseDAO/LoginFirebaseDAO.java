@@ -54,6 +54,20 @@ public class LoginFirebaseDAO implements LoginDAO {
     }
 
     @Override
+    public void resetPasswordRequest(final DatabaseCallback callback, final int callbackCode) {
+        fAuth.sendPasswordResetEmail(User.getLocalInstance().getEmail())
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            callback.callback(callbackCode);
+                        }
+                        else callback.manageError(task.getException(),callbackCode);
+                    }
+                });
+    }
+
+    @Override
     public void isTokenExpired(final DatabaseCallback callback, final int callbackCode) {
         // Inizializzazione listener sullo stato di autenticazione. In caso di scadenza token, il listener si attiva.
         FirebaseAuth.getInstance().addAuthStateListener(new FirebaseAuth.AuthStateListener() {

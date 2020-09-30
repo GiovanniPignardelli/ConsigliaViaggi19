@@ -13,8 +13,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.storage.FirebaseStorage;
+
 import com.google.firebase.storage.StorageReference;
 
 import java.util.List;
@@ -55,36 +56,10 @@ public class QueryResultsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         holder.title.setText(holdingPlace.getName());
         holder.nReviews.setText(holdingPlace.getnReviews().toString());
         holder.rating.setRating(holdingPlace.getAvgReview());
-
-        FirebaseStorage storage = FirebaseStorage.getInstance();
-        StorageReference storageReference = storage.getReference();
-        storageReference.child("Places/Pictures/"+holdingPlace.getDbDocID()+"/main.jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-            @Override
-            public void onSuccess(final Uri uri) {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Bitmap bitmap= HomeSliderItemsGetter.getBitmapFromURL( uri.toString() );
-                        updateQueryImage(bitmap, holder);
-                    }
-                }).start();
-            }
-        });
-
+        Glide.with(holder.itemView.getContext()).load(holdingPlace.getPictures().get(0)).into(holder.image);
         holder.location.setText(holdingPlace.getAddress()+", "+holdingPlace.getCity()+", "+holdingPlace.getState());
 
     }
-
-    private void updateQueryImage(final Bitmap bitmap, final ResultsViewHolder holder)
-    {
-        activity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                holder.image.setImageBitmap(bitmap);
-            }
-        });
-    }
-
 
     @Override
     public int getItemCount() {

@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.storage.FirebaseStorage;
+
 
 import java.util.List;
 
@@ -82,18 +82,11 @@ public class ReviewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         {
             case FLAG_PLACE:
                 placeDao.getPlaceByID(actualReview.getPlaceId(), ReviewsAdapter.this, holder,0);
-
-                FirebaseStorage.getInstance().getReference().child("Places").child("Pictures").child(actualReview.getPlaceId()).child("main.jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                    @Override
-                    public void onSuccess(Uri uri) {
-                        if(uri!=null)
-                            Glide.with(context).load(uri).into(holder.userImage);
-                    }
-                });
                 break;
 
             case FLAG_USER:
                 userDao.getUserByID(actualReview.getUserId(),this,holder, 0);
+                break;
         }
 
         holder.reviewDate.setText(actualReview.getDate());
@@ -117,6 +110,7 @@ public class ReviewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     @Override
     public void callback(Place place, ReviewViewHolder holder, int callbackCode) {
         holder.userName.setText(place.getName());
+        Glide.with(context).load(place.getPictures().get(0)).into(holder.userImage);
     }
 
     @Override

@@ -12,6 +12,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
+
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -26,8 +27,7 @@ import it.gpgames.consigliaviaggi19.search.place_details.reviews.ReviewsAdapter;
 public class UserFirebaseDAO implements UserDAO {
 
     FirebaseFirestore dbRef = FirebaseFirestore.getInstance();
-    private StorageReference storageRef = FirebaseStorage.getInstance().getReference();
-
+    StorageReference stoRef = FirebaseStorage.getInstance().getReference();
 
     public void getUserByID(final String userID, final DatabaseCallback callback, final ReviewsAdapter.ReviewViewHolder holder, final int callbackCode)
     {
@@ -52,7 +52,7 @@ public class UserFirebaseDAO implements UserDAO {
     }
 
     public void setAvatarByID(final String uid, byte[] data, final DatabaseCallback callback, final int callbackCode){
-        final StorageReference userProfileImagesRef = storageRef.child("Users/Avatars/avatar_"+
+        final StorageReference userProfileImagesRef = stoRef.child("Users/Avatars/avatar_"+
                 uid+".jpg");
         UploadTask uploadTask = userProfileImagesRef.putBytes(data);
         Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
