@@ -17,7 +17,8 @@ import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.Toast;
 
-import com.firebase.geofire.GeoFire;
+
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -62,7 +63,6 @@ public class MainActivity extends AppCompatActivity implements DatabaseCallback 
     private ImageView bUserPanel;
     private SearchView svSearchPlaces;
     private static String lastSearchString;
-    private static GeoFire geoFire = null;
     private UserDAO userDao = DAOFactory.getDAOInstance().getUserDAO();
     private PlaceDAO placeDao = DAOFactory.getDAOInstance().getPlaceDAO();
     private LoginDAO loginDao = DAOFactory.getDAOInstance().getLoginDAO();
@@ -193,13 +193,10 @@ public class MainActivity extends AppCompatActivity implements DatabaseCallback 
         return networkChangeReceiver;
     }
 
-    /**Inizializza il riferimento a GeoFire al relativo pool del RealtimeDatabase (/geofire)*/
-    public static GeoFire getGeofire(){
-        if(geoFire == null){
-            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("geofire");
-            geoFire = new GeoFire(ref);
-        }
-        return geoFire;
+
+    @Override
+    public void callback(Place place, MarkerOptions mOpt, int callbackCode) {
+
     }
 
     @Override

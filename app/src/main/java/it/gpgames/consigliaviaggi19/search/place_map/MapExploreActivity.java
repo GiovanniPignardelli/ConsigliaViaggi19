@@ -9,12 +9,12 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.firebase.geofire.GeoLocation;
-import com.firebase.geofire.LocationCallback;
+
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -31,17 +31,23 @@ import com.google.firebase.database.DatabaseError;
 
 import java.util.List;
 
+import it.gpgames.consigliaviaggi19.DAO.DAOFactory;
+import it.gpgames.consigliaviaggi19.DAO.DatabaseCallback;
+import it.gpgames.consigliaviaggi19.DAO.GeolocationDAO;
+import it.gpgames.consigliaviaggi19.DAO.models.reviews.Review;
 import it.gpgames.consigliaviaggi19.R;
 import it.gpgames.consigliaviaggi19.DAO.models.places.Place;
 import it.gpgames.consigliaviaggi19.home.MainActivity;
 import it.gpgames.consigliaviaggi19.search.place_details.PlaceDetailsActivity;
 import it.gpgames.consigliaviaggi19.DAO.models.users.User;
+import it.gpgames.consigliaviaggi19.search.place_details.reviews.ReviewsAdapter;
 
 public class MapExploreActivity extends AppCompatActivity implements OnMapReadyCallback {
 
-    private class ResultMarkerAdapter
+    private class ResultMarkerAdapter implements DatabaseCallback
     {
         private List<Place> results = resultsToShow;
+        private GeolocationDAO geoDAO = DAOFactory.getDAOInstance().getGeolocationDAO();
 
         public void startAdapter(){
             for(Place p : results){
@@ -50,40 +56,68 @@ public class MapExploreActivity extends AppCompatActivity implements OnMapReadyC
         }
 
         public void createResultMarker(final Place p){
-            MainActivity.getGeofire().getLocation(p.getDbDocID(), new LocationCallback() {
-                @Override
-                public void onLocationResult(String key, GeoLocation location) {
-                    LatLng currentLatLng = new LatLng(location.latitude,location.longitude);
-                    MarkerOptions markerOptions = new MarkerOptions().position(currentLatLng).title(p.getName()).snippet("Media recens.: "+p.getAvgReview().toString());
-                    switch(p.getCategory()){
-                        case Place.CATEGORY_HOTEL: markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.hotelmarker));
-                            break;
-                        case Place.CATEGORY_PLACE: markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.placemarker));
-                            break;
-                        case Place.CATEGORY_RESTAURANT: markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.foodmarker));
-                            break;
-                    }
-                    Marker placeMarker = mMap.addMarker(markerOptions);
-                    placeMarker.setTag(p);
-                    mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
-                        @Override
-                        public void onInfoWindowClick(Marker marker) {
-                            Intent intent = new Intent(MapExploreActivity.this, PlaceDetailsActivity.class);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            intent.putExtra("toShow", (Place) marker.getTag());
-                            MapExploreActivity.this.startActivity(intent);
-                        }
-                    });
-                    placeMarker.showInfoWindow();
-                }
+            geoDAO.getGeolocationByPlace(p,this,0);
+        }
 
+        @Override
+        public void callback(Place p, MarkerOptions markerOptions, int callbackCode) {
+            Marker placeMarker = mMap.addMarker(markerOptions);
+            placeMarker.setTag(p);
+            mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
                 @Override
-                public void onCancelled(DatabaseError databaseError) {
-                    Toast.makeText(MapExploreActivity.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
-                    finish();
+                public void onInfoWindowClick(Marker marker) {
+                    Intent intent = new Intent(MapExploreActivity.this, PlaceDetailsActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.putExtra("toShow", (Place) marker.getTag());
+                    MapExploreActivity.this.startActivity(intent);
                 }
             });
+            placeMarker.showInfoWindow();
+        }
 
+        @Override
+        public void callback(int callbackCode) {
+
+        }
+
+        @Override
+        public void callback(Place p, int callbackCode) {
+        }
+
+        @Override
+        public void callback(Place place, ReviewsAdapter.ReviewViewHolder holder, int callbackCode) {
+
+        }
+
+        @Override
+        public void callback(User user, int callbackCode) {
+
+        }
+
+        @Override
+        public void callback(User user, ReviewsAdapter.ReviewViewHolder holder, int callbackCode) {
+
+        }
+
+        @Override
+        public void callback(List<Review> reviews, int callbackCode) {
+
+        }
+
+        @Override
+        public void callback(List<Place> weakList, List<Place> topList, int callbackCode) {
+
+        }
+
+        @Override
+        public void callback(String message, int callbackCode) {
+
+        }
+
+        @Override
+        public void manageError(Exception e, int callbackCode) {
+            Toast.makeText(MapExploreActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+            finish();
         }
     }
 

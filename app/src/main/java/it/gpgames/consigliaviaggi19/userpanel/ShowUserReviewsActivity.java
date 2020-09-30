@@ -9,6 +9,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.google.android.gms.maps.model.MarkerOptions;
+
 import java.util.List;
 
 import it.gpgames.consigliaviaggi19.DAO.DAOFactory;
@@ -73,6 +75,11 @@ public class ShowUserReviewsActivity extends AppCompatActivity implements Review
                 userDao.getUserByID(id, this, 0);
                 break;
         }
+    }
+
+    @Override
+    public void callback(Place place, MarkerOptions mOpt, int callbackCode) {
+
     }
 
     @Override

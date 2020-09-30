@@ -21,6 +21,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import com.google.firebase.storage.ListResult;
@@ -283,6 +284,11 @@ public class PlaceDetailsActivity extends AppCompatActivity implements ReviewsAd
                 userDao.getUserByID(id,this,null,0);
                 break;
         }
+    }
+
+    @Override
+    public void callback(Place place, MarkerOptions mOpt, int callbackCode) {
+
     }
 
     @Override

@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
@@ -174,6 +175,11 @@ public class UserPanelActivity extends AppCompatActivity implements DatabaseCall
     protected void onPause() {
         super.onPause();
         unregisterReceiver(networkChangeReceiver);
+    }
+
+    @Override
+    public void callback(Place place, MarkerOptions mOpt, int callbackCode) {
+
     }
 
     @Override

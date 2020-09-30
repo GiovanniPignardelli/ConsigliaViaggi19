@@ -12,6 +12,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.model.MarkerOptions;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -123,6 +125,11 @@ public class ResultsActivity extends AppCompatActivity implements DatabaseCallba
     public RecyclerView getRecyclerView()
     {
         return resultQueries;
+    }
+
+    @Override
+    public void callback(Place place, MarkerOptions mOpt, int callbackCode) {
+
     }
 
     @Override
