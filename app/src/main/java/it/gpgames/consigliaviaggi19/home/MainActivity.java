@@ -205,6 +205,7 @@ public class MainActivity extends AppCompatActivity implements DatabaseCallback 
     @Override
     public void callback(int callbackCode) {
         Intent accessNeeded = new Intent(MainActivity.this, LoginActivity.class);
+        accessNeeded.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(accessNeeded);
     }
 
@@ -218,16 +219,29 @@ public class MainActivity extends AppCompatActivity implements DatabaseCallback 
 
     }
 
+    private static final int CALLBACK_USER_PANEL = 0;
+    private static final int CALLBACK_SET_LOCAL_USER = 1;
+
     @Override
     public void callback(User user, int callbackCode) {
-        Intent showUser = new Intent(MainActivity.this,UserPanelActivity.class);
-        showUser.putExtra("userToShow",(Parcelable) user);
-        showUser.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(showUser);
+        switch(callbackCode)
+        {
+            case CALLBACK_USER_PANEL:
+                Intent showUser = new Intent(MainActivity.this,UserPanelActivity.class);
+                showUser.putExtra("userToShow",(Parcelable) user);
+                showUser.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(showUser);
+                break;
+            case CALLBACK_SET_LOCAL_USER:
+                User.setLocalInstance(user);
+                break;
+        }
+
     }
 
     @Override
     public void callback(User user, ReviewsAdapter.ReviewViewHolder holder, int callbackCode) {
+        throw new UnsupportedOperationException("Not supported yet.");
 
     }
 
@@ -238,7 +252,7 @@ public class MainActivity extends AppCompatActivity implements DatabaseCallback 
 
     @Override
     public void callback(String message, int callbackCode) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        userDao.getUserByID(message,this,1);
     }
 
     @Override

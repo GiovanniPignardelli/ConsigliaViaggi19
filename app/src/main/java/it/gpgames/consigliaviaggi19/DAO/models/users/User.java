@@ -27,9 +27,12 @@ public class User implements Parcelable {
     private boolean isBlacklisted;
     private Integer nReview;
     private Float avgReview;
+    private int sumReviews;
     private String registerDate;
+    private String firstName;
+    private String lastName;
 
-    public User(String displayName, String email, String userID, boolean isBlacklisted, Integer nReview, Float avgReview, String registerDate,String avatar) {
+    public User(String displayName, String email, String userID, boolean isBlacklisted, Integer nReview, Float avgReview, String registerDate,String avatar,String firstName,String lastName, int sumReviews) {
         this.displayName = displayName;
         this.email = email;
         this.userID = userID;
@@ -38,6 +41,33 @@ public class User implements Parcelable {
         this.avgReview = avgReview;
         this.registerDate = registerDate;
         this.avatar=avatar;
+        this.firstName=firstName;
+        this.lastName=lastName;
+        this.sumReviews=sumReviews;
+    }
+
+    public int getSumReviews() {
+        return sumReviews;
+    }
+
+    public void setSumReviews(int sumReviews) {
+        this.sumReviews = sumReviews;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     private static User localInstance = null;

@@ -77,6 +77,9 @@ public class LoginFirebaseDAO implements LoginDAO {
                 {
                     callback.callback(callbackCode);
                 }
+                else{
+                    callback.callback(FirebaseAuth.getInstance().getCurrentUser().getUid(),callbackCode);
+                }
             }
         });
     }

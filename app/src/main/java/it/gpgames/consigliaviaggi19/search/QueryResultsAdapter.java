@@ -56,7 +56,11 @@ public class QueryResultsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         holder.title.setText(holdingPlace.getName());
         holder.nReviews.setText(holdingPlace.getnReviews().toString());
         holder.rating.setRating(holdingPlace.getAvgReview());
-        Glide.with(holder.itemView.getContext()).load(holdingPlace.getPictures().get(0)).into(holder.image);
+        if(holdingPlace.getPictures()!=null && holdingPlace.getPictures().get(0)!=null)
+        {
+            String picUri=holdingPlace.getPictures().get(0);
+            Glide.with(holder.itemView.getContext()).load(picUri).into(holder.image);
+        }
         holder.location.setText(holdingPlace.getAddress()+", "+holdingPlace.getCity()+", "+holdingPlace.getState());
 
     }

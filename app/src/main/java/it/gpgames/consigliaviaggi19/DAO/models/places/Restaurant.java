@@ -23,7 +23,7 @@ public class Restaurant extends Place implements Serializable {
     private ArrayList<String> cuisineTags;
 
     public Restaurant(Place toObject, ArrayList<String> cuisineTags, ArrayList<String> serviceTags, String docID) {
-        super(toObject.getName(),toObject.getAddress(),toObject.getCity(),toObject.getPostal_code(),toObject.getState(),toObject.getPriceTag(),toObject.getTags(),toObject.getAddYear(), toObject.getEmail(), toObject.getTelephone(), toObject.getWebsite(), toObject.getCategory(), docID, toObject.getnReviews(), toObject.getAvgReview());
+        super(toObject.getName(),toObject.getAddress(),toObject.getCity(),toObject.getPostal_code(),toObject.getState(),toObject.getPriceTag(),toObject.getTags(),toObject.getAddYear(), toObject.getEmail(), toObject.getTelephone(), toObject.getWebsite(), toObject.getCategory(), docID, toObject.getnReviews(), toObject.getAvgReview(), toObject.getSumReviews());
 
         this.cuisineTags=cuisineTags;
         this.serviceTags=serviceTags;

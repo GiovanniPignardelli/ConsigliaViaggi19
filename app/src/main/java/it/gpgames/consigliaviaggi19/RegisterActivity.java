@@ -36,7 +36,7 @@ import it.gpgames.consigliaviaggi19.DAO.models.users.User;
 import it.gpgames.consigliaviaggi19.search.place_details.reviews.ReviewsAdapter;
 
 public class RegisterActivity extends AppCompatActivity implements DatabaseCallback {
-    EditText eUser,ePsw,eEmail,confirmPsw;
+    EditText eUser,ePsw,eEmail,confirmPsw,fName,lName;
     Button bLogin,bRegister;
     RegisterDAO registerDAO= DAOFactory.getDAOInstance().getRegisterDAO();
 
@@ -52,6 +52,9 @@ public class RegisterActivity extends AppCompatActivity implements DatabaseCallb
         bLogin=findViewById(R.id.login);
         bRegister=findViewById(R.id.signin);
         confirmPsw=findViewById(R.id.confirmpasswordtxt);
+        fName=findViewById(R.id.nametxt);
+        lName=findViewById(R.id.surnametxt);
+        initListeners();
     }
 
     private void initListeners(){
@@ -63,6 +66,8 @@ public class RegisterActivity extends AppCompatActivity implements DatabaseCallb
                 final String username=eUser.getText().toString().trim();
                 final String password=ePsw.getText().toString().trim();
                 final String confirmPassword=confirmPsw.getText().toString().trim();
+                final String firstName=fName.getText().toString().trim();
+                final String lastName=lName.getText().toString().trim();
 
                 if(TextUtils.isEmpty(email))
                 {
@@ -88,11 +93,23 @@ public class RegisterActivity extends AppCompatActivity implements DatabaseCallb
                     return;
                 }
 
+                if(!firstName.equals("") && !isAlpha(firstName))
+                {
+                    fName.setError("Il nome può contenere solo lettere.");
+                    return;
+                }
+
+                if(!lastName.equals("") && !isAlpha(lastName))
+                {
+                    fName.setError("Il cognome può contenere solo lettere.");
+                    return;
+                }
+
                 LocalDate date = LocalDate.now();
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
                 String dateString=date.format(formatter);
 
-                User toRegister=new User(username,email,null,false,0, (float) 0,dateString,null);
+                User toRegister=new User(username,email,null,false,0, (float) 0,dateString,null,firstName,lastName,0);
                 registerDAO.register(toRegister,password,RegisterActivity.this,0);
 
 
@@ -122,6 +139,19 @@ public class RegisterActivity extends AppCompatActivity implements DatabaseCallb
         IntentFilter filter = new IntentFilter();
         filter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
         registerReceiver(networkChangeReceiver, filter);
+    }
+
+    /**Restituisce true se una stringa contiene solo caratteri alfabetici*/
+    public boolean isAlpha(String name) {
+        char[] chars = name.toCharArray();
+
+        for (char c : chars) {
+            if(!Character.isLetter(c)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     @Override

@@ -5,6 +5,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
@@ -101,91 +102,79 @@ public class ReviewFirebaseDAO implements ReviewDAO {
     }
 
     private void refreshStats(final Review review, final DatabaseCallback callback, final int callbackCode) {
+
         FirebaseFirestore.getInstance().collection("userPool").whereEqualTo("userID", FirebaseAuth.getInstance().getUid()).limit(1).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
                     User user = task.getResult().toObjects(User.class).get(0);
                     final String documentID = task.getResult().getDocuments().get(0).getId();
-                    final Integer oldNum = user.getnReview();
-                    FirebaseFirestore.getInstance().collection("userPool").document(documentID).update("nReview", oldNum + 1);
+                    final int oldNum = user.getnReview();
+                    final int oldSum = user.getSumReviews();
+                    DocumentReference userDoc = FirebaseFirestore.getInstance().collection("userPool").document(documentID);
 
-                    FirebaseFirestore.getInstance().collection("reviewPool").whereEqualTo("userId", user.getUserID()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    userDoc.update("nReview", oldNum + 1).addOnFailureListener(new OnFailureListener() {
                         @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            if(task.isSuccessful())
-                            {
-                                int sum = 0;
-                                for (QueryDocumentSnapshot doc : task.getResult()) {
-                                    sum += doc.toObject(Review.class).getRating();
-                                }
-                                FirebaseFirestore.getInstance().collection("userPool").document(documentID).update("avgReview", sum / (oldNum + 1));
-                            }
-                            else
-                                Log.d("query",task.getException().getMessage());
+                        public void onFailure(@NonNull Exception e) {
+                            callback.manageError(e, callbackCode);
+                        }
+                    });
 
+                    userDoc.update("sumReviews", (oldSum + review.getRating())).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            callback.manageError(e, callbackCode);
+                        }
+                    });
+
+                    userDoc.update("avgReview", (oldNum + review.getRating()) / oldNum + 1).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            callback.manageError(e, callbackCode);
+                        }
+                    });
+                }
+            }
+        });
+
+        FirebaseFirestore.getInstance().collection("places").document(review.getPlaceId()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if(task.isSuccessful())
+                {
+                    Place place=task.getResult().toObject(Place.class);
+                    final int oldNum = place.getnReviews();
+                    final int oldSum = place.getSumReviews();
+
+                    DocumentReference placeDoc=task.getResult().getReference();
+
+                    placeDoc.update("nReview", oldNum + 1).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            callback.manageError(e, callbackCode);
+                        }
+                    });
+
+                    placeDoc.update("sumReviews", (oldSum + review.getRating())).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            callback.manageError(e, callbackCode);
+                        }
+                    });
+
+                    placeDoc.update("avgReview", (oldNum + review.getRating()) / oldNum + 1).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            callback.manageError(e, callbackCode);
                         }
                     });
 
                 }
                 else
-                    Log.d("query",task.getException().getMessage());
+                    callback.manageError(task.getException(),callbackCode);
             }
-        });
 
 
-        FirebaseFirestore.getInstance().collection("places").document(review.getPlaceId()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    PlaceFirebaseDAO placeFDao = (PlaceFirebaseDAO) DAOFactory.getDAOInstance().getPlaceDAO();
-                    final Place place = PlaceFirebaseDAO.generatePlace(task.getResult());
-                    final Integer oldNum = place.getnReviews();
-                    FirebaseFirestore.getInstance().collection("places").document(place.getDbDocID()).update("nReviews", oldNum + 1);
-
-                    FirebaseFirestore.getInstance().collection("reviewPool").whereEqualTo("placeId", place.getDbDocID()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            if(task.isSuccessful()) {
-                                int sum = 0;
-                                for (QueryDocumentSnapshot doc : task.getResult()) {
-                                    Log.d("sum", doc.toObject(Review.class).getRating().toString());
-                                    sum += doc.toObject(Review.class).getRating();
-                                }
-                                Log.d("sum_", String.valueOf(oldNum + 1));
-                                FirebaseFirestore.getInstance().collection("places").document(place.getDbDocID()).update("avgReview", sum / (oldNum + 1)).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-                                        if (task.isSuccessful()) {
-                                            FirebaseFirestore.getInstance().collection("places").document(place.getDbDocID()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                                @Override
-                                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                                    Place toShow = PlaceFirebaseDAO.generatePlace(task.getResult());
-                                                    callback.callback(toShow, callbackCode);
-                                                }
-                                            });
-
-                                        } else {
-                                            Log.d("query", task.getException().getMessage());
-                                            callback.manageError(task.getException(), 0);
-                                        }
-
-                                    }
-                                });
-
-
-                            }
-                            else
-                            {
-                                Log.d("query",task.getException().getMessage());
-                            }
-                        }
-                    }
-                    );
-                }
-                else
-                Log.d("query",task.getException().getMessage());
-            }
         });
     }
 
