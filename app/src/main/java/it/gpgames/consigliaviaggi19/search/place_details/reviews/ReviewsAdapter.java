@@ -94,18 +94,6 @@ public class ReviewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
             case FLAG_USER:
                 userDao.getUserByID(actualReview.getUserId(),this,holder, 0);
-
-                FirebaseStorage.getInstance().getReference().child("Users/Avatars/avatar_"+actualReview.getUserId()+".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                    @Override
-                    public void onSuccess(Uri uri) {
-                        if(uri!=null)
-                            Glide.with(context)
-                                    .load(uri)
-                                    .into(holder.userImage);
-                    }
-                });
-
-                break;
         }
 
         holder.reviewDate.setText(actualReview.getDate());
@@ -139,6 +127,9 @@ public class ReviewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     @Override
     public void callback(User user, ReviewViewHolder holder, int callbackCode) {
         holder.userName.setText(user.getDisplayName());
+        Glide.with(context)
+                .load(user.getAvatar())
+                .into(holder.userImage);
     }
 
     @Override

@@ -76,16 +76,10 @@ public class WriteReviewActivity extends AppCompatActivity implements DatabaseCa
     }
 
     private void initPlaceImage() {
-        FirebaseStorage.getInstance().getReference().child("Places").child("Pictures").child(dbDocID).child("main.jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-            @Override
-            public void onSuccess(Uri uri) {
+        String uri = toShow.getPictures().get(0);
                 if(uri!=null)
                     Glide.with(getApplicationContext()).load(uri).into(iPlacePic);
-                else
-                    Log.d("write_review","Impossibile caricare l'immagine. ");
-            }
-        });
-
+                else Log.d("write_review","Impossibile caricare l'immagine. ");
     }
 
     private void initListeners(){
