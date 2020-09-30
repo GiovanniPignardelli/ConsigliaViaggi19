@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
@@ -127,7 +128,7 @@ public class ReviewFirebaseDAO implements ReviewDAO {
                         }
                     });
 
-                    userDoc.update("avgReview", (oldNum + review.getRating()) / oldNum + 1).addOnFailureListener(new OnFailureListener() {
+                    userDoc.update("avgReview", (oldNum + review.getRating()) / (oldNum + 1)).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
                             callback.manageError(e, callbackCode);
@@ -142,32 +143,49 @@ public class ReviewFirebaseDAO implements ReviewDAO {
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if(task.isSuccessful())
                 {
-                    Place place=task.getResult().toObject(Place.class);
+                    final DocumentSnapshot doc=task.getResult();
+                    final Place place=task.getResult().toObject(Place.class);
                     final int oldNum = place.getnReviews();
                     final int oldSum = place.getSumReviews();
 
-                    DocumentReference placeDoc=task.getResult().getReference();
+                    final DocumentReference placeDoc=task.getResult().getReference();
 
-                    placeDoc.update("nReview", oldNum + 1).addOnFailureListener(new OnFailureListener() {
+                    placeDoc.update("nReviews", oldNum + 1).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
                             callback.manageError(e, callbackCode);
                         }
-                    });
-
-                    placeDoc.update("sumReviews", (oldSum + review.getRating())).addOnFailureListener(new OnFailureListener() {
+                    }).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
-                        public void onFailure(@NonNull Exception e) {
-                            callback.manageError(e, callbackCode);
+                        public void onSuccess(Void aVoid) {
+                            placeDoc.update("sumReviews", (oldSum + review.getRating())).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    callback.manageError(e, callbackCode);
+                                }
+                            }).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    placeDoc.update("avgReview", (oldNum + review.getRating()) / (oldNum + 1)).addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            callback.manageError(e, callbackCode);
+                                        }
+                                    }).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+
+                                            callback.callback(callbackCode);
+                                        }
+                                    });
+                                }
+                            });
                         }
                     });
 
-                    placeDoc.update("avgReview", (oldNum + review.getRating()) / oldNum + 1).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            callback.manageError(e, callbackCode);
-                        }
-                    });
+
+
+
 
                 }
                 else

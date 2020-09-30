@@ -28,6 +28,7 @@ import java.util.List;
 import de.hdodenhof.circleimageview.CircleImageView;
 import it.gpgames.consigliaviaggi19.DAO.DAOFactory;
 import it.gpgames.consigliaviaggi19.DAO.DatabaseCallback;
+import it.gpgames.consigliaviaggi19.DAO.PlaceDAO;
 import it.gpgames.consigliaviaggi19.DAO.ReviewDAO;
 import it.gpgames.consigliaviaggi19.R;
 import it.gpgames.consigliaviaggi19.network.NetworkChangeReceiver;
@@ -51,6 +52,7 @@ public class WriteReviewActivity extends AppCompatActivity implements DatabaseCa
 
     NetworkChangeReceiver networkChangeReceiver=NetworkChangeReceiver.getNetworkChangeReceiverInstance();
     private ReviewDAO reviewDao = DAOFactory.getDAOInstance().getReviewDAO();
+    private PlaceDAO placeDAO = DAOFactory.getDAOInstance().getPlaceDAO();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,10 +77,14 @@ public class WriteReviewActivity extends AppCompatActivity implements DatabaseCa
     }
 
     private void initPlaceImage() {
-        String uri = toShow.getPictures().get(0);
-                if(uri!=null)
-                    Glide.with(getApplicationContext()).load(uri).into(iPlacePic);
-                else Log.d("write_review","Impossibile caricare l'immagine. ");
+        if(toShow.getPictures()!=null)
+        {
+            String uri = toShow.getPictures().get(0);
+            if(uri!=null)
+                Glide.with(getApplicationContext()).load(uri).into(iPlacePic);
+            else Log.d("write_review","Impossibile caricare l'immagine. ");
+        }
+
     }
 
     private void initListeners(){
@@ -149,7 +155,7 @@ public class WriteReviewActivity extends AppCompatActivity implements DatabaseCa
 
     @Override
     public void callback(int callbackCode) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        placeDAO.getPlaceByID(toShow.getDbDocID(),this,0);
     }
 
     @Override
