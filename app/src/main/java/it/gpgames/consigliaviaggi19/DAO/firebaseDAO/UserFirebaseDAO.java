@@ -19,7 +19,6 @@ import com.google.firebase.storage.UploadTask;
 import java.util.Objects;
 
 import it.gpgames.consigliaviaggi19.DAO.DatabaseCallback;
-import it.gpgames.consigliaviaggi19.DAO.DatabaseUtilities;
 import it.gpgames.consigliaviaggi19.DAO.UserDAO;
 import it.gpgames.consigliaviaggi19.DAO.models.users.User;
 import it.gpgames.consigliaviaggi19.search.place_details.reviews.ReviewsAdapter;
@@ -89,7 +88,7 @@ public class UserFirebaseDAO implements UserDAO {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
                                         if (task.isSuccessful()) {
-                                            callback.showMessage("La tua foto profilo è stata aggiornata!", callbackCode);
+                                            callback.callback("La tua foto profilo è stata aggiornata!", callbackCode);
                                             callback.callback(callbackCode);
                                         }
                                         else callback.manageError(new Exception("Qualcosa è andato storto, riprova! :("), callbackCode);

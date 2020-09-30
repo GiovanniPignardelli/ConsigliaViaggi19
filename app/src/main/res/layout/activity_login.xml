@@ -5,13 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FF6D00"
-    tools:context=".Login">
+    tools:context=".LoginActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#FF6D00"
-        tools:context=".Register"
+        tools:context=".RegisterActivity"
         tools:layout_editor_absoluteX="-152dp"
         tools:layout_editor_absoluteY="91dp">
 

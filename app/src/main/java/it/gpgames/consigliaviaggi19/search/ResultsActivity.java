@@ -18,7 +18,6 @@ import java.util.List;
 import it.gpgames.consigliaviaggi19.DAO.DAOFactory;
 import it.gpgames.consigliaviaggi19.DAO.DatabaseCallback;
 import it.gpgames.consigliaviaggi19.DAO.PlaceDAO;
-import it.gpgames.consigliaviaggi19.DAO.firebaseDAO.PlaceFirebaseDAO;
 import it.gpgames.consigliaviaggi19.DAO.models.reviews.Review;
 import it.gpgames.consigliaviaggi19.DAO.models.users.User;
 import it.gpgames.consigliaviaggi19.R;
@@ -162,7 +161,7 @@ public class ResultsActivity extends AppCompatActivity implements DatabaseCallba
     }
 
     @Override
-    public void showMessage(String message, int callbackCode) {
+    public void callback(String message, int callbackCode) {
 
     }
 

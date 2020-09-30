@@ -117,7 +117,7 @@ public class ShowUserReviewsActivity extends AppCompatActivity implements Review
     }
 
     @Override
-    public void showMessage(String message, int callbackCode) {
+    public void callback(String message, int callbackCode) {
 
     }
 

@@ -9,7 +9,6 @@ import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -220,7 +219,7 @@ public class UserPanelActivity extends AppCompatActivity implements DatabaseCall
     }
 
     @Override
-    public void showMessage(String message, int callbackCode) {
+    public void callback(String message, int callbackCode) {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }
 

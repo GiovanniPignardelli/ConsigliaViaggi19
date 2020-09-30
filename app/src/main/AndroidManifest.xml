@@ -38,10 +38,10 @@
             android:name=".userpanel.UserPanelActivity"
             android:launchMode="singleTask" />
         <activity
-            android:name=".Login"
+            android:name=".LoginActivity"
             android:launchMode="singleTask" />
         <activity
-            android:name=".Register"
+            android:name=".RegisterActivity"
             android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

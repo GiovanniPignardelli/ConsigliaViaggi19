@@ -5,8 +5,6 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
@@ -21,7 +19,6 @@ import java.util.List;
 import it.gpgames.consigliaviaggi19.DAO.DAOFactory;
 import it.gpgames.consigliaviaggi19.DAO.DatabaseCallback;
 import it.gpgames.consigliaviaggi19.DAO.DatabaseUtilities;
-import it.gpgames.consigliaviaggi19.DAO.PlaceDAO;
 import it.gpgames.consigliaviaggi19.DAO.ReviewDAO;
 import it.gpgames.consigliaviaggi19.DAO.models.places.Place;
 import it.gpgames.consigliaviaggi19.DAO.models.reviews.Review;
@@ -92,7 +89,7 @@ public class ReviewFirebaseDAO implements ReviewDAO {
                 {
                     Log.d("UploadReview", "Review caricata.");
                     refreshStats(review, callback, callbackCode);
-                    callback.showMessage("Recensione inviata", callbackCode);
+                    callback.callback("Recensione inviata", callbackCode);
                 }
                 else
                 {

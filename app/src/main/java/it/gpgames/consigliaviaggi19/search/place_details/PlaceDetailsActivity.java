@@ -1,6 +1,5 @@
 package it.gpgames.consigliaviaggi19.search.place_details;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -22,12 +21,8 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.ListResult;
 import com.google.firebase.storage.StorageReference;
@@ -40,7 +35,6 @@ import java.util.List;
 
 import it.gpgames.consigliaviaggi19.DAO.DAOFactory;
 import it.gpgames.consigliaviaggi19.DAO.DatabaseCallback;
-import it.gpgames.consigliaviaggi19.DAO.PlaceDAO;
 import it.gpgames.consigliaviaggi19.DAO.ReviewDAO;
 import it.gpgames.consigliaviaggi19.DAO.UserDAO;
 import it.gpgames.consigliaviaggi19.DAO.models.users.User;
@@ -58,7 +52,7 @@ import it.gpgames.consigliaviaggi19.userpanel.UserPanelActivity;
 /** Activity che si occupa di mostrare i dettagli di una struttura selezionata da ResultsActivity.*/
 public class PlaceDetailsActivity extends AppCompatActivity implements ReviewsAdapter.RecyclerGetter, DatabaseCallback {
 
-    /** Holder del Place da mostrare. Viene passato come extra all'activity.*/
+    /**Place da mostrare. Viene passato dall'activity chiamante.*/
     private Place toShow;
 
     //vari adapter che adattano i contenuti al layout
@@ -117,8 +111,7 @@ public class PlaceDetailsActivity extends AppCompatActivity implements ReviewsAd
             init();
         else
         {
-            Log.d("place", "Errore caricamento");
-            Toast.makeText(getApplicationContext(),"Errore nel caricamento della struttura. Riprovare.", Toast.LENGTH_LONG);
+            Toast.makeText(getApplicationContext(),"Errore nella visualizzazione della struttura. Riprovare.", Toast.LENGTH_LONG);
             finish();
         }
 
@@ -245,14 +238,14 @@ public class PlaceDetailsActivity extends AppCompatActivity implements ReviewsAd
         ratingBar.setRating(toShow.getAvgReview());
     }
 
-
+    /** Il metodo controlla che l'utente corrente non abbia già scritto una recensione per la struttura visualizzata.*/
     private void checkIfReviewExists() {
-        reviewDao.getReviewsByPlaceIDAndUserID(toShow.getDbDocID(),FirebaseAuth.getInstance().getUid(),this,1);
+        reviewDao.getReviewsByPlaceIDAndUserID(toShow.getDbDocID(),FirebaseAuth.getInstance().getUid(),this, CALLBACK_IF_ABLE_TO_REVIEW);
     }
 
     /**Metodo che aggiorna le review relative alla struttura. Esegue un controllo sui valori attuali degli attributi actualOrder e actualSort per effettuare la query*/
     private void refreshReviews() {
-        reviewDao.getReviewsByPlaceID(toShow.getDbDocID(),PlaceDetailsActivity.this, actualSort, actualOrder, 0);
+        reviewDao.getReviewsByPlaceID(toShow.getDbDocID(),PlaceDetailsActivity.this, actualSort, actualOrder, CALLBACK_REFRESH_REVIEWS);
     }
 
     /**Inizializza lo slider delle immagini della struttura recuperandole dal database*/
@@ -281,6 +274,7 @@ public class PlaceDetailsActivity extends AppCompatActivity implements ReviewsAd
         });
     }
 
+    /** Avvia lo slider per le immagini della struttura visualizzata.*/
     private void startSliderAdapter(List<String> urls) {
         sliderAdapter=new PlaceSliderAdapter(getApplicationContext(),urls, toShow.getDbDocID(), PlaceDetailsActivity.this);
         slider.setSliderAdapter(sliderAdapter);
@@ -293,7 +287,7 @@ public class PlaceDetailsActivity extends AppCompatActivity implements ReviewsAd
         slider.startAutoCycle();
     }
 
-    /**Riceve in input un array di stringhe, e genera una stringa composta dalle stesse parole dell'array, ma splittate con ", "*/
+    /**Riceve in input i tags e li restituisce in un'unica stringa divisa da ", ".*/
     private String makeString(List<String> tags) {
         String result=new String();
         for(String s: tags)
@@ -347,15 +341,18 @@ public class PlaceDetailsActivity extends AppCompatActivity implements ReviewsAd
 
     }
 
+    public static final int CALLBACK_REFRESH_REVIEWS = 0;
+    public static final int CALLBACK_IF_ABLE_TO_REVIEW = 1;
+
     @Override
     public void callback(List<Review> reviewsList, int callbackCode) {
         switch(callbackCode){
-            case 0:
+            case CALLBACK_REFRESH_REVIEWS:
                 reviewsAdapter=new ReviewsAdapter(PlaceDetailsActivity.this,reviewsList, PlaceDetailsActivity.this, ReviewsAdapter.FLAG_USER);
                 reviews.setAdapter(reviewsAdapter);
                 reviews.setLayoutManager(new LinearLayoutManager(PlaceDetailsActivity.this, RecyclerView.VERTICAL, false));
                 break;
-            case 1:
+            case CALLBACK_IF_ABLE_TO_REVIEW:
                 if(!reviewsList.isEmpty())
                     alreadyWritten=true;
                 else{
@@ -373,7 +370,7 @@ public class PlaceDetailsActivity extends AppCompatActivity implements ReviewsAd
     }
 
     @Override
-    public void showMessage(String message, int callbackCode) {
+    public void callback(String message, int callbackCode) {
 
     }
 

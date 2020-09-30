@@ -41,7 +41,7 @@ public class User implements Parcelable {
         this.avatar=avatar;
     }
 
-    private static User localInstance;
+    private static User localInstance = null;
 
     public boolean isBlacklisted() {
         return isBlacklisted;

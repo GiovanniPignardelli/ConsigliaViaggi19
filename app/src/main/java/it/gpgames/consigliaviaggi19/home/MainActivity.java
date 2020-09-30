@@ -12,7 +12,6 @@ import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.Message;
 import android.os.Parcelable;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.SearchView;
@@ -39,7 +38,7 @@ import it.gpgames.consigliaviaggi19.DAO.PlaceDAO;
 import it.gpgames.consigliaviaggi19.DAO.UserDAO;
 import it.gpgames.consigliaviaggi19.DAO.models.places.Place;
 import it.gpgames.consigliaviaggi19.DAO.models.reviews.Review;
-import it.gpgames.consigliaviaggi19.Login;
+import it.gpgames.consigliaviaggi19.LoginActivity;
 import it.gpgames.consigliaviaggi19.R;
 import it.gpgames.consigliaviaggi19.home.slider.HomeSliderAdapter;
 import it.gpgames.consigliaviaggi19.home.slider.HomeSliderItemsGetter;
@@ -95,7 +94,7 @@ public class MainActivity extends AppCompatActivity implements DatabaseCallback 
     /**Controlla se il token d'accesso è scaduto. In tal caso è necessario ri-effettuare l'accesso.*/
     private void checkIfTokenHasExpired(){
         if(FirebaseAuth.getInstance().getCurrentUser() == null){
-            Intent accessNeeded = new Intent(MainActivity.this, Login.class);
+            Intent accessNeeded = new Intent(MainActivity.this, LoginActivity.class);
             startActivity(accessNeeded);
         }
     }
@@ -126,7 +125,7 @@ public class MainActivity extends AppCompatActivity implements DatabaseCallback 
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 if(FirebaseAuth.getInstance().getCurrentUser()==null)
                 {
-                    startActivity(new Intent(MainActivity.this, Login.class));
+                    startActivity(new Intent(MainActivity.this, LoginActivity.class));
                     finish();
                 }
             }
@@ -257,7 +256,7 @@ public class MainActivity extends AppCompatActivity implements DatabaseCallback 
     }
 
     @Override
-    public void showMessage(String message, int callbackCode) {
+    public void callback(String message, int callbackCode) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

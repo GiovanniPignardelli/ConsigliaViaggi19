@@ -28,7 +28,7 @@ import it.gpgames.consigliaviaggi19.home.MainActivity;
 import it.gpgames.consigliaviaggi19.network.NetworkChangeReceiver;
 import it.gpgames.consigliaviaggi19.DAO.models.users.User;
 
-public class Register extends AppCompatActivity {
+public class RegisterActivity extends AppCompatActivity {
     EditText eUser,ePsw,eEmail;
     Button bLogin,bRegister;
     FirebaseAuth fAuth;
@@ -52,6 +52,10 @@ public class Register extends AppCompatActivity {
             finish();
         }
 
+
+    }
+
+    private void initListeners(){
         bRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -79,32 +83,32 @@ public class Register extends AppCompatActivity {
 
                 fAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(
                         new OnCompleteListener<AuthResult>() {
-                    @RequiresApi(api = Build.VERSION_CODES.O)
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if(task.isSuccessful())
-                        {
-                            UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                                .setDisplayName(username)
-                                .build();
-                            fAuth.getCurrentUser().updateProfile(profileUpdates);
+                            @RequiresApi(api = Build.VERSION_CODES.O)
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                if(task.isSuccessful())
+                                {
+                                    UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                                            .setDisplayName(username)
+                                            .build();
+                                    fAuth.getCurrentUser().updateProfile(profileUpdates);
 
-                            LocalDate date = LocalDate.now();
-                            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-                            String dateString=date.format(formatter);
+                                    LocalDate date = LocalDate.now();
+                                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+                                    String dateString=date.format(formatter);
 
-                            User user=new User(username, email, FirebaseAuth.getInstance().getUid(),false,new Integer(0),new Float(0),dateString,null);
-                            FirebaseFirestore.getInstance().collection("userPool").add(user);
-                            Toast.makeText(getApplicationContext(), "Ricorda di verificare la tua mail.", Toast.LENGTH_LONG).show();
-                            startActivity(new Intent(Register.this, MainActivity.class));
-                            finish();
-                        }
-                        else if(!task.isSuccessful())
-                        {
-                            Toast.makeText(Register.this,task.getException().getMessage(), Toast.LENGTH_LONG).show();
-                        }
-                    }
-                });
+                                    User user=new User(username, email, FirebaseAuth.getInstance().getUid(),false,new Integer(0),new Float(0),dateString,null);
+                                    FirebaseFirestore.getInstance().collection("userPool").add(user);
+                                    Toast.makeText(getApplicationContext(), "Ricorda di verificare la tua mail.", Toast.LENGTH_LONG).show();
+                                    startActivity(new Intent(RegisterActivity.this, MainActivity.class));
+                                    finish();
+                                }
+                                else if(!task.isSuccessful())
+                                {
+                                    Toast.makeText(RegisterActivity.this,task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                                }
+                            }
+                        });
             }
         });
 
@@ -113,7 +117,7 @@ public class Register extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(Register.this, Login.class));
+                startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
                 finish();
             }
         });
