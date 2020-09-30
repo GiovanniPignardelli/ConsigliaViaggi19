@@ -2,6 +2,7 @@ package it.gpgames.consigliaviaggi19.DAO;
 
 import it.gpgames.consigliaviaggi19.DAO.firebaseDAO.LoginFirebaseDAO;
 import it.gpgames.consigliaviaggi19.DAO.firebaseDAO.PlaceFirebaseDAO;
+import it.gpgames.consigliaviaggi19.DAO.firebaseDAO.RegisterFirebaseDAO;
 import it.gpgames.consigliaviaggi19.DAO.firebaseDAO.ReviewFirebaseDAO;
 import it.gpgames.consigliaviaggi19.DAO.firebaseDAO.UserFirebaseDAO;
 
@@ -36,6 +37,12 @@ public class DAOFactory {
     public LoginDAO getLoginDAO(){
         if(db.equals("firebase"))
             return new LoginFirebaseDAO();
+        return null;
+    }
+
+    public RegisterDAO getRegisterDAO(){
+        if(db.equals("firebase"))
+            return new RegisterFirebaseDAO();
         return null;
     }
 }

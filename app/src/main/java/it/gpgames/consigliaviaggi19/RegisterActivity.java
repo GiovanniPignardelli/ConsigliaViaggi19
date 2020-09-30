@@ -9,6 +9,7 @@ import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -23,15 +24,22 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
+import it.gpgames.consigliaviaggi19.DAO.DAOFactory;
+import it.gpgames.consigliaviaggi19.DAO.DatabaseCallback;
+import it.gpgames.consigliaviaggi19.DAO.RegisterDAO;
+import it.gpgames.consigliaviaggi19.DAO.models.places.Place;
+import it.gpgames.consigliaviaggi19.DAO.models.reviews.Review;
 import it.gpgames.consigliaviaggi19.home.MainActivity;
 import it.gpgames.consigliaviaggi19.network.NetworkChangeReceiver;
 import it.gpgames.consigliaviaggi19.DAO.models.users.User;
+import it.gpgames.consigliaviaggi19.search.place_details.reviews.ReviewsAdapter;
 
-public class RegisterActivity extends AppCompatActivity {
-    EditText eUser,ePsw,eEmail;
+public class RegisterActivity extends AppCompatActivity implements DatabaseCallback {
+    EditText eUser,ePsw,eEmail,confirmPsw;
     Button bLogin,bRegister;
-    FirebaseAuth fAuth;
+    RegisterDAO registerDAO= DAOFactory.getDAOInstance().getRegisterDAO();
 
     private static final NetworkChangeReceiver networkChangeReceiver=NetworkChangeReceiver.getNetworkChangeReceiverInstance();
 
@@ -44,24 +52,18 @@ public class RegisterActivity extends AppCompatActivity {
         eEmail=findViewById(R.id.emailtxt);
         bLogin=findViewById(R.id.login);
         bRegister=findViewById(R.id.signin);
-        fAuth=FirebaseAuth.getInstance();
-
-        if(fAuth.getCurrentUser()!=null)
-        {
-            startActivity(new Intent(getApplicationContext(), MainActivity.class));
-            finish();
-        }
-
-
+        confirmPsw=findViewById(R.id.confirmpasswordtxt);
     }
 
     private void initListeners(){
         bRegister.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onClick(View v) {
                 final String email=eEmail.getText().toString().trim();
                 final String username=eUser.getText().toString().trim();
                 final String password=ePsw.getText().toString().trim();
+                final String confirmPassword=confirmPsw.getText().toString().trim();
 
                 if(TextUtils.isEmpty(email))
                 {
@@ -81,34 +83,20 @@ public class RegisterActivity extends AppCompatActivity {
                     return;
                 }
 
-                fAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(
-                        new OnCompleteListener<AuthResult>() {
-                            @RequiresApi(api = Build.VERSION_CODES.O)
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                if(task.isSuccessful())
-                                {
-                                    UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                                            .setDisplayName(username)
-                                            .build();
-                                    fAuth.getCurrentUser().updateProfile(profileUpdates);
+                if(!confirmPassword.equals(password))
+                {
+                    confirmPsw.setError("Le password non corrispondono!");
+                    return;
+                }
 
-                                    LocalDate date = LocalDate.now();
-                                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-                                    String dateString=date.format(formatter);
+                LocalDate date = LocalDate.now();
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+                String dateString=date.format(formatter);
 
-                                    User user=new User(username, email, FirebaseAuth.getInstance().getUid(),false,new Integer(0),new Float(0),dateString,null);
-                                    FirebaseFirestore.getInstance().collection("userPool").add(user);
-                                    Toast.makeText(getApplicationContext(), "Ricorda di verificare la tua mail.", Toast.LENGTH_LONG).show();
-                                    startActivity(new Intent(RegisterActivity.this, MainActivity.class));
-                                    finish();
-                                }
-                                else if(!task.isSuccessful())
-                                {
-                                    Toast.makeText(RegisterActivity.this,task.getException().getMessage(), Toast.LENGTH_LONG).show();
-                                }
-                            }
-                        });
+                User toRegister=new User(username,email,null,false,0, (float) 0,dateString,null);
+                registerDAO.register(toRegister,password,RegisterActivity.this,0);
+
+
             }
         });
 
@@ -135,5 +123,55 @@ public class RegisterActivity extends AppCompatActivity {
         IntentFilter filter = new IntentFilter();
         filter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
         registerReceiver(networkChangeReceiver, filter);
+    }
+
+    @Override
+    public void callback(int callbackCode) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void callback(Place place, int callbackCode) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void callback(Place place, ReviewsAdapter.ReviewViewHolder holder, int callbackCode) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void callback(User user, int callbackCode) {
+        User.setLocalInstance(user);
+        Intent i=new Intent(this,MainActivity.class);
+        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(i);
+        finish();
+    }
+
+    @Override
+    public void callback(User user, ReviewsAdapter.ReviewViewHolder holder, int callbackCode) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void callback(List<Review> reviews, int callbackCode) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void callback(List<Place> weakList, List<Place> topList, int callbackCode) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void callback(String message, int callbackCode) {
+        Toast.makeText(this,message,Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void manageError(Exception e, int callbackCode) {
+        Toast.makeText(this,"Errore. Controllare i log.", Toast.LENGTH_LONG);
+        Log.d("callback error",e.getMessage());
     }
 }

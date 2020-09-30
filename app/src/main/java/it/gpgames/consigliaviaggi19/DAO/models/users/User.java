@@ -155,7 +155,7 @@ public class User implements Parcelable {
         return userID;
     }
 
-    void setUserID(String userID) {
+    public void setUserID(String userID) {
         this.userID = userID;
     }
 

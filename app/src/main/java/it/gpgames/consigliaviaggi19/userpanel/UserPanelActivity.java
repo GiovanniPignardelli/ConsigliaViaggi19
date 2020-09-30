@@ -188,7 +188,7 @@ public class UserPanelActivity extends AppCompatActivity implements DatabaseCall
 
     @Override
     public void callback(int callbackCode) {
-        switch(){
+        switch(callbackCode){
             case CALLBACK_DEFAULT_CODE:
                 finish();
                 break;
