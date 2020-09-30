@@ -34,6 +34,7 @@ import java.util.List;
 
 import it.gpgames.consigliaviaggi19.DAO.DAOFactory;
 import it.gpgames.consigliaviaggi19.DAO.DatabaseCallback;
+import it.gpgames.consigliaviaggi19.DAO.LoginDAO;
 import it.gpgames.consigliaviaggi19.DAO.PlaceDAO;
 import it.gpgames.consigliaviaggi19.DAO.UserDAO;
 import it.gpgames.consigliaviaggi19.DAO.models.places.Place;
@@ -65,6 +66,7 @@ public class MainActivity extends AppCompatActivity implements DatabaseCallback 
     private static GeoFire geoFire = null;
     private UserDAO userDao = DAOFactory.getDAOInstance().getUserDAO();
     private PlaceDAO placeDao = DAOFactory.getDAOInstance().getPlaceDAO();
+    private LoginDAO loginDao = DAOFactory.getDAOInstance().getLoginDAO();
 
     public static String getLastSearchString() {
         return lastSearchString;
@@ -78,8 +80,7 @@ public class MainActivity extends AppCompatActivity implements DatabaseCallback 
         bUserPanel=findViewById(R.id.user);
         svSearchPlaces = findViewById(R.id.searchView);
         bMapExplore = findViewById(R.id.mapSearch);
-        User.initiateLocalInstance();
-        checkIfTokenHasExpired();
+        loginDao.isTokenExpired(this,CALLBACK_DEFAULT_CODE);
         init();
     }
 
@@ -91,14 +92,6 @@ public class MainActivity extends AppCompatActivity implements DatabaseCallback 
         registerReceiver(networkChangeReceiver, filter);
     }
 
-    /**Controlla se il token d'accesso è scaduto. In tal caso è necessario ri-effettuare l'accesso.*/
-    private void checkIfTokenHasExpired(){
-        if(FirebaseAuth.getInstance().getCurrentUser() == null){
-            Intent accessNeeded = new Intent(MainActivity.this, LoginActivity.class);
-            startActivity(accessNeeded);
-        }
-    }
-
     /**Inizializza tutte le componenti della activity_main.xml*/
     private void init()
     {
@@ -107,35 +100,23 @@ public class MainActivity extends AppCompatActivity implements DatabaseCallback 
     }
 
     /**Inizializza i listener della activity_main.xml:
-     * - OnClickListener(bUserPanel): button per aprire l'UserPanelActivity;
-     * - AuthStateListener(FirebaseAuth.getInstance()): gestisce la scadenza del token di accesso.*/
+     * - OnClickListener(bUserPanel): button per aprire l'UserPanelActivity;*/
     private void initListeners()
     {
         //Inizializzazione listener dello user_button, per accede al pannello di controllo dell'utente
         bUserPanel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                userDao.getUserByID(FirebaseAuth.getInstance().getUid(),MainActivity.this, 0);
+                userDao.getUserByID(User.getLocalInstance().getUserID(),MainActivity.this, 0);
             }
         });
 
-        // Inizializzazione listener sullo stato di autenticazione. In caso di scadenza token, il listener si attiva.
-        FirebaseAuth.getInstance().addAuthStateListener(new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                if(FirebaseAuth.getInstance().getCurrentUser()==null)
-                {
-                    startActivity(new Intent(MainActivity.this, LoginActivity.class));
-                    finish();
-                }
-            }
-        });
 
         svSearchPlaces.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 lastSearchString=query;
-                placeDao.getPlaceByTags(lastSearchString,MainActivity.this, 0);
+                placeDao.getPlaceByTags(lastSearchString,MainActivity.this, CALLBACK_DEFAULT_CODE);
                 return true;
             }
 
@@ -224,7 +205,8 @@ public class MainActivity extends AppCompatActivity implements DatabaseCallback 
 
     @Override
     public void callback(int callbackCode) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        Intent accessNeeded = new Intent(MainActivity.this, LoginActivity.class);
+        startActivity(accessNeeded);
     }
 
     @Override

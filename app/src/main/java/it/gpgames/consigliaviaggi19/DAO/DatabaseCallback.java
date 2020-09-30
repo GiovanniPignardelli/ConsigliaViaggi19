@@ -9,6 +9,8 @@ import it.gpgames.consigliaviaggi19.search.place_details.reviews.ReviewsAdapter;
 
 public interface DatabaseCallback
 {
+    int CALLBACK_DEFAULT_CODE = 0;
+
     void callback(int callbackCode);
     void callback(Place place, int callbackCode);
     void callback(Place place, ReviewsAdapter.ReviewViewHolder holder, int callbackCode);

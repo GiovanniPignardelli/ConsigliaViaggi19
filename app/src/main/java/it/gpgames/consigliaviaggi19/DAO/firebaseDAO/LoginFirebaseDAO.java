@@ -27,6 +27,8 @@ public class LoginFirebaseDAO implements LoginDAO {
         else callback.callback(fAuth.getUid(),callbackCode);
     }
 
+
+
     @Override
     public void authentication(String email, String password, final DatabaseCallback callback, final int callbackCode) {
         fAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(
@@ -35,7 +37,6 @@ public class LoginFirebaseDAO implements LoginDAO {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful())
                         {
-
                             callback.callback(callbackCode);
                         }
                         else
@@ -44,5 +45,25 @@ public class LoginFirebaseDAO implements LoginDAO {
                         }
                     }
                 });
+    }
+
+    @Override
+    public void signOut(DatabaseCallback callback, int callbackCode) {
+        FirebaseAuth.getInstance().signOut();
+        callback.callback(callbackCode);
+    }
+
+    @Override
+    public void isTokenExpired(final DatabaseCallback callback, final int callbackCode) {
+        // Inizializzazione listener sullo stato di autenticazione. In caso di scadenza token, il listener si attiva.
+        FirebaseAuth.getInstance().addAuthStateListener(new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                if(FirebaseAuth.getInstance().getCurrentUser()==null)
+                {
+                    callback.callback(callbackCode);
+                }
+            }
+        });
     }
 }

@@ -37,7 +37,6 @@ public class LoginActivity extends AppCompatActivity implements DatabaseCallback
     private EditText e,p;
     private LoginDAO loginDao = DAOFactory.getDAOInstance().getLoginDAO();
     private UserDAO userDao = DAOFactory.getDAOInstance().getUserDAO();
-    FirebaseAuth fAuth;
 
     private static final NetworkChangeReceiver networkChangeReceiver=NetworkChangeReceiver.getNetworkChangeReceiverInstance();
 

@@ -240,7 +240,7 @@ public class PlaceDetailsActivity extends AppCompatActivity implements ReviewsAd
 
     /** Il metodo controlla che l'utente corrente non abbia già scritto una recensione per la struttura visualizzata.*/
     private void checkIfReviewExists() {
-        reviewDao.getReviewsByPlaceIDAndUserID(toShow.getDbDocID(),FirebaseAuth.getInstance().getUid(),this, CALLBACK_IF_ABLE_TO_REVIEW);
+        reviewDao.getReviewsByPlaceIDAndUserID(toShow.getDbDocID(),User.getLocalInstance().getUserID(),this, CALLBACK_IF_ABLE_TO_REVIEW);
     }
 
     /**Metodo che aggiorna le review relative alla struttura. Esegue un controllo sui valori attuali degli attributi actualOrder e actualSort per effettuare la query*/

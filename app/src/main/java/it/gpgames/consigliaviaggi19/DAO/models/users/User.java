@@ -79,22 +79,6 @@ public class User implements Parcelable {
         User.localInstance = localInstance;
     }
 
-
-    public static void initiateLocalInstance()
-    {
-        FirebaseFirestore.getInstance().collection("userPool").whereEqualTo("userID",FirebaseAuth.getInstance().getUid()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if(task.isSuccessful() && task.getResult().size()>1)
-                {
-                    QuerySnapshot result = task.getResult();
-                    localInstance=result.toObjects(User.class).get(0);
-                }
-            }
-        });
-    }
-
-
     public User()
     {
 
@@ -141,21 +125,6 @@ public class User implements Parcelable {
         dest.writeInt(nReview);
         dest.writeFloat(avgReview);
         dest.writeString(avatar);
-    }
-
-    /**La classe UserDataUpdate implementa Runnable. Viene avviato su un Thread secondario per
-     * salvare localmente le informazioni in UserData. Effettua operazioni network.*/
-    private class UserDataUpdater implements Runnable{
-        @Override
-        public void run() {
-            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-            if (user != null) {
-                setDisplayName(user.getDisplayName());
-                setEmail(user.getEmail());
-                setAvatar(user.getPhotoUrl().toString());
-                setUserID(user.getUid());
-            }
-        }
     }
 
     public String getDisplayName() {

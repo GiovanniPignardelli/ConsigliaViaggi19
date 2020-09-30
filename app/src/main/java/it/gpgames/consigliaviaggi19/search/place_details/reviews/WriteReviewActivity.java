@@ -132,7 +132,7 @@ public class WriteReviewActivity extends AppCompatActivity implements DatabaseCa
     }
 
     private void sendReview(String reviewString, int rating, String day, String month, String year) {
-        Review review=new Review(dbDocID, FirebaseAuth.getInstance().getUid(),reviewString,year,month,day, rating);
+        Review review=new Review(dbDocID, User.getLocalInstance().getUserID(),reviewString,year,month,day, rating);
         reviewDao.createReview(review,this,0);
     }
 

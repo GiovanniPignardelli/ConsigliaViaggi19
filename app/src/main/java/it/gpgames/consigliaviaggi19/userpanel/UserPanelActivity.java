@@ -27,6 +27,7 @@ import java.util.List;
 
 import it.gpgames.consigliaviaggi19.DAO.DAOFactory;
 import it.gpgames.consigliaviaggi19.DAO.DatabaseCallback;
+import it.gpgames.consigliaviaggi19.DAO.LoginDAO;
 import it.gpgames.consigliaviaggi19.DAO.PlaceDAO;
 import it.gpgames.consigliaviaggi19.DAO.ReviewDAO;
 import it.gpgames.consigliaviaggi19.DAO.UserDAO;
@@ -52,6 +53,7 @@ public class UserPanelActivity extends AppCompatActivity implements DatabaseCall
     private UserDAO userDao = DAOFactory.getDAOInstance().getUserDAO();
     private PlaceDAO placeDao = DAOFactory.getDAOInstance().getPlaceDAO();
     private ReviewDAO reviewDao = DAOFactory.getDAOInstance().getReviewDAO();
+    private LoginDAO loginDao = DAOFactory.getDAOInstance().getLoginDAO();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,15 +115,14 @@ public class UserPanelActivity extends AppCompatActivity implements DatabaseCall
         bLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FirebaseAuth.getInstance().signOut();
-                User.setLocalInstance(null);
+                loginDao.signOut(UserPanelActivity.this,1);
             }
         });
 
         bResetPassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                auth.sendPasswordResetEmail(FirebaseAuth.getInstance().getCurrentUser().getEmail())
+                auth.sendPasswordResetEmail(User.getLocalInstance().getEmail())
                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
@@ -175,7 +176,7 @@ public class UserPanelActivity extends AppCompatActivity implements DatabaseCall
         bChangeProfilePicture.setEnabled(false);
         bResetPassword.setEnabled(false);
         bLogout.setEnabled(false);
-        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        String uid = User.getLocalInstance().getUserID();
         userDao.setAvatarByID(uid, data, this, 0);
     }
 
@@ -187,7 +188,14 @@ public class UserPanelActivity extends AppCompatActivity implements DatabaseCall
 
     @Override
     public void callback(int callbackCode) {
-        finish();
+        switch(){
+            case CALLBACK_DEFAULT_CODE:
+                finish();
+                break;
+            case 1:
+                User.setLocalInstance(null);
+                break;
+        }
     }
 
     @Override
