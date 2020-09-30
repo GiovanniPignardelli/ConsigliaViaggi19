@@ -176,7 +176,7 @@ public class Place implements Serializable {
         this.pictures = pictures;
     }
 
-    public Place(String name, String address, String city, String postal_code, String state, String priceTag, List<String> tags, String addYear, String email, String telephone, String website, String category, String docID, Integer nReview, Float avgReview, int sumReviews) {
+    public Place(String name, String address, String city, String postal_code, String state, String priceTag, List<String> tags, String addYear, String email, String telephone, String website, String category, String docID, Integer nReview, Float avgReview, int sumReviews, List<String> pictures) {
         this.name = name;
         this.address = address;
         this.city = city;
@@ -193,6 +193,7 @@ public class Place implements Serializable {
         this.nReviews=nReview;
         this.avgReview=avgReview;
         this.sumReviews=sumReviews;
+        this.pictures = pictures;
     }
 
     public Place(Place toObject, String docID)
