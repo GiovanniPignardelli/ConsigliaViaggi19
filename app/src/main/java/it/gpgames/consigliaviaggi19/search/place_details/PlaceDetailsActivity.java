@@ -293,17 +293,17 @@ public class PlaceDetailsActivity extends AppCompatActivity implements ReviewsAd
 
     @Override
     public void callback(int callbackCode) {
-
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public void callback(Place place, int callbackCode) {
-
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public void callback(Place place, ReviewsAdapter.ReviewViewHolder holder, int callbackCode) {
-
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
@@ -316,7 +316,7 @@ public class PlaceDetailsActivity extends AppCompatActivity implements ReviewsAd
 
     @Override
     public void callback(User user, ReviewsAdapter.ReviewViewHolder holder, int callbackCode) {
-
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     public static final int CALLBACK_REFRESH_REVIEWS = 0;
@@ -332,11 +332,20 @@ public class PlaceDetailsActivity extends AppCompatActivity implements ReviewsAd
                 break;
             case CALLBACK_IF_ABLE_TO_REVIEW:
                 if(!reviewsList.isEmpty())
+                {
                     alreadyWritten=true;
-                else{
-                    alreadyWritten=false;
-                    bWriteReview.setEnabled(true);
+                    bWriteReview.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Toast.makeText(getApplicationContext(),"Hai già inserito una recensione per questa struttura.",Toast.LENGTH_LONG).show();
+                        }
+                    });
                 }
+                else
+                    {
+                    alreadyWritten=false;
+                }
+                bWriteReview.setEnabled(true);
                 break;
         }
 
@@ -344,12 +353,12 @@ public class PlaceDetailsActivity extends AppCompatActivity implements ReviewsAd
 
     @Override
     public void callback(List<Place> weakList, List<Place> topList, int callbackCode) {
-
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public void callback(String message, int callbackCode) {
-
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override

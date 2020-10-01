@@ -219,10 +219,16 @@ public class UserPanelActivity extends AppCompatActivity implements DatabaseCall
 
     @Override
     public void callback(List<Review> reviews, int callbackCode) {
-        Intent i=new Intent(getApplicationContext(),ShowUserReviewsActivity.class);
-        i.putExtra("reviewsToShow",(Serializable) reviews);
-        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(i);
+        if(reviews.size()>0)
+        {
+            Intent i=new Intent(getApplicationContext(),ShowUserReviewsActivity.class);
+            i.putExtra("reviewsToShow",(Serializable) reviews);
+            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(i);
+        }
+        else
+            Toast.makeText(getApplicationContext(),"L'utente non ha inserito recensioni.", Toast.LENGTH_LONG).show();
+
     }
 
     @Override

@@ -51,7 +51,7 @@ public class WriteReviewActivity extends AppCompatActivity implements DatabaseCa
     private Place toShow;
     private String dbDocID;
 
-    NetworkChangeReceiver networkChangeReceiver=NetworkChangeReceiver.getNetworkChangeReceiverInstance();
+    private final static NetworkChangeReceiver networkChangeReceiver=NetworkChangeReceiver.getNetworkChangeReceiverInstance();
     private ReviewDAO reviewDao = DAOFactory.getDAOInstance().getReviewDAO();
     private PlaceDAO placeDAO = DAOFactory.getDAOInstance().getPlaceDAO();
 
