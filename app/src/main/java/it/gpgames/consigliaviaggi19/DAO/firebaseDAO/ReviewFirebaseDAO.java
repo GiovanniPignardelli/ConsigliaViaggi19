@@ -110,8 +110,8 @@ public class ReviewFirebaseDAO implements ReviewDAO {
                 if (task.isSuccessful()) {
                     User user = task.getResult().toObjects(User.class).get(0);
                     final String documentID = task.getResult().getDocuments().get(0).getId();
-                    final int oldNum = user.getnReview();
-                    final int oldSum = user.getSumReviews();
+                    final float oldNum = user.getnReview();
+                    final float oldSum = user.getSumReviews();
                     DocumentReference userDoc = FirebaseFirestore.getInstance().collection("userPool").document(documentID);
 
                     userDoc.update("nReview", oldNum + 1).addOnFailureListener(new OnFailureListener() {
@@ -128,7 +128,7 @@ public class ReviewFirebaseDAO implements ReviewDAO {
                         }
                     });
 
-                    userDoc.update("avgReview", (oldNum + review.getRating()) / (oldNum + 1)).addOnFailureListener(new OnFailureListener() {
+                    userDoc.update("avgReview", ((oldSum + review.getRating()) / (oldNum + 1))).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
                             callback.manageError(e, callbackCode);
@@ -145,12 +145,12 @@ public class ReviewFirebaseDAO implements ReviewDAO {
                 {
                     final DocumentSnapshot doc=task.getResult();
                     final Place place=task.getResult().toObject(Place.class);
-                    final int oldNum = place.getnReviews();
-                    final int oldSum = place.getSumReviews();
+                    final float oldNum = place.getnReviews();
+                    final float oldSum = place.getSumReviews();
 
                     final DocumentReference placeDoc=task.getResult().getReference();
 
-                    placeDoc.update("nReviews", oldNum + 1).addOnFailureListener(new OnFailureListener() {
+                    placeDoc.update("avgReview", ((oldSum + review.getRating()) / (oldNum + 1))).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
                             callback.manageError(e, callbackCode);
@@ -166,7 +166,7 @@ public class ReviewFirebaseDAO implements ReviewDAO {
                             }).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {
-                                    placeDoc.update("avgReview", (oldNum + review.getRating()) / (oldNum + 1)).addOnFailureListener(new OnFailureListener() {
+                                    placeDoc.update("nReviews", oldNum + 1).addOnFailureListener(new OnFailureListener() {
                                         @Override
                                         public void onFailure(@NonNull Exception e) {
                                             callback.manageError(e, callbackCode);
