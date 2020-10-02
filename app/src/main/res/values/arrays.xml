@@ -9,4 +9,94 @@
         <item>reply</item>
         <item>reply_all</item>
     </string-array>
+
+    <string-array name="spinner_items">
+        <item>Qualsiasi</item>
+        <item>Ristoranti</item>
+        <item>Alberghi</item>
+        <item>Attrazioni</item>
+    </string-array>
+
+    <string-array name="general_tags">
+        <item>Free Wifi</item>
+        <item>Sala interna</item>
+        <item>Centro città</item>
+        <item>Turistico</item>
+        <item>Parcheggio</item>
+        <item>Vista mare</item>
+        <item>Vista montagna</item>
+        <item>Aria condizionata</item>
+        <item>Cultura</item>
+        <item>Panoramica</item>
+        <item>Animali ammessi</item>
+        <item>Area cani</item>
+        <item>Stile orientale</item>
+        <item>Bosco</item>
+        <item>Sport</item>
+        <item>Picnic</item>
+    </string-array>
+
+    <string-array name="service_tags">
+        <item>Al tavolo</item>
+        <item>Delivery</item>
+        <item>Asporto</item>
+        <item>All you can eat</item>
+    </string-array>
+
+    <string-array name="cuisine_tags">
+        <item>Italiana</item>
+        <item>Fast food</item>
+        <item>Steakhouse</item>
+        <item>Pizza</item>
+        <item>Vineria</item>
+        <item>Pub</item>
+        <item>Tedesca</item>
+        <item>Medio-orientale</item>
+        <item>Bar</item>
+        <item>Sushi</item>
+        <item>Giapponese</item>
+        <item>Cinese</item>
+        <item>Indiana</item>
+        <item>Vegan</item>
+        <item>Street food</item>
+        <item>Fusion</item>
+        <item>Americana</item>
+        <item>Grill</item>
+        <item>Barbecue</item>
+        <item>Seafood</item>
+    </string-array>
+
+    <string-array name="room_tags">
+        <item>Smart TV</item>
+        <item>Caffè</item>
+        <item>Frigorifero</item>
+        <item>Servizio di pulizia</item>
+        <item>Balcone privato</item>
+        <item>Minibar</item>
+        <item>Servizio in camera</item>
+        <item>Vasca da bagno</item>
+        <item>Finestra</item>
+        <item>Bagno privato</item>
+        <item>Jacuzzi</item>
+        <item>Idromassaggio</item>
+        <item>Colazione inclusa</item>
+        <item>Letto King size</item>
+    </string-array>
+
+    <string-array name="room_type_tags">
+        <item>Singola</item>
+        <item>Matrimoniale</item>
+        <item>Tripla</item>
+        <item>Quadrupla</item>
+        <item>Suite</item>
+        <item>Suite con Spa</item>
+        <item>Deluxe</item>
+        <item>A tema</item>
+        <item>Vista città</item>
+        <item>Vista mare</item>
+        <item>Vista montagna</item>
+        <item>Vista piscina</item>
+    </string-array>
+
+
 </resources>

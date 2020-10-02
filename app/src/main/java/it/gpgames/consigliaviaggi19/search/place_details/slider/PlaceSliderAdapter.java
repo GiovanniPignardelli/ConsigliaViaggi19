@@ -54,7 +54,6 @@ public class PlaceSliderAdapter extends SliderViewAdapter<PlaceSliderAdapter.Pla
             @Override
             public void run() {
                 final Bitmap bitmap= HomeSliderItemsGetter.getBitmapFromURL( sliderItemString );
-                Log.d("images","Sto per modificare l'immagine");
                 activity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {

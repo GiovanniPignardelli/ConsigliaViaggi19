@@ -5,6 +5,15 @@ import java.util.ArrayList;
 
 public class Restaurant extends Place implements Serializable {
 
+    private ArrayList<String> serviceTags;
+    private ArrayList<String> cuisineTags;
+
+    public Restaurant(Place toObject, ArrayList<String> cuisineTags, ArrayList<String> serviceTags, String docID) {
+        super(toObject.getName(),toObject.getAddress(),toObject.getCity(),toObject.getPostal_code(),toObject.getState(),toObject.getPriceTag(),toObject.getTags(),toObject.getAddYear(), toObject.getEmail(), toObject.getTelephone(), toObject.getWebsite(), toObject.getCategory(), docID, toObject.getnReviews(), toObject.getAvgReview(), toObject.getSumReviews(), toObject.getPictures());
+
+        this.cuisineTags=cuisineTags;
+        this.serviceTags=serviceTags;
+    }
 
     public Restaurant()
     {
@@ -17,16 +26,6 @@ public class Restaurant extends Place implements Serializable {
 
     public void setCuisineTags(ArrayList<String> cuisineTags) {
         this.cuisineTags = cuisineTags;
-    }
-
-    private ArrayList<String> serviceTags;
-    private ArrayList<String> cuisineTags;
-
-    public Restaurant(Place toObject, ArrayList<String> cuisineTags, ArrayList<String> serviceTags, String docID) {
-        super(toObject.getName(),toObject.getAddress(),toObject.getCity(),toObject.getPostal_code(),toObject.getState(),toObject.getPriceTag(),toObject.getTags(),toObject.getAddYear(), toObject.getEmail(), toObject.getTelephone(), toObject.getWebsite(), toObject.getCategory(), docID, toObject.getnReviews(), toObject.getAvgReview(), toObject.getSumReviews(), toObject.getPictures());
-
-        this.cuisineTags=cuisineTags;
-        this.serviceTags=serviceTags;
     }
 
     public ArrayList<String> getServiceTags() {

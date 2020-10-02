@@ -115,7 +115,7 @@ public class MainActivity extends AppCompatActivity implements DatabaseCallback 
             @Override
             public boolean onQueryTextSubmit(String query) {
                 lastSearchString=query;
-                placeDao.getPlaceByTags(lastSearchString,MainActivity.this, CALLBACK_DEFAULT_CODE);
+                placeDao.getPlaceByTags(lastSearchString,null,null,null,null,MainActivity.this, CALLBACK_DEFAULT_CODE);
                 return true;
             }
 

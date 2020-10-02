@@ -8,6 +8,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import it.gpgames.consigliaviaggi19.DAO.DatabaseCallback;
 import it.gpgames.consigliaviaggi19.DAO.DatabaseUtilities;
@@ -22,9 +23,9 @@ public class PlaceFirebaseDAO implements PlaceDAO {
 
     FirebaseFirestore dbRef = FirebaseFirestore.getInstance();
 
-    public void getPlaceByTags(final String searchString, final DatabaseCallback callback, int callbackCode)
+    public void getPlaceByTags(final String searchString, String category, Integer minRating, String price, HashMap<Integer, ArrayList<String>> tags, DatabaseCallback callback, int callbackCode)
     {
-        new FirebaseQueryExecutor(DatabaseUtilities.parseString(searchString," "),callback,callbackCode).executeQuery();
+        new FirebaseQueryExecutor(DatabaseUtilities.parseString(searchString, " "),category,minRating,price,tags,callback,callbackCode).executeQuery();
     }
 
     public void getPlaceByID(final String dataID, final DatabaseCallback callback, int callbackCode){
