@@ -110,7 +110,7 @@ public class FirebaseQueryExecutor {
                                     for(String tag: tags)
                                     {
                                         Log.d("tag__",tag);
-                                        query=query.whereArrayContains("tags",tag);
+                                        query=query.whereEqualTo("generalTags."+tag,true);
                                     }
 
                                     break;
@@ -118,25 +118,26 @@ public class FirebaseQueryExecutor {
                                     if(category!=Place.CATEGORY_RESTAURANT)
                                         throw new IllegalStateException("You can't set this filter!");
                                     for(String tag: tags)
-                                        query=query.whereArrayContains("cuisineTags",tag);
+                                        query=query.whereEqualTo("cuisineTags."+tag,true);
                                     break;
                                 case FiltersSelectorActivity.FLAG_SERVICE_TAGS:
                                     if(category!=Place.CATEGORY_RESTAURANT)
                                         throw new IllegalStateException("You can't set this filter!");
                                     for(String tag: tags)
-                                        query=query.whereArrayContains("serviceTags",tag);
+                                        query=query.whereEqualTo("serviceTags."+tag,true);
                                     break;
                                 case FiltersSelectorActivity.FLAG_ROOM_TAGS:
                                     if(category!=Place.CATEGORY_HOTEL)
                                         throw new IllegalStateException("You can't set this filter!");
                                     for(String tag: tags)
-                                        query=query.whereArrayContains("roomTags", tag);
+                                        query=query.whereEqualTo("roomTags."+tag,true);
                                     break;
                                 case FiltersSelectorActivity.FLAG_ROOM_TYPE_TAGS:
                                     if(category!=Place.CATEGORY_HOTEL)
                                         throw new IllegalStateException("You can't set this filter!");
                                     for(String tag: tags)
-                                        query=query.whereArrayContains("roomTypeTags", tag);
+                                        query=query.whereEqualTo("roomTypeTags."+tag,true);
+                                    break;
                             }
                         }
                     }
@@ -153,22 +154,22 @@ public class FirebaseQueryExecutor {
                             for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult()))
                             {
                                 Log.d("query", document.getId() + " => " + document.getData().toString());
-                                if(document.toObject(Place.class).getCategory().equals(Place.CATEGORY_RESTAURANT))
+                                if(PlaceFirebaseDAO.generatePlace(document).getCategory().equals(Place.CATEGORY_RESTAURANT))
                                 {
                                     Log.d("gen", "sto generando ristorante");
-                                    Restaurant rest=new Restaurant(document.toObject(Place.class), (ArrayList<String>) document.get("cuisineTags"),(ArrayList<String>)document.get("serviceTags"), document.getId());
+                                    Restaurant rest=new Restaurant(PlaceFirebaseDAO.generatePlace(document), PlaceFirebaseDAO.generateTagList((HashMap<String,Boolean>)document.get("cuisineTags")),PlaceFirebaseDAO.generateTagList((HashMap<String,Boolean>)document.get("serviceTags")), document.getId());
                                     newList.add(rest);
                                 }
-                                else if(document.toObject(Place.class).getCategory().equals(Place.CATEGORY_HOTEL))
+                                else if(PlaceFirebaseDAO.generatePlace(document).getCategory().equals(Place.CATEGORY_HOTEL))
                                 {
                                     Log.d("gen", "sto generando hotel");
-                                    Hotel hotel=new Hotel(document.toObject(Place.class),  document.get("hClass").toString(), (ArrayList<String>) document.get("roomTags"), (ArrayList<String>) document.get("roomTypeTags"),document.getId());
+                                    Hotel hotel=new Hotel(PlaceFirebaseDAO.generatePlace(document),  document.get("hClass").toString(), PlaceFirebaseDAO.generateTagList((HashMap<String,Boolean>)document.get("roomTags")), PlaceFirebaseDAO.generateTagList((HashMap<String,Boolean>)document.get("roomTypeTags")),document.getId());
                                     newList.add(hotel);
                                 }
-                                else if(document.toObject(Place.class).getCategory().equals(Place.CATEGORY_PLACE))
+                                else if(PlaceFirebaseDAO.generatePlace(document).getCategory().equals(Place.CATEGORY_PLACE))
                                 {
                                     Log.d("gen", "sto generando place");
-                                    Place place=new Place(document.toObject(Place.class), document.getId());
+                                    Place place=new Place(PlaceFirebaseDAO.generatePlace(document), document.getId());
                                     newList.add(place);
                                 }
                             }

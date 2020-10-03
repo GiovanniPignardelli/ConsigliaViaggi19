@@ -21,7 +21,6 @@ public class Place implements Serializable {
     private String dbDocID;
     private List<String> pictures;
     private String addYear;
-
     private String email;
     private String telephone;
     private String website;
@@ -29,6 +28,14 @@ public class Place implements Serializable {
     private Float avgReview;
     private int sumReviews;
     public String category;
+
+    public List<String> getTags() {
+        return tags;
+    }
+
+    public void setTags(List<String> tags) {
+        this.tags = tags;
+    }
 
     public int getSumReviews() {
         return sumReviews;
@@ -102,14 +109,6 @@ public class Place implements Serializable {
 
     public void setPriceTag(String priceTag) {
         this.priceTag = priceTag;
-    }
-
-    public List<String> getTags() {
-        return tags;
-    }
-
-    public void setTags(List<String> tags) {
-        this.tags = tags;
     }
 
     public String getAddYear() {

@@ -98,5 +98,13 @@
         <item>Vista piscina</item>
     </string-array>
 
+    <string-array name="order_tags">
+        <item>Miglior corrispondenza</item>
+        <item>Punteggio</item>
+        <item>Numero Recensioni</item>
+        <item>Alfabetico</item>
+        <item>Data inserimento</item>
+    </string-array>
+
 
 </resources>

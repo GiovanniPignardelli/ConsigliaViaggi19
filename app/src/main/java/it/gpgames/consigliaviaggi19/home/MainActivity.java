@@ -12,6 +12,7 @@ import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.Message;
 import android.os.Parcelable;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.SearchView;
@@ -19,25 +20,38 @@ import android.widget.Toast;
 
 
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.smarteist.autoimageslider.IndicatorView.animation.type.IndicatorAnimationType;
 import com.smarteist.autoimageslider.SliderAnimations;
 import com.smarteist.autoimageslider.SliderView;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import it.gpgames.consigliaviaggi19.DAO.DAOFactory;
 import it.gpgames.consigliaviaggi19.DAO.DatabaseCallback;
 import it.gpgames.consigliaviaggi19.DAO.LoginDAO;
 import it.gpgames.consigliaviaggi19.DAO.PlaceDAO;
 import it.gpgames.consigliaviaggi19.DAO.UserDAO;
+import it.gpgames.consigliaviaggi19.DAO.firebaseDAO.PlaceFirebaseDAO;
+import it.gpgames.consigliaviaggi19.DAO.models.places.Hotel;
 import it.gpgames.consigliaviaggi19.DAO.models.places.Place;
+import it.gpgames.consigliaviaggi19.DAO.models.places.Restaurant;
 import it.gpgames.consigliaviaggi19.DAO.models.reviews.Review;
 import it.gpgames.consigliaviaggi19.LoginActivity;
 import it.gpgames.consigliaviaggi19.R;

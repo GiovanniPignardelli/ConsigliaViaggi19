@@ -249,7 +249,7 @@ public class ResultsActivity extends AppCompatActivity implements DatabaseCallba
     }
 
     @Override
-    public void refresh() {
+    public void refreshFilter() {
         placeDao.getPlaceByTags(MainActivity.getLastSearchString(),category,minRating,priceTag,tags,this,0);
     }
 }

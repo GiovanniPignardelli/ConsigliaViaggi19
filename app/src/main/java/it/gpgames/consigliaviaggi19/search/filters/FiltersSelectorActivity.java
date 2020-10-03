@@ -141,13 +141,8 @@ public class FiltersSelectorActivity extends Activity implements FilterTagsAdapt
                         actualCategory=FLAG_HOTEL;
                         break;
                     case FLAG_ANY:
-                        mergedLists=new ArrayList<>(serviceTags);
-                        mergedLists.addAll(cuisineTags);
-                        mergedLists.addAll(roomTags);
-                        mergedLists.addAll(roomTypeTags);
-                        setUpSecondaryTags(mergedLists);
-                        secondaryTags.setVisibility(View.VISIBLE);
-                        otherTagsText.setVisibility(View.VISIBLE);
+                        secondaryTags.setVisibility(View.INVISIBLE);
+                        otherTagsText.setVisibility(View.INVISIBLE);
                         actualCategory=FLAG_ANY;
                         break;
                 }
@@ -246,9 +241,8 @@ public class FiltersSelectorActivity extends Activity implements FilterTagsAdapt
                     filterCallback.setMinRating((int)actualRating);
 
                 filterCallback.setTags(actualTags);
-                filterCallback.refresh();
+                filterCallback.refreshFilter();
 
-                if(actualTags.get(FLAG_GENERAL_TAGS)==null)Log.d("TAG__", "null");
                 Iterator it = actualTags.entrySet().iterator();
                 while (it.hasNext()) {
                     Map.Entry pair = (Map.Entry) it.next();
@@ -415,6 +409,6 @@ public class FiltersSelectorActivity extends Activity implements FilterTagsAdapt
         void setPriceString(String price);
         void setTags(HashMap<Integer,ArrayList<String>> tags);
         void setMaxDistance(int km);
-        void refresh();
+        void refreshFilter();
     }
 }

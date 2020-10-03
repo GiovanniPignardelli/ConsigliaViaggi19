@@ -1,5 +1,7 @@
 package it.gpgames.consigliaviaggi19.DAO.firebaseDAO;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -9,6 +11,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import it.gpgames.consigliaviaggi19.DAO.DatabaseCallback;
 import it.gpgames.consigliaviaggi19.DAO.DatabaseUtilities;
@@ -48,16 +53,39 @@ public class PlaceFirebaseDAO implements PlaceDAO {
         });
     }
 
-    static Place generatePlace(DocumentSnapshot result) {
+    public static Place generatePlace(DocumentSnapshot result) {
         Place toObject=result.toObject(Place.class);
+        HashMap<String, Boolean> map=(HashMap<String, Boolean>)result.get("generalTags");
+        ArrayList<String> tags=generateTagList(map);
+        toObject.setTags(tags);
+
         if(toObject.getCategory().equals(Place.CATEGORY_RESTAURANT))
-            return new Restaurant(toObject, (ArrayList<String>) result.get("cuisineTags"),(ArrayList<String>)result.get("serviceTags"), result.getId());
+        {
+            return new Restaurant(toObject, generateTagList((HashMap<String,Boolean>)result.get("cuisineTags")),generateTagList((HashMap<String,Boolean>)result.get("serviceTags")), result.getId());
+        }
 
         else if(toObject.getCategory().equals(Place.CATEGORY_HOTEL))
-            return new Hotel(toObject,  result.get("hClass").toString(), (ArrayList<String>) result.get("roomTags"), (ArrayList<String>) result.get("roomTypeTags"),result.getId());
-
+        {
+            return new Hotel(toObject, String.valueOf(result.get("hClass")), generateTagList((HashMap<String,Boolean>)result.get("roomTags")), generateTagList((HashMap<String,Boolean>)result.get("roomTypeTags")), result.getId());
+        }
         else
             return new Place(toObject, result.getId());
+    }
+
+    public static ArrayList<String> generateTagList(HashMap<String, Boolean> map)
+    {
+        ArrayList<String> tags=new ArrayList<>();
+        Iterator it = map.entrySet().iterator();
+        while (it.hasNext())
+        {
+            Map.Entry pair = (Map.Entry) it.next();
+            String key = (String) pair.getKey();
+            Boolean value = (Boolean) pair.getValue();
+            if(value.equals(true))
+                tags.add(key);
+        }
+
+        return tags;
     }
 
 }
