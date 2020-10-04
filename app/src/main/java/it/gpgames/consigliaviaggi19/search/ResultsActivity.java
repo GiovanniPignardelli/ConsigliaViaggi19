@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firestore.v1.StructuredQuery;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -31,13 +32,14 @@ import it.gpgames.consigliaviaggi19.home.MainActivity;
 import it.gpgames.consigliaviaggi19.network.NetworkChangeReceiver;
 import it.gpgames.consigliaviaggi19.DAO.models.places.Place;
 import it.gpgames.consigliaviaggi19.search.filters.FiltersSelectorActivity;
+import it.gpgames.consigliaviaggi19.search.filters.order.OrderSelectorActivity;
 import it.gpgames.consigliaviaggi19.search.place_details.PlaceDetailsActivity;
 import it.gpgames.consigliaviaggi19.search.place_details.reviews.ReviewsAdapter;
 import it.gpgames.consigliaviaggi19.search.place_map.MapExploreActivity;
 
 /** Activity che si occupa di visualizzare i risultati di una query.
  * A questa activity viene anche passata la stringa di ricerca tramite intent*/
-public class ResultsActivity extends AppCompatActivity implements DatabaseCallback, FiltersSelectorActivity.FilterCallback{
+public class ResultsActivity extends AppCompatActivity implements DatabaseCallback, FiltersSelectorActivity.FilterCallback, OrderSelectorActivity.OrderCallback {
 
     private static android.content.Context context;
     private TextView titleText;
@@ -49,16 +51,20 @@ public class ResultsActivity extends AppCompatActivity implements DatabaseCallba
     private static final NetworkChangeReceiver networkChangeReceiver=NetworkChangeReceiver.getNetworkChangeReceiverInstance();
     private PlaceDAO placeDao = DAOFactory.getDAOInstance().getPlaceDAO();
 
-    private static FiltersSelectorActivity.FilterCallback lastInstance;
+    private static ResultsActivity lastInstance;
 
+
+    //filters
     private HashMap<Integer,ArrayList<String>> tags;
     private String category;
     private Integer minRating;
     private Integer maxDistance;
     private String priceTag;
 
+    //order
+    private Integer order=OrderSelectorActivity.FLAG_BEST_MATCH;
+    private Integer direction=OrderSelectorActivity.FLAG_DESC;
 
-    /** Il metodo si occupa anche di generare il primo QueryExecutor.*/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -139,9 +145,25 @@ public class ResultsActivity extends AppCompatActivity implements DatabaseCallba
                 startActivity(i);
             }
         });
+
+        bOrder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                order=OrderSelectorActivity.FLAG_BEST_MATCH;
+                direction= OrderSelectorActivity.FLAG_DESC;
+                Intent i=new Intent(ResultsActivity.this,OrderSelectorActivity.class);
+                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(i);
+            }
+        });
     }
 
-    public static FiltersSelectorActivity.FilterCallback getLastInstance()
+    public static FiltersSelectorActivity.FilterCallback getLastFilterInstance()
+    {
+        return lastInstance;
+    }
+
+    public static OrderSelectorActivity.OrderCallback getLastOrderInstance()
     {
         return lastInstance;
     }
@@ -164,8 +186,9 @@ public class ResultsActivity extends AppCompatActivity implements DatabaseCallba
     }
 
     @Override
+
     public void callback(int callbackCode) {
-        placeDao.getPlaceByTags(MainActivity.getLastSearchString(),category,minRating,priceTag,tags,this,0);
+        placeDao.getPlaceByTags(MainActivity.getLastSearchString(),category,minRating,priceTag,tags,order,direction,this,0);
     }
 
     @Override
@@ -207,6 +230,7 @@ public class ResultsActivity extends AppCompatActivity implements DatabaseCallba
     @Override
     public void manageError(Exception e, int callbackCode) {
         Toast.makeText(this,"Non ho trovato risultati.",Toast.LENGTH_LONG).show();
+        Log.d("query",e.getMessage());
     }
 
     @Override
@@ -250,6 +274,21 @@ public class ResultsActivity extends AppCompatActivity implements DatabaseCallba
 
     @Override
     public void refreshFilter() {
-        placeDao.getPlaceByTags(MainActivity.getLastSearchString(),category,minRating,priceTag,tags,this,0);
+        placeDao.getPlaceByTags(MainActivity.getLastSearchString(),category,minRating,priceTag,tags,order,direction,this,0);
+    }
+
+    @Override
+    public void setOrder(int orderFlag) {
+        this.order=orderFlag;
+    }
+
+    @Override
+    public void setDirection(int directionFlag) {
+        this.direction=directionFlag;
+    }
+
+    @Override
+    public void refreshOrder() {
+        placeDao.getPlaceByTags(MainActivity.getLastSearchString(),category,minRating,priceTag,tags,order,direction,this,0);
     }
 }

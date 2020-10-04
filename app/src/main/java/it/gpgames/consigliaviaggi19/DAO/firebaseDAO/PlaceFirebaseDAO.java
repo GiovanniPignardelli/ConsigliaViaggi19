@@ -28,9 +28,9 @@ public class PlaceFirebaseDAO implements PlaceDAO {
 
     FirebaseFirestore dbRef = FirebaseFirestore.getInstance();
 
-    public void getPlaceByTags(final String searchString, String category, Integer minRating, String price, HashMap<Integer, ArrayList<String>> tags, DatabaseCallback callback, int callbackCode)
+    public void getPlaceByTags(final String searchString, String category, Integer minRating, String price, HashMap<Integer, ArrayList<String>> tags, Integer order, Integer direction, DatabaseCallback callback, int callbackCode)
     {
-        new FirebaseQueryExecutor(DatabaseUtilities.parseString(searchString, " "),category,minRating,price,tags,callback,callbackCode).executeQuery();
+        new FirebaseQueryExecutor(DatabaseUtilities.parseString(searchString, " "),category,minRating,price,tags,order,direction,callback,callbackCode).executeQuery();
     }
 
     public void getPlaceByID(final String dataID, final DatabaseCallback callback, int callbackCode){
@@ -84,7 +84,6 @@ public class PlaceFirebaseDAO implements PlaceDAO {
             if(value.equals(true))
                 tags.add(key);
         }
-
         return tags;
     }
 

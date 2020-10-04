@@ -104,7 +104,7 @@ public class FiltersSelectorActivity extends Activity implements FilterTagsAdapt
         roomTags=new ArrayList<>(Arrays.asList(getResources().getStringArray(R.array.room_tags)));
         roomTypeTags=new ArrayList<>(Arrays.asList(getResources().getStringArray(R.array.room_type_tags)));
 
-        filterCallback=ResultsActivity.getLastInstance();
+        filterCallback=ResultsActivity.getLastFilterInstance();
 
 
         setUpListeners();

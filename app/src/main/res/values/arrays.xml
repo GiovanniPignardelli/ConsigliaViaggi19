@@ -19,6 +19,13 @@
 
     <string-array name="general_tags">
         <item>Free Wifi</item>
+        <item>Accogliente</item>
+        <item>Archelogia</item>
+        <item>Free Wifi</item>
+        <item>Bar</item>
+        <item>Pranzo</item>
+        <item>Cena</item>
+        <item>Colazione</item>
         <item>Sala interna</item>
         <item>Centro città</item>
         <item>Turistico</item>
@@ -34,6 +41,17 @@
         <item>Bosco</item>
         <item>Sport</item>
         <item>Picnic</item>
+        <item>Da non perdere</item>
+        <item>Eventi</item>
+        <item>Feste di compleanno</item>
+        <item>Percorsi pedonali</item>
+        <item>Piscina</item>
+        <item>Sala interna</item>
+        <item>Sala esterna</item>
+        <item>Sala conferenze</item>
+        <item>Siti storici</item>
+        <item>Ubicazione storica</item>
+        <item>Vista mare</item>
     </string-array>
 
     <string-array name="service_tags">
@@ -52,7 +70,6 @@
         <item>Pub</item>
         <item>Tedesca</item>
         <item>Medio-orientale</item>
-        <item>Bar</item>
         <item>Sushi</item>
         <item>Giapponese</item>
         <item>Cinese</item>

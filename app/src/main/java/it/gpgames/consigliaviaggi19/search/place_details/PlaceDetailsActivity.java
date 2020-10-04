@@ -288,7 +288,7 @@ public class PlaceDetailsActivity extends AppCompatActivity implements ReviewsAd
 
     @Override
     public void callback(Place place, MarkerOptions mOpt, int callbackCode) {
-
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override

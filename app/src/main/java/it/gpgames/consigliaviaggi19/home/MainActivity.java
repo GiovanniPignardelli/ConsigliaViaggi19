@@ -57,6 +57,7 @@ import it.gpgames.consigliaviaggi19.LoginActivity;
 import it.gpgames.consigliaviaggi19.R;
 import it.gpgames.consigliaviaggi19.home.slider.HomeSliderAdapter;
 import it.gpgames.consigliaviaggi19.home.slider.HomeSliderItemsGetter;
+import it.gpgames.consigliaviaggi19.search.filters.order.OrderSelectorActivity;
 import it.gpgames.consigliaviaggi19.search.place_details.reviews.ReviewsAdapter;
 import it.gpgames.consigliaviaggi19.search.place_map.MapExploreActivity;
 import it.gpgames.consigliaviaggi19.network.NetworkChangeReceiver;
@@ -129,7 +130,7 @@ public class MainActivity extends AppCompatActivity implements DatabaseCallback 
             @Override
             public boolean onQueryTextSubmit(String query) {
                 lastSearchString=query;
-                placeDao.getPlaceByTags(lastSearchString,null,null,null,null,MainActivity.this, CALLBACK_DEFAULT_CODE);
+                placeDao.getPlaceByTags(lastSearchString,null,null,null,null, OrderSelectorActivity.FLAG_BEST_MATCH,OrderSelectorActivity.FLAG_DESC,MainActivity.this, CALLBACK_DEFAULT_CODE);
                 return true;
             }
 
