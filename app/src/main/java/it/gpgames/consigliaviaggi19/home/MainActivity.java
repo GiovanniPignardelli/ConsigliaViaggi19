@@ -3,10 +3,14 @@ package it.gpgames.consigliaviaggi19.home;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.core.app.ActivityCompat;
 
+import android.Manifest;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -20,8 +24,15 @@ import android.widget.SearchView;
 import android.widget.Toast;
 
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -69,7 +80,7 @@ import it.gpgames.consigliaviaggi19.DAO.models.users.User;
 import it.gpgames.consigliaviaggi19.userpanel.UserPanelActivity;
 import it.gpgames.consigliaviaggi19.home.slider.HomeSliderItem;
 
-public class MainActivity extends AppCompatActivity implements DatabaseCallback {
+public class MainActivity extends AppCompatActivity implements DatabaseCallback, DistanceRadiusSliderActivity.RadiusSliderCallback {
 
     private DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference();
 
@@ -86,6 +97,14 @@ public class MainActivity extends AppCompatActivity implements DatabaseCallback 
     private PlaceDAO placeDao = DAOFactory.getDAOInstance().getPlaceDAO();
     private LoginDAO loginDao = DAOFactory.getDAOInstance().getLoginDAO();
 
+    public static MainActivity getLastInstance() {
+        return lastInstance;
+    }
+
+    private static MainActivity lastInstance;
+
+
+
     public static String getLastSearchString() {
         return lastSearchString;
     }
@@ -101,6 +120,7 @@ public class MainActivity extends AppCompatActivity implements DatabaseCallback 
         hCard=findViewById(R.id.hotelCardView);
         pCard=findViewById(R.id.placeCardView);
         rCard=findViewById(R.id.restaurantCardView);
+        lastInstance = this;
         loginDao.isTokenExpired(this,CALLBACK_DEFAULT_CODE);
         init();
     }
@@ -150,8 +170,7 @@ public class MainActivity extends AppCompatActivity implements DatabaseCallback 
         bMapExplore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent toExploreMap = new Intent(MainActivity.this, MapExploreActivity.class);
-                startActivity(toExploreMap);
+                checkLocationPermissions();
             }
         });
 
@@ -216,8 +235,39 @@ public class MainActivity extends AppCompatActivity implements DatabaseCallback 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) { }
         });
+    }
+    private FusedLocationProviderClient client;
+    private Location loc;
 
+    private void checkLocationPermissions(){
+        if(ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+            client = LocationServices.getFusedLocationProviderClient(this);
+            client.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
+                @Override
+                public void onSuccess(Location location) {
+                    if(location != null) {
+                        loc = location;
+                        Intent i = new Intent(MainActivity.this,DistanceRadiusSliderActivity.class);
+                        startActivity(i);
+                    }
+                    else{
+                        manageError(new Exception("Impossibile localizzarsi. Ripulire la cache."),0);
+                    }
+                }
+            });
+        }
+        else{
+            ActivityCompat.requestPermissions(MainActivity.this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION},44);
+        }
 
+    }
+
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults){
+        if(requestCode == 44){
+            if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                checkLocationPermissions();
+            }
+        }
     }
 
     @Override
@@ -301,6 +351,7 @@ public class MainActivity extends AppCompatActivity implements DatabaseCallback 
     public void callback(List<Place> weakList, List<Place> topList, int callbackCode) {
         Intent iShowResults = new Intent(MainActivity.this, ResultsActivity.class);
         iShowResults.putExtra("query", (Serializable) topList);
+        iShowResults.putExtra("type",1);
         switch (callbackCode)
         {
             case CALLBACK_DEFAULT_CODE:
@@ -321,8 +372,31 @@ public class MainActivity extends AppCompatActivity implements DatabaseCallback 
     }
 
     @Override
+    public void places_callback(List<Place> places, int callbackCode) {
+        Intent iShowResults = new Intent(MainActivity.this, ResultsActivity.class);
+        iShowResults.putExtra("query", (Serializable) places);
+        switch (callbackCode) {
+            case CALLBACK_DEFAULT_CODE:
+                iShowResults.putExtra("title", "Ecco cosa abbiamo trovato per: " + MainActivity.getLastSearchString());
+                iShowResults.putExtra("removeButtons", false);
+                break;
+        }
+        startActivity(iShowResults);
+    }
+
+    @Override
     public void manageError(Exception e, int callbackCode) {
-        Toast.makeText(this, "Errore. Controllare i log.", Toast.LENGTH_SHORT).show();
-        Log.d("query",e.getMessage());
+        Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void receiveInputData(float value) {
+        Intent iShowResults = new Intent(MainActivity.this, ResultsActivity.class);
+        iShowResults.putExtra("type", 0);
+        iShowResults.putExtra("distance",value);
+        iShowResults.putExtra("removeButtons", true);
+        iShowResults.putExtra("lat",loc.getLatitude());
+        iShowResults.putExtra("long",loc.getLongitude());
+        startActivity(iShowResults);
     }
 }

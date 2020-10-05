@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firestore.v1.StructuredQuery;
 
@@ -47,7 +48,7 @@ public class ResultsActivity extends AppCompatActivity implements DatabaseCallba
     private Button bMapExplore, bFilter, bOrder;
     private RecyclerView resultQueries;
     private QueryResultsAdapter adapter;
-    private List<Place> lastQuery;
+    private List<Place> lastQuery = new ArrayList<>();
     private static final NetworkChangeReceiver networkChangeReceiver=NetworkChangeReceiver.getNetworkChangeReceiverInstance();
     private PlaceDAO placeDao = DAOFactory.getDAOInstance().getPlaceDAO();
 
@@ -87,8 +88,17 @@ public class ResultsActivity extends AppCompatActivity implements DatabaseCallba
             bOrder.setEnabled(false);
         }
 
-        List<Place> results = (List<Place>) getIntent().getSerializableExtra("query");
-        setUpRecyclerView(null, results); // weakList not implemented yet.
+        switch(getIntent().getIntExtra("type",1)){
+            case 0: placeDao.getPlaceByLocation(new LatLng(getIntent().getDoubleExtra("lat",0),getIntent().getDoubleExtra("long",0)),getIntent().getFloatExtra("distance",0),this,0);
+                    setUpRecyclerView(null,null);
+            break;
+            case 1: List<Place> results = (List<Place>) getIntent().getSerializableExtra("query");
+                setUpRecyclerView(null, results); // weakList not implemented yet.
+            break;
+        }
+
+
+
     }
 
     @Override
@@ -118,8 +128,8 @@ public class ResultsActivity extends AppCompatActivity implements DatabaseCallba
     /** Quando si ottengono i risultati di una query, si passano le liste ottenute a questo metodo che si occupa
      * di organizzare i risultati nella scrollView dell'activity. Per farlo si serve dell'adapter QueryResultAdapter.*/
     public void setUpRecyclerView(List<Place> weakList, List<Place> topList) {
-        adapter = new QueryResultsAdapter(ResultsActivity.this, topList, this);
-        lastQuery = topList;
+        if(topList != null) lastQuery = topList;
+        adapter = new QueryResultsAdapter(ResultsActivity.this, lastQuery, this);
         resultQueries.setAdapter(adapter);
         resultQueries.setLayoutManager(new LinearLayoutManager(ResultsActivity.this, RecyclerView.VERTICAL, false));
         bMapExplore.setEnabled(true);
@@ -206,7 +216,8 @@ public class ResultsActivity extends AppCompatActivity implements DatabaseCallba
 
     @Override
     public void callback(Place place, int callbackCode) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        lastQuery.add(place);
+        adapter.notifyDataSetChanged();
     }
 
     @Override
@@ -232,6 +243,11 @@ public class ResultsActivity extends AppCompatActivity implements DatabaseCallba
     @Override
     public void callback(List<Place> weakList, List<Place> topList, int callbackCode) {
         setUpRecyclerView(null,topList);
+    }
+
+    @Override
+    public void places_callback(List<Place> places, int callbackCode) {
+
     }
 
     @Override

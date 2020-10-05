@@ -67,7 +67,8 @@ public class QueryResultsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     @Override
     public int getItemCount() {
-        return placesList.size();
+        if(placesList !=null) return placesList.size();
+        return 0;
     }
 
     public class ResultsViewHolder extends RecyclerView.ViewHolder {

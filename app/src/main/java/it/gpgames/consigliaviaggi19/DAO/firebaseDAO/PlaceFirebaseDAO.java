@@ -4,8 +4,18 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.firebase.geofire.GeoFire;
+import com.firebase.geofire.GeoLocation;
+import com.firebase.geofire.GeoQuery;
+import com.firebase.geofire.GeoQueryDataEventListener;
+import com.firebase.geofire.GeoQueryEventListener;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
@@ -32,6 +42,7 @@ import it.gpgames.consigliaviaggi19.search.place_details.reviews.ReviewsAdapter;
 public class PlaceFirebaseDAO implements PlaceDAO {
 
     FirebaseFirestore dbRef = FirebaseFirestore.getInstance();
+    GeoFire geoFire = null;
 
     public void getPlaceByTags(final String searchString, String category, Integer minRating, String price, HashMap<Integer, ArrayList<String>> tags, Integer order, Integer direction, DatabaseCallback callback, int callbackCode)
     {
@@ -89,6 +100,58 @@ public class PlaceFirebaseDAO implements PlaceDAO {
                 }
                 else
                     callback.manageError(task.getException(),callbackCode);
+            }
+        });
+    }
+
+
+    @Override
+    public void getPlaceByLocation(LatLng loc, float radius, final DatabaseCallback callback, final int callbackCode) {
+        if(geoFire == null){
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("geofire");
+            geoFire = new GeoFire(ref);
+        }
+        GeoQuery geoQuery = geoFire.queryAtLocation(new GeoLocation(loc.latitude, loc.longitude), radius);
+        final List<String> inRadiusPlaces = new ArrayList<>();
+        geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
+            @Override
+            public void onKeyEntered(String key, GeoLocation location) {
+                inRadiusPlaces.add(key);
+            }
+
+            @Override
+            public void onKeyExited(String key) {
+                System.out.println(String.format("Key %s is no longer in the search area", key));
+            }
+
+            @Override
+            public void onKeyMoved(String key, GeoLocation location) {
+                System.out.println(String.format("Key %s moved within the search area to [%f,%f]", key, location.latitude, location.longitude));
+            }
+
+            @Override
+            public void onGeoQueryReady() {
+                final Iterator i = inRadiusPlaces.iterator();
+                while(i.hasNext()){
+                    dbRef.collection("places").document((String) i.next()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if(task.isSuccessful())
+                            {
+                                Place newPlace = generatePlace(task.getResult());
+                                if(newPlace != null) callback.callback(newPlace,callbackCode);
+                                return;
+                            }
+                        }
+                    });
+                }
+                callback.manageError(new Exception("Nessuna struttura trovata nei dintorni."), callbackCode);
+
+            }
+
+            @Override
+            public void onGeoQueryError(DatabaseError error) {
+                System.err.println("There was an error with this query: " + error);
             }
         });
     }

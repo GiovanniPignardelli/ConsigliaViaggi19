@@ -144,6 +144,11 @@ public class ReviewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
     @Override
+    public void places_callback(List<Place> places, int callbackCode) {
+
+    }
+
+    @Override
     public void callback(String message, int callbackCode) {
         throw new UnsupportedOperationException("Not supported yet.");
     }

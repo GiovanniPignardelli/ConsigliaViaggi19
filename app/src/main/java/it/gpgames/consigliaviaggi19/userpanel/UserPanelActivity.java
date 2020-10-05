@@ -245,6 +245,11 @@ public class UserPanelActivity extends AppCompatActivity implements DatabaseCall
     }
 
     @Override
+    public void places_callback(List<Place> places, int callbackCode) {
+
+    }
+
+    @Override
     public void manageError(Exception e, int callbackCode) {
         Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
         finish();

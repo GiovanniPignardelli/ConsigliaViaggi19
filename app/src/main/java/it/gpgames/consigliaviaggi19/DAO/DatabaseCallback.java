@@ -21,6 +21,7 @@ public interface DatabaseCallback
     void callback(User user, ReviewsAdapter.ReviewViewHolder holder, int callbackCode);
     void callback(List<Review> reviews, int callbackCode);
     void callback(List<Place> weakList, List<Place> topList, int callbackCode);
+    void places_callback(List<Place> places, int callbackCode);
     void callback(String message, int callbackCode);
     void manageError(Exception e, int callbackCode);
 }

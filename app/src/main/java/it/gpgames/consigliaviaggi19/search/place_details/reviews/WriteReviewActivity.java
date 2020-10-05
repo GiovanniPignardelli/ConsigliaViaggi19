@@ -199,6 +199,11 @@ public class WriteReviewActivity extends AppCompatActivity implements DatabaseCa
     }
 
     @Override
+    public void places_callback(List<Place> places, int callbackCode) {
+
+    }
+
+    @Override
     public void callback(String message, int callbackCode) {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
         finish();

@@ -124,6 +124,11 @@ public class ShowUserReviewsActivity extends AppCompatActivity implements Review
     }
 
     @Override
+    public void places_callback(List<Place> places, int callbackCode) {
+
+    }
+
+    @Override
     public void callback(String message, int callbackCode) {
 
     }

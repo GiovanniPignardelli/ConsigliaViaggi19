@@ -110,6 +110,11 @@ public class MapExploreActivity extends AppCompatActivity implements OnMapReadyC
         }
 
         @Override
+        public void places_callback(List<Place> places, int callbackCode) {
+
+        }
+
+        @Override
         public void callback(String message, int callbackCode) {
 
         }
