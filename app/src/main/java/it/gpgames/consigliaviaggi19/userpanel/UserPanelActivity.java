@@ -34,6 +34,7 @@ import it.gpgames.consigliaviaggi19.DAO.UserDAO;
 import it.gpgames.consigliaviaggi19.DAO.models.places.Place;
 import it.gpgames.consigliaviaggi19.DAO.models.reviews.Review;
 import it.gpgames.consigliaviaggi19.DAO.models.users.User;
+import it.gpgames.consigliaviaggi19.LoginActivity;
 import it.gpgames.consigliaviaggi19.R;
 import it.gpgames.consigliaviaggi19.network.NetworkChangeReceiver;
 import it.gpgames.consigliaviaggi19.search.place_details.reviews.ReviewsAdapter;
@@ -140,7 +141,6 @@ public class UserPanelActivity extends AppCompatActivity implements DatabaseCall
         if(currentUser.getAvatar()!=null) Glide.with(getApplicationContext())
                 .load(currentUser.getAvatar())
                 .into(iUserPicture);
-
     }
 
     @Override
@@ -179,7 +179,7 @@ public class UserPanelActivity extends AppCompatActivity implements DatabaseCall
 
     @Override
     public void callback(Place place, MarkerOptions mOpt, int callbackCode) {
-
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
@@ -190,6 +190,10 @@ public class UserPanelActivity extends AppCompatActivity implements DatabaseCall
                 break;
             case 1:
                 User.setLocalInstance(null);
+                Intent i=new Intent(this, LoginActivity.class);
+                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(i);
+                finish();
                 break;
             case 2:
                 Toast.makeText(getApplicationContext(),"Reset Password: controlla la casella di posta elettronica.",Toast.LENGTH_SHORT).show();
@@ -228,7 +232,6 @@ public class UserPanelActivity extends AppCompatActivity implements DatabaseCall
         }
         else
             Toast.makeText(getApplicationContext(),"L'utente non ha inserito recensioni.", Toast.LENGTH_LONG).show();
-
     }
 
     @Override

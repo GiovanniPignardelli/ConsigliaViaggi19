@@ -157,7 +157,7 @@ public class RegisterActivity extends AppCompatActivity implements DatabaseCallb
 
     @Override
     public void callback(Place place, MarkerOptions mOpt, int callbackCode) {
-
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override

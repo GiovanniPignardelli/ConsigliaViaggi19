@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -31,8 +32,6 @@ import it.gpgames.consigliaviaggi19.network.NetworkChangeReceiver;
 import it.gpgames.consigliaviaggi19.search.place_details.reviews.ReviewsAdapter;
 
 public class LoginActivity extends AppCompatActivity implements DatabaseCallback {
-
-
     private Button login,signin;
     private EditText e,p;
     private LoginDAO loginDao = DAOFactory.getDAOInstance().getLoginDAO();
@@ -50,7 +49,6 @@ public class LoginActivity extends AppCompatActivity implements DatabaseCallback
         p=findViewById(R.id.passwordtxt);
 
         loginDao.isAuthenticated(this,0);
-
     }
 
     public void initListeners(){
@@ -104,7 +102,7 @@ public class LoginActivity extends AppCompatActivity implements DatabaseCallback
 
     @Override
     public void callback(Place place, MarkerOptions mOpt, int callbackCode) {
-
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
@@ -114,16 +112,17 @@ public class LoginActivity extends AppCompatActivity implements DatabaseCallback
 
     @Override
     public void callback(Place place, int callbackCode) {
-
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public void callback(Place place, ReviewsAdapter.ReviewViewHolder holder, int callbackCode) {
-
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public void callback(User user, int callbackCode) {
+        Log.d("user","Sto per settare l'user: "+user.getDisplayName());
         User.setLocalInstance(user);
         startActivity(new Intent(getApplicationContext(), MainActivity.class));
         finish();
@@ -131,17 +130,17 @@ public class LoginActivity extends AppCompatActivity implements DatabaseCallback
 
     @Override
     public void callback(User user, ReviewsAdapter.ReviewViewHolder holder, int callbackCode) {
-
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public void callback(List<Review> reviews, int callbackCode) {
-
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public void callback(List<Place> weakList, List<Place> topList, int callbackCode) {
-
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 
@@ -156,5 +155,8 @@ public class LoginActivity extends AppCompatActivity implements DatabaseCallback
     @Override
     public void manageError(Exception e, int callbackCode) {
         Toast.makeText(LoginActivity.this,e.getMessage(), Toast.LENGTH_LONG).show();
+        Intent i=new Intent(this,RegisterActivity.class);
+        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(i);
     }
 }

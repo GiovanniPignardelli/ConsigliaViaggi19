@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -149,7 +150,8 @@ public class ReviewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     @Override
     public void manageError(Exception e, int callbackCode) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        Log.d("query",e.getMessage());
+        Toast.makeText(context,"Errore. Controllare i log.", Toast.LENGTH_LONG).show();
     }
 
     public class ReviewViewHolder extends RecyclerView.ViewHolder {

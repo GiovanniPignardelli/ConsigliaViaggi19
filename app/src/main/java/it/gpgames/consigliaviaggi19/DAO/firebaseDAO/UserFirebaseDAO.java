@@ -42,7 +42,7 @@ public class UserFirebaseDAO implements UserDAO {
                     if(holder!=null) callback.callback(toShow, holder, callbackCode);
                     else callback.callback(toShow, callbackCode);
                 }
-                else  callback.manageError(new Exception("fratm"), callbackCode);
+                else  callback.manageError(new Exception("Errore nel caricamento degli utenti."), callbackCode);
             }
         });
     }

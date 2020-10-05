@@ -1,5 +1,6 @@
 package it.gpgames.consigliaviaggi19.DAO.firebaseDAO;
 
+import android.content.Intent;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -14,6 +15,8 @@ import com.google.firestore.v1.StructuredQuery;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -68,11 +71,14 @@ public class FirebaseQueryExecutor {
         this.order=order;
     }
 
-
     public void executeQuery()
     {
         //Query di base con la ricerca sui tag di ricerca.
-        Query query=dbRef.collection("places").whereArrayContainsAny("searchTags", Arrays.asList(parsedString));
+        Query query=dbRef.collection("places");
+
+        //se ho inserito una stringa di ricerca.
+        if(parsedString!=null)
+            query=query.whereArrayContainsAny("searchTags", Arrays.asList(parsedString));
 
         //applico i filtri
         query=applyFilter(query);
@@ -102,6 +108,13 @@ public class FirebaseQueryExecutor {
     }
 
     private void reorderByBestMatch(ArrayList<Place> placeList) {
+
+        if(parsedString==null)
+        {
+            waitingForResults.manageError(new IllegalStateException("Non posso verificare le migliori corrispondenze se non hai inserito una stringa di ricerca."), callbackCode);
+            return;
+        }
+
         final HashSet<String> searchStrings=new HashSet<>();
         searchStrings.addAll(Arrays.asList(parsedString));
 
@@ -120,13 +133,15 @@ public class FirebaseQueryExecutor {
                     if(searchStrings.contains(s))
                         n2++;
                 }
-
                 if(n1>n2)return 1;
                 if(n1<n2)return -1;
                 return o1.getName().compareTo(o2.getName());
             }
         };
+
         placeList.sort(comparator);
+        if(direction==OrderSelectorActivity.FLAG_DESC)
+            Collections.reverse(placeList);
     }
 
     private Query applyOrder(Query query) {

@@ -20,6 +20,8 @@ import java.util.concurrent.Executors;
  * La classe maniente una propria istanza (LocalInstance), che fa riferimento all'utente corrente.*/
 public class User implements Parcelable {
 
+    private static User localInstance = null;
+
     private String displayName;
     private String email;
     private String avatar;
@@ -69,8 +71,6 @@ public class User implements Parcelable {
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
-
-    private static User localInstance = null;
 
     public boolean isBlacklisted() {
         return isBlacklisted;

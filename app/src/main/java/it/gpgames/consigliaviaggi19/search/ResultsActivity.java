@@ -79,6 +79,8 @@ public class ResultsActivity extends AppCompatActivity implements DatabaseCallba
         context=getApplicationContext();
         lastInstance=this;
 
+        titleText.setText(getIntent().getStringExtra("title"));
+
         List<Place> results = (List<Place>) getIntent().getSerializableExtra("query");
         setUpRecyclerView(null, results); // weakList not implemented yet.
     }
@@ -140,6 +142,11 @@ public class ResultsActivity extends AppCompatActivity implements DatabaseCallba
         {
             @Override
             public void onClick(View v) {
+                tags=null;
+                category=null;
+                minRating=null;
+                maxDistance=null;
+                priceTag=null;
                 Intent i=new Intent(ResultsActivity.this,FiltersSelectorActivity.class);
                 i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(i);
@@ -218,7 +225,6 @@ public class ResultsActivity extends AppCompatActivity implements DatabaseCallba
 
     @Override
     public void callback(List<Place> weakList, List<Place> topList, int callbackCode) {
-        Log.d("result","sto per aggiornare la lista");
         setUpRecyclerView(null,topList);
     }
 

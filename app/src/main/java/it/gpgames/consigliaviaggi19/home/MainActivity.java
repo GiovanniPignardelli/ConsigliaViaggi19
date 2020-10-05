@@ -2,6 +2,7 @@ package it.gpgames.consigliaviaggi19.home;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -31,6 +32,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firestore.v1.StructuredQuery;
 import com.smarteist.autoimageslider.IndicatorView.animation.type.IndicatorAnimationType;
 import com.smarteist.autoimageslider.SliderAnimations;
 import com.smarteist.autoimageslider.SliderView;
@@ -68,12 +70,13 @@ import it.gpgames.consigliaviaggi19.home.slider.HomeSliderItem;
 
 public class MainActivity extends AppCompatActivity implements DatabaseCallback {
 
-    DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference();
+    private DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference();
 
     private static final NetworkChangeReceiver networkChangeReceiver=NetworkChangeReceiver.getNetworkChangeReceiverInstance();
 
     private SliderView sliderView;
-    static List<HomeSliderItem> SliderItemToShow = new ArrayList<>();
+    private static List<HomeSliderItem> SliderItemToShow = new ArrayList<>();
+    private CardView hCard,pCard,rCard;
     private ImageView bMapExplore;
     private ImageView bUserPanel;
     private SearchView svSearchPlaces;
@@ -94,6 +97,9 @@ public class MainActivity extends AppCompatActivity implements DatabaseCallback 
         bUserPanel=findViewById(R.id.user);
         svSearchPlaces = findViewById(R.id.searchView);
         bMapExplore = findViewById(R.id.mapSearch);
+        hCard=findViewById(R.id.hotelCardView);
+        pCard=findViewById(R.id.placeCardView);
+        rCard=findViewById(R.id.restaurantCardView);
         loginDao.isTokenExpired(this,CALLBACK_DEFAULT_CODE);
         init();
     }
@@ -148,6 +154,26 @@ public class MainActivity extends AppCompatActivity implements DatabaseCallback 
             }
         });
 
+        hCard.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                placeDao.getPlaceByTags(null,"hotel",null,null,null,OrderSelectorActivity.FLAG_RATING, OrderSelectorActivity.FLAG_DESC,MainActivity.this,CALLBACK_NO_SEARCH_STRING);
+            }
+        });
+
+        pCard.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                placeDao.getPlaceByTags(null,"place",null,null,null,OrderSelectorActivity.FLAG_RATING, OrderSelectorActivity.FLAG_DESC,MainActivity.this,CALLBACK_NO_SEARCH_STRING);
+            }
+        });
+
+        rCard.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                placeDao.getPlaceByTags(null,"restaurant",null,null,null,OrderSelectorActivity.FLAG_RATING, OrderSelectorActivity.FLAG_DESC,MainActivity.this,CALLBACK_NO_SEARCH_STRING);
+            }
+        });
     }
 
     /** Inizializza lo slider di immagini nell'activity_main.xml. Nota: vedere HomeSliderItemsGetter e HomeSliderAdapter. */
@@ -204,14 +230,10 @@ public class MainActivity extends AppCompatActivity implements DatabaseCallback 
         unregisterReceiver(networkChangeReceiver);
     }
 
-    public static NetworkChangeReceiver getNetworkChangeReceiver() {
-        return networkChangeReceiver;
-    }
-
 
     @Override
     public void callback(Place place, MarkerOptions mOpt, int callbackCode) {
-
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
@@ -228,11 +250,12 @@ public class MainActivity extends AppCompatActivity implements DatabaseCallback 
 
     @Override
     public void callback(Place place, ReviewsAdapter.ReviewViewHolder holder, int callbackCode) {
-
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     private static final int CALLBACK_USER_PANEL = 0;
     private static final int CALLBACK_SET_LOCAL_USER = 1;
+    private static final int CALLBACK_NO_SEARCH_STRING = 2;
 
     @Override
     public void callback(User user, int callbackCode) {
@@ -271,11 +294,20 @@ public class MainActivity extends AppCompatActivity implements DatabaseCallback 
     public void callback(List<Place> weakList, List<Place> topList, int callbackCode) {
         Intent iShowResults = new Intent(MainActivity.this, ResultsActivity.class);
         iShowResults.putExtra("query", (Serializable) topList);
+        switch (callbackCode)
+        {
+            case CALLBACK_DEFAULT_CODE:
+                iShowResults.putExtra("title","Ecco cosa abbiamo trovato per: "+MainActivity.getLastSearchString());
+                break;
+            case CALLBACK_NO_SEARCH_STRING:
+                iShowResults.putExtra("title","Ecco i nostri migliori risultati.");
+        }
         startActivity(iShowResults);
     }
 
     @Override
     public void manageError(Exception e, int callbackCode) {
-        Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Errore. Controllare i log.", Toast.LENGTH_SHORT).show();
+        Log.d("query",e.getMessage());
     }
 }

@@ -51,7 +51,7 @@ public class FiltersSelectorActivity extends Activity implements FilterTagsAdapt
     public static final String PRICE_TWO="€€";
     public static final String PRICE_THREE="€€€";
 
-    FilterCallback filterCallback;
+    private FilterCallback filterCallback;
 
     private TextView distanceText,otherTagsText;
     private RatingBar ratingBar;
