@@ -34,6 +34,7 @@ import java.util.List;
 import it.gpgames.consigliaviaggi19.DAO.DAOFactory;
 import it.gpgames.consigliaviaggi19.DAO.DatabaseCallback;
 import it.gpgames.consigliaviaggi19.DAO.GeolocationDAO;
+import it.gpgames.consigliaviaggi19.DAO.firebaseDAO.HandshakeResponse;
 import it.gpgames.consigliaviaggi19.DAO.models.reviews.Review;
 import it.gpgames.consigliaviaggi19.R;
 import it.gpgames.consigliaviaggi19.DAO.models.places.Place;
@@ -77,6 +78,11 @@ public class MapExploreActivity extends AppCompatActivity implements OnMapReadyC
 
         @Override
         public void callback(int callbackCode) {
+
+        }
+
+        @Override
+        public void callback(HandshakeResponse hreq, int callbackCode) {
 
         }
 

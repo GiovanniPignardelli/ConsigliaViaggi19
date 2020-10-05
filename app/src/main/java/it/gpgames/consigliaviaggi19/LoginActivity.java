@@ -24,6 +24,7 @@ import it.gpgames.consigliaviaggi19.DAO.DAOFactory;
 import it.gpgames.consigliaviaggi19.DAO.DatabaseCallback;
 import it.gpgames.consigliaviaggi19.DAO.LoginDAO;
 import it.gpgames.consigliaviaggi19.DAO.UserDAO;
+import it.gpgames.consigliaviaggi19.DAO.firebaseDAO.HandshakeResponse;
 import it.gpgames.consigliaviaggi19.DAO.models.places.Place;
 import it.gpgames.consigliaviaggi19.DAO.models.reviews.Review;
 import it.gpgames.consigliaviaggi19.DAO.models.users.User;
@@ -108,6 +109,11 @@ public class LoginActivity extends AppCompatActivity implements DatabaseCallback
     @Override
     public void callback(int callbackCode) {
         startActivity(new Intent(getApplicationContext(),MainActivity.class));
+    }
+
+    @Override
+    public void callback(HandshakeResponse hreq, int callbackCode) {
+
     }
 
     @Override

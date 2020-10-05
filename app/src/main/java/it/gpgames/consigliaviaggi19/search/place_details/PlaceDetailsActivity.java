@@ -37,6 +37,7 @@ import it.gpgames.consigliaviaggi19.DAO.DAOFactory;
 import it.gpgames.consigliaviaggi19.DAO.DatabaseCallback;
 import it.gpgames.consigliaviaggi19.DAO.ReviewDAO;
 import it.gpgames.consigliaviaggi19.DAO.UserDAO;
+import it.gpgames.consigliaviaggi19.DAO.firebaseDAO.HandshakeResponse;
 import it.gpgames.consigliaviaggi19.DAO.models.users.User;
 import it.gpgames.consigliaviaggi19.R;
 import it.gpgames.consigliaviaggi19.network.NetworkChangeReceiver;
@@ -294,6 +295,11 @@ public class PlaceDetailsActivity extends AppCompatActivity implements ReviewsAd
     @Override
     public void callback(int callbackCode) {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void callback(HandshakeResponse hreq, int callbackCode) {
+
     }
 
     @Override

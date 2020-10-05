@@ -26,6 +26,7 @@ import java.util.List;
 import it.gpgames.consigliaviaggi19.DAO.DAOFactory;
 import it.gpgames.consigliaviaggi19.DAO.DatabaseCallback;
 import it.gpgames.consigliaviaggi19.DAO.PlaceDAO;
+import it.gpgames.consigliaviaggi19.DAO.firebaseDAO.HandshakeResponse;
 import it.gpgames.consigliaviaggi19.DAO.models.reviews.Review;
 import it.gpgames.consigliaviaggi19.DAO.models.users.User;
 import it.gpgames.consigliaviaggi19.R;
@@ -212,6 +213,11 @@ public class ResultsActivity extends AppCompatActivity implements DatabaseCallba
 
     public void callback(int callbackCode) {
         placeDao.getPlaceByTags(MainActivity.getLastSearchString(),category,minRating,priceTag,tags,order,direction,this,0);
+    }
+
+    @Override
+    public void callback(HandshakeResponse hreq, int callbackCode) {
+
     }
 
     @Override

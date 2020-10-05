@@ -62,6 +62,8 @@ import it.gpgames.consigliaviaggi19.DAO.DatabaseUtilities;
 import it.gpgames.consigliaviaggi19.DAO.LoginDAO;
 import it.gpgames.consigliaviaggi19.DAO.PlaceDAO;
 import it.gpgames.consigliaviaggi19.DAO.UserDAO;
+import it.gpgames.consigliaviaggi19.DAO.firebaseDAO.HandshakeResponse;
+import it.gpgames.consigliaviaggi19.DAO.firebaseDAO.LoginFirebaseDAO;
 import it.gpgames.consigliaviaggi19.DAO.firebaseDAO.PlaceFirebaseDAO;
 import it.gpgames.consigliaviaggi19.DAO.models.places.Hotel;
 import it.gpgames.consigliaviaggi19.DAO.models.places.Place;
@@ -122,6 +124,7 @@ public class MainActivity extends AppCompatActivity implements DatabaseCallback,
         rCard=findViewById(R.id.restaurantCardView);
         lastInstance = this;
         loginDao.isTokenExpired(this,CALLBACK_DEFAULT_CODE);
+        if(User.getLocalInstance() != null) loginDao.checkHandshakeRequests(User.getLocalInstance().getUserID(),this,0);
         init();
     }
 
@@ -291,6 +294,20 @@ public class MainActivity extends AppCompatActivity implements DatabaseCallback,
     public void callback(int callbackCode) {
         Intent accessNeeded = new Intent(MainActivity.this, LoginActivity.class);
         accessNeeded.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(accessNeeded);
+    }
+
+    public static HandshakeResponse getHandshakeResponse() {
+        return handshakeResponse;
+    }
+
+    public static HandshakeResponse handshakeResponse = null;
+
+    @Override
+    public void callback(HandshakeResponse hreq, int callbackCode) {
+        Log.d("testingHandshake","qui arriva");
+        handshakeResponse = hreq;
+        Intent accessNeeded = new Intent(MainActivity.this, BackofficeHandshakeActivity.class);
         startActivity(accessNeeded);
     }
 

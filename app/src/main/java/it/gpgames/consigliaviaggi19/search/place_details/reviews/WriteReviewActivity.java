@@ -31,6 +31,7 @@ import it.gpgames.consigliaviaggi19.DAO.DAOFactory;
 import it.gpgames.consigliaviaggi19.DAO.DatabaseCallback;
 import it.gpgames.consigliaviaggi19.DAO.PlaceDAO;
 import it.gpgames.consigliaviaggi19.DAO.ReviewDAO;
+import it.gpgames.consigliaviaggi19.DAO.firebaseDAO.HandshakeResponse;
 import it.gpgames.consigliaviaggi19.R;
 import it.gpgames.consigliaviaggi19.network.NetworkChangeReceiver;
 import it.gpgames.consigliaviaggi19.DAO.models.places.Place;
@@ -162,6 +163,11 @@ public class WriteReviewActivity extends AppCompatActivity implements DatabaseCa
     @Override
     public void callback(int callbackCode) {
         placeDAO.getPlaceByID(toShow.getDbDocID(),this,0);
+    }
+
+    @Override
+    public void callback(HandshakeResponse hreq, int callbackCode) {
+
     }
 
     @Override

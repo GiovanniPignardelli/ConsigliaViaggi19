@@ -29,6 +29,7 @@ import java.util.List;
 import it.gpgames.consigliaviaggi19.DAO.DAOFactory;
 import it.gpgames.consigliaviaggi19.DAO.DatabaseCallback;
 import it.gpgames.consigliaviaggi19.DAO.RegisterDAO;
+import it.gpgames.consigliaviaggi19.DAO.firebaseDAO.HandshakeResponse;
 import it.gpgames.consigliaviaggi19.DAO.models.places.Place;
 import it.gpgames.consigliaviaggi19.DAO.models.reviews.Review;
 import it.gpgames.consigliaviaggi19.home.MainActivity;
@@ -163,6 +164,11 @@ public class RegisterActivity extends AppCompatActivity implements DatabaseCallb
     @Override
     public void callback(int callbackCode) {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void callback(HandshakeResponse hreq, int callbackCode) {
+
     }
 
     @Override

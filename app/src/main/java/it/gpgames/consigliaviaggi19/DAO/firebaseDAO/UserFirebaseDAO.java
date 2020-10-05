@@ -26,8 +26,8 @@ import it.gpgames.consigliaviaggi19.search.place_details.reviews.ReviewsAdapter;
 
 public class UserFirebaseDAO implements UserDAO {
 
-    FirebaseFirestore dbRef = FirebaseFirestore.getInstance();
-    StorageReference stoRef = FirebaseStorage.getInstance().getReference();
+    private FirebaseFirestore dbRef = FirebaseFirestore.getInstance();
+    private StorageReference stoRef = FirebaseStorage.getInstance().getReference();
 
     public void getUserByID(final String userID, final DatabaseCallback callback, final ReviewsAdapter.ReviewViewHolder holder, final int callbackCode)
     {

@@ -17,6 +17,7 @@ import it.gpgames.consigliaviaggi19.DAO.DAOFactory;
 import it.gpgames.consigliaviaggi19.DAO.DatabaseCallback;
 import it.gpgames.consigliaviaggi19.DAO.PlaceDAO;
 import it.gpgames.consigliaviaggi19.DAO.UserDAO;
+import it.gpgames.consigliaviaggi19.DAO.firebaseDAO.HandshakeResponse;
 import it.gpgames.consigliaviaggi19.DAO.models.users.User;
 import it.gpgames.consigliaviaggi19.R;
 import it.gpgames.consigliaviaggi19.DAO.models.places.Place;
@@ -84,6 +85,11 @@ public class ShowUserReviewsActivity extends AppCompatActivity implements Review
 
     @Override
     public void callback(int callbackCode) {
+
+    }
+
+    @Override
+    public void callback(HandshakeResponse hreq, int callbackCode) {
 
     }
 

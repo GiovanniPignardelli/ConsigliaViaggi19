@@ -9,6 +9,12 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import it.gpgames.consigliaviaggi19.DAO.DatabaseCallback;
 import it.gpgames.consigliaviaggi19.DAO.LoginDAO;
@@ -19,7 +25,9 @@ import it.gpgames.consigliaviaggi19.home.MainActivity;
 
 public class LoginFirebaseDAO implements LoginDAO {
 
-    FirebaseAuth fAuth = FirebaseAuth.getInstance();
+    private FirebaseAuth fAuth = FirebaseAuth.getInstance();
+    private FirebaseDatabase fDat = FirebaseDatabase.getInstance();
+    private FirebaseFirestore fFir = FirebaseFirestore.getInstance();
 
     @Override
     public void isAuthenticated(DatabaseCallback callback, int callbackCode) {
@@ -37,7 +45,7 @@ public class LoginFirebaseDAO implements LoginDAO {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful())
                         {
-                            callback.callback(callbackCode);
+                            callback.callback(fAuth.getUid(),callbackCode);
                         }
                         else
                         {
@@ -82,5 +90,29 @@ public class LoginFirebaseDAO implements LoginDAO {
                 }
             }
         });
+    }
+
+
+    @Override
+    public void checkHandshakeRequests(final String userID, final DatabaseCallback callback, final int callbackCode) {
+        fDat.getReference().child("backendTokens").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+               if(snapshot.hasChild(userID)){
+                   String token = (String) snapshot.child(userID).child("requestToken").getValue();
+                   callback.callback(new HandshakeResponse(token,"0"),callbackCode);
+               }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                callback.manageError(error.toException(),callbackCode);
+            }
+        });
+    }
+
+    @Override
+    public void sendHandshakeResponse(HandshakeResponse hreq, final DatabaseCallback callback, final int callbackCode) {
+        fDat.getReference().child("backendResponseTokens").child(fAuth.getUid()).setValue(hreq);
+        callback.callback(callbackCode);
     }
 }
