@@ -8,6 +8,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,6 +23,9 @@ import it.gpgames.consigliaviaggi19.DAO.PlaceDAO;
 import it.gpgames.consigliaviaggi19.DAO.models.places.Hotel;
 import it.gpgames.consigliaviaggi19.DAO.models.places.Place;
 import it.gpgames.consigliaviaggi19.DAO.models.places.Restaurant;
+import it.gpgames.consigliaviaggi19.home.MainActivity;
+import it.gpgames.consigliaviaggi19.home.slider.HomeSliderAdapter;
+import it.gpgames.consigliaviaggi19.home.slider.HomeSliderItem;
 import it.gpgames.consigliaviaggi19.search.place_details.reviews.ReviewsAdapter;
 
 
@@ -31,7 +36,7 @@ public class PlaceFirebaseDAO implements PlaceDAO {
     public void getPlaceByTags(final String searchString, String category, Integer minRating, String price, HashMap<Integer, ArrayList<String>> tags, Integer order, Integer direction, DatabaseCallback callback, int callbackCode)
     {
         if(searchString!=null)
-            new FirebaseQueryExecutor(DatabaseUtilities.parseString(searchString, " "),category,minRating,price,tags,order,direction,callback,callbackCode).executeQuery();
+            new FirebaseQueryExecutor(DatabaseUtilities.parseString(searchString, " ",true),category,minRating,price,tags,order,direction,callback,callbackCode).executeQuery();
         else
             new FirebaseQueryExecutor(null,category,minRating,price,tags,order,direction,callback,callbackCode).executeQuery();
 
@@ -53,6 +58,37 @@ public class PlaceFirebaseDAO implements PlaceDAO {
                     else callback.callback(toShow, holder, callbackCode);
                 }
                 else callback.manageError(new DatabaseUtilities.DataNotFoundException(), callbackCode);
+            }
+        });
+    }
+
+    @Override
+    public void getPlaceByLocation(String locType, String locName, final DatabaseCallback callback, final int callbackCode) {
+        Query query=dbRef.collection("places");
+
+        if(locType.equals(HomeSliderItem.STRING_CITY))
+            query=query.whereEqualTo("city",locName);
+        else if(locType.equals(HomeSliderItem.STRING_STATE))
+            query=query.whereEqualTo("state",locName);
+
+        query=query.orderBy("avgReview",Query.Direction.DESCENDING).orderBy("name",Query.Direction.ASCENDING);
+
+        query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if(task.isSuccessful())
+                {
+                    ArrayList<Place> placeList=new ArrayList<>();
+
+                    for(DocumentSnapshot doc:task.getResult())
+                    {
+                        placeList.add(generatePlace(doc));
+                    }
+
+                    callback.callback(null,placeList,callbackCode);
+                }
+                else
+                    callback.manageError(task.getException(),callbackCode);
             }
         });
     }

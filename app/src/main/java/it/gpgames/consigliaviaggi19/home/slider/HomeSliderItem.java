@@ -6,9 +6,18 @@ import android.os.Parcelable;
 
 public class HomeSliderItem implements Parcelable {
 
+    public static final String STRING_CITY="city";
+    public static final String STRING_STATE="state";
+
     String keyword;
     Bitmap img;
     String desc;
+
+    public String getLocationType() {
+        return locationType;
+    }
+
+    String locationType;
 
     public String getDescription() {
         return desc;
@@ -23,6 +32,7 @@ public class HomeSliderItem implements Parcelable {
         img = in.readParcelable(Bitmap.class.getClassLoader());
         desc = in.readString();
         index = in.readInt();
+        locationType = in.readString();
     }
 
     @Override
@@ -31,6 +41,7 @@ public class HomeSliderItem implements Parcelable {
         dest.writeParcelable(img, flags);
         dest.writeString(desc);
         dest.writeInt(index);
+        dest.writeString(locationType);
     }
 
     @Override
@@ -62,11 +73,12 @@ public class HomeSliderItem implements Parcelable {
 
 
 
-    public HomeSliderItem(Bitmap img, String keyword, String desc, int index){
+    public HomeSliderItem(Bitmap img, String keyword, String desc, int index,String location_type){
         this.img = img;
         this.keyword = keyword;
         this.index=index;
         this.desc = desc;
+        this.locationType=location_type;
     }
 
     public Bitmap getImg() {

@@ -122,13 +122,13 @@ public class FirebaseQueryExecutor {
             @Override
             public int compare(Place o1, Place o2) {
                 int n1=0,n2=0;
-                for(String s: DatabaseUtilities.parseString(o1.getName(), " "))
+                for(String s: DatabaseUtilities.parseString(o1.getName(), " ",true))
                 {
                     if(searchStrings.contains(s))
                         n1++;
                 }
 
-                for(String s: DatabaseUtilities.parseString(o2.getName(), " "))
+                for(String s: DatabaseUtilities.parseString(o2.getName(), " ",true))
                 {
                     if(searchStrings.contains(s))
                         n2++;

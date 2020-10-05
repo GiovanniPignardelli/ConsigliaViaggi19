@@ -47,6 +47,7 @@ import java.util.Set;
 
 import it.gpgames.consigliaviaggi19.DAO.DAOFactory;
 import it.gpgames.consigliaviaggi19.DAO.DatabaseCallback;
+import it.gpgames.consigliaviaggi19.DAO.DatabaseUtilities;
 import it.gpgames.consigliaviaggi19.DAO.LoginDAO;
 import it.gpgames.consigliaviaggi19.DAO.PlaceDAO;
 import it.gpgames.consigliaviaggi19.DAO.UserDAO;
@@ -194,7 +195,7 @@ public class MainActivity extends AppCompatActivity implements DatabaseCallback 
                             uiThread.post(new Runnable() {
                                 @Override
                                 public void run() {
-                                    sliderView.setSliderAdapter(new HomeSliderAdapter(MainActivity.this,SliderItemToShow));
+                                    sliderView.setSliderAdapter(new HomeSliderAdapter(MainActivity.this,SliderItemToShow,MainActivity.this));
                                     sliderView.setIndicatorAnimation(IndicatorAnimationType.WORM); //set indicator animation by using IndicatorAnimationType. :WORM or THIN_WORM or COLOR or DROP or FILL or NONE or SCALE or SCALE_DOWN or SLIDE and SWAP!!
                                     sliderView.setSliderTransformAnimation(SliderAnimations.SIMPLETRANSFORMATION);
                                     sliderView.setAutoCycleDirection(SliderView.AUTO_CYCLE_DIRECTION_BACK_AND_FORTH);
@@ -287,7 +288,13 @@ public class MainActivity extends AppCompatActivity implements DatabaseCallback 
 
     @Override
     public void callback(String message, int callbackCode) {
-        userDao.getUserByID(message,this,1);
+        if(callbackCode==HomeSliderAdapter.FLAG_SLIDER_ITEM)
+        {
+            String[] mes= DatabaseUtilities.parseString(message," ",false);
+            placeDao.getPlaceByLocation(mes[0],mes[1],this,HomeSliderAdapter.FLAG_SLIDER_ITEM);
+        }
+        else
+            userDao.getUserByID(message,this,1);
     }
 
     @Override
@@ -298,9 +305,17 @@ public class MainActivity extends AppCompatActivity implements DatabaseCallback 
         {
             case CALLBACK_DEFAULT_CODE:
                 iShowResults.putExtra("title","Ecco cosa abbiamo trovato per: "+MainActivity.getLastSearchString());
+                iShowResults.putExtra("removeButtons", false);
                 break;
             case CALLBACK_NO_SEARCH_STRING:
                 iShowResults.putExtra("title","Ecco i nostri migliori risultati.");
+                iShowResults.putExtra("removeButtons", false);
+                break;
+            case HomeSliderAdapter.FLAG_SLIDER_ITEM:
+                iShowResults.putExtra("title","Ecco il meglio di questo posto.");
+                iShowResults.putExtra("removeButtons", true);
+                break;
+
         }
         startActivity(iShowResults);
     }

@@ -12,9 +12,11 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.smarteist.autoimageslider.SliderViewAdapter;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import it.gpgames.consigliaviaggi19.DAO.DAOFactory;
+import it.gpgames.consigliaviaggi19.DAO.DatabaseCallback;
+import it.gpgames.consigliaviaggi19.DAO.PlaceDAO;
 import it.gpgames.consigliaviaggi19.R;
 
 /**La classe HomeSliderAdapter mette in funzione l'AutoImageSlider presente sull'activity_main.xml.*/
@@ -22,26 +24,15 @@ public class HomeSliderAdapter extends
         SliderViewAdapter<HomeSliderAdapter.SliderAdapterVH> {
 
     private Context context;
-    private List<HomeSliderItem> mSliderItems = new ArrayList<>();
+    private DatabaseCallback callback;
+    private List<HomeSliderItem> mSliderItems;
 
-    public HomeSliderAdapter(Context context, List<HomeSliderItem> sliderItems) {
+    public static final int FLAG_SLIDER_ITEM=3;
+
+    public HomeSliderAdapter(Context context, List<HomeSliderItem> sliderItems, DatabaseCallback dbcallback) {
         this.context = context;
         mSliderItems = sliderItems;
-    }
-
-    public void renewItems(List<HomeSliderItem> sliderItems) {
-        this.mSliderItems = sliderItems;
-        notifyDataSetChanged();
-    }
-
-    public void deleteItem(int position) {
-        this.mSliderItems.remove(position);
-        notifyDataSetChanged();
-    }
-
-    public void addItem(HomeSliderItem sliderItem) {
-        this.mSliderItems.add(sliderItem);
-        notifyDataSetChanged();
+        this.callback=dbcallback;
     }
 
     @Override
@@ -64,6 +55,7 @@ public class HomeSliderAdapter extends
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                callback.callback(mSliderItems.get(position).getLocationType()+" "+mSliderItems.get(position).getKeyword(),FLAG_SLIDER_ITEM);
                 Toast.makeText(context, "This is item in position " + position, Toast.LENGTH_SHORT).show();
             }
         });

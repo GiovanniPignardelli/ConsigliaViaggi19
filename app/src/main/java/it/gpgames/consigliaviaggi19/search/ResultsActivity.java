@@ -81,6 +81,12 @@ public class ResultsActivity extends AppCompatActivity implements DatabaseCallba
 
         titleText.setText(getIntent().getStringExtra("title"));
 
+        if(getIntent().getBooleanExtra("removeButtons",true))
+        {
+            bFilter.setEnabled(false);
+            bOrder.setEnabled(false);
+        }
+
         List<Place> results = (List<Place>) getIntent().getSerializableExtra("query");
         setUpRecyclerView(null, results); // weakList not implemented yet.
     }

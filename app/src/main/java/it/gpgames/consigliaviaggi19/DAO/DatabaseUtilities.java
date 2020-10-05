@@ -3,12 +3,17 @@ package it.gpgames.consigliaviaggi19.DAO;
 public class DatabaseUtilities {
 
     /** Splitta una stringa con un dato pivot e setta tutti i caratteri a lowercase. Restituisce un array delle dimensioni del numero di parole della stringa.*/
-    public static String[] parseString(String in, String pivot){
+    public static String[] parseString(String in, String pivot,boolean toLowecase){
         String[] parsed=in.split(pivot);
-        for(int i=0;i<parsed.length;i++)
+
+        if(toLowecase)
         {
-            parsed[i]=parsed[i].toLowerCase();
+            for(int i=0;i<parsed.length;i++)
+            {
+                parsed[i]=parsed[i].toLowerCase();
+            }
         }
+
 
         return parsed;
     }

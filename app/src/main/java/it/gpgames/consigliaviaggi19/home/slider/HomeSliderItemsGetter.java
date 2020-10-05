@@ -40,7 +40,8 @@ public class HomeSliderItemsGetter implements Runnable {
                     getBitmapFromURL(currentRef.child("img").getValue().toString()),
                     currentRef.child("keyword").getValue().toString(),
                     currentRef.child("desc").getValue().toString(),
-                    index-1
+                    index-1,
+                    currentRef.child("location_type").getValue().toString()
             ));
             index++;
         }

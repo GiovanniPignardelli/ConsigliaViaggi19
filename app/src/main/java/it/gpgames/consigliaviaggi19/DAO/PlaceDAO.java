@@ -3,6 +3,7 @@ package it.gpgames.consigliaviaggi19.DAO;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import it.gpgames.consigliaviaggi19.home.MainActivity;
 import it.gpgames.consigliaviaggi19.search.place_details.reviews.ReviewsAdapter;
 
 public interface PlaceDAO {
@@ -11,4 +12,6 @@ public interface PlaceDAO {
     public void getPlaceByID(final String id, DatabaseCallback callback, int callbackCode);
 
     public void getPlaceByID(final String dataID, final DatabaseCallback callback, final ReviewsAdapter.ReviewViewHolder holder, int callbackCode);
+
+    public void getPlaceByLocation(String me, String me1, DatabaseCallback callback, int callbackCode);
 }
