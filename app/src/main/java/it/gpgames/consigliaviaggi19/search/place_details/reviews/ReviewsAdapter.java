@@ -102,17 +102,17 @@ public class ReviewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     @Override
     public void callback(Place place, MarkerOptions mOpt, int callbackCode) {
-
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public void callback(int callbackCode) {
-
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public void callback(HandshakeResponse hreq, int callbackCode) {
-
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
@@ -133,7 +133,7 @@ public class ReviewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     @Override
     public void callback(User user, ReviewViewHolder holder, int callbackCode) {
-        holder.userName.setText(user.getDisplayName());
+        holder.userName.setText(user.getShowingName());
         Glide.with(context)
                 .load(user.getAvatar())
                 .into(holder.userImage);
@@ -151,7 +151,7 @@ public class ReviewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     @Override
     public void places_callback(List<Place> places, int callbackCode) {
-
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
@@ -207,7 +207,6 @@ public class ReviewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         public void onClick(View v) {
             int itemPosition = activity.getReviewsRecyclerView().getChildAdapterPosition(v);
             String placeID = reviewsList.get(itemPosition).getPlaceId();
-            Log.d("click","Sto per mostrare una struttura");
             activity.show(placeID, FLAG_PLACE);
         }
     }

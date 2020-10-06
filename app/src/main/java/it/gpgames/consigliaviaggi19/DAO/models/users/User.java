@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -21,6 +22,8 @@ import java.util.concurrent.Executors;
 public class User implements Parcelable {
 
     private static User localInstance = null;
+    public static final int FLAG_USERNAME=0;
+    public static final int FLAG_FULLNAME=1;
 
     private String displayName;
     private String email;
@@ -33,8 +36,9 @@ public class User implements Parcelable {
     private String registerDate;
     private String firstName;
     private String lastName;
+    private Integer showingFlag;
 
-    public User(String displayName, String email, String userID, boolean isBlacklisted, Integer nReview, Float avgReview, String registerDate,String avatar,String firstName,String lastName, int sumReviews) {
+    public User(String displayName, String email, String userID, boolean isBlacklisted, Integer nReview, Float avgReview, String registerDate,String avatar,String firstName,String lastName, int sumReviews, Integer showFullName) {
         this.displayName = displayName;
         this.email = email;
         this.userID = userID;
@@ -42,10 +46,34 @@ public class User implements Parcelable {
         this.nReview = nReview;
         this.avgReview = avgReview;
         this.registerDate = registerDate;
-        this.avatar=avatar;
-        this.firstName=firstName;
-        this.lastName=lastName;
-        this.sumReviews=sumReviews;
+        this.avatar = avatar;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.sumReviews = sumReviews;
+        this.showingFlag = showFullName;
+    }
+
+    public String getShowingName()
+    {
+        switch(showingFlag)
+        {
+            case FLAG_FULLNAME:
+                Log.d("name","full");
+                return firstName+" "+lastName;
+            case FLAG_USERNAME:
+                Log.d("name","user");
+                return displayName;
+            default:
+                return displayName;
+        }
+    }
+
+    public Integer getShowingFlag() {
+        return showingFlag;
+    }
+
+    public void setShowingFlag(Integer showingFlag) {
+        this.showingFlag = showingFlag;
     }
 
     public int getSumReviews() {
@@ -126,6 +154,10 @@ public class User implements Parcelable {
         nReview = in.readInt();
         avgReview = in.readFloat();
         avatar=in.readString();
+        showingFlag = in.readInt();
+        firstName = in.readString();
+        lastName = in.readString();
+
     }
 
     public static final Creator<User> CREATOR = new Creator<User>() {
@@ -154,6 +186,10 @@ public class User implements Parcelable {
         dest.writeInt(nReview);
         dest.writeFloat(avgReview);
         dest.writeString(avatar);
+        dest.writeInt(showingFlag);
+        dest.writeString(firstName);
+        dest.writeString(lastName);
+
     }
 
     public String getDisplayName() {

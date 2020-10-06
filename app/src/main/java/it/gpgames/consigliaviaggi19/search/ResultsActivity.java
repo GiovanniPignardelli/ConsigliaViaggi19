@@ -97,9 +97,6 @@ public class ResultsActivity extends AppCompatActivity implements DatabaseCallba
                 setUpRecyclerView(null, results); // weakList not implemented yet.
             break;
         }
-
-
-
     }
 
     @Override

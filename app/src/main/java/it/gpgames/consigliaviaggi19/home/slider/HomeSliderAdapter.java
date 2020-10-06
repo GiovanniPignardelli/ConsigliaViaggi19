@@ -56,7 +56,6 @@ public class HomeSliderAdapter extends
             @Override
             public void onClick(View v) {
                 callback.callback(mSliderItems.get(position).getLocationType()+" "+mSliderItems.get(position).getKeyword(),FLAG_SLIDER_ITEM);
-                Toast.makeText(context, "This is item in position " + position, Toast.LENGTH_SHORT).show();
             }
         });
     }

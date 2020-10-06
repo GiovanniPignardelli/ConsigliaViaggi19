@@ -111,7 +111,7 @@ public class RegisterActivity extends AppCompatActivity implements DatabaseCallb
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
                 String dateString=date.format(formatter);
 
-                User toRegister=new User(username,email,null,false,0, (float) 0,dateString,null,firstName,lastName,0);
+                User toRegister=new User(username,email,null,false,0, (float) 0,dateString,null,firstName,lastName,0,User.FLAG_USERNAME);
                 registerDAO.register(toRegister,password,RegisterActivity.this,0);
 
 

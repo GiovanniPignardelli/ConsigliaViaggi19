@@ -60,7 +60,6 @@ public class FiltersSelectorActivity extends Activity implements FilterTagsAdapt
     private Spinner categorySpinner;
     private RecyclerView mainTags,secondaryTags;
     private Button applyButton,cancelButton;
-    private SeekBar seekBar;
 
     private FilterTagsAdapter adapter;
 
@@ -95,8 +94,6 @@ public class FiltersSelectorActivity extends Activity implements FilterTagsAdapt
         cancelButton=findViewById(R.id.filter_cancel_button);
         distanceText=findViewById(R.id.textView24);
         otherTagsText=findViewById(R.id.textView23);
-        seekBar=findViewById(R.id.seekBar);
-        seekBar.setAlpha((float)0.5);
 
         generalTags=new ArrayList<>(Arrays.asList(getResources().getStringArray(R.array.general_tags)));
         cuisineTags=new ArrayList<>(Arrays.asList(getResources().getStringArray(R.array.cuisine_tags)));
@@ -154,28 +151,7 @@ public class FiltersSelectorActivity extends Activity implements FilterTagsAdapt
             }
 
         });
-        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if(!distanceIsSelected)
-                {
-                    seekBar.setAlpha(1);
-                    distanceIsSelected=true;
-                }
-                actualDistance=progress;
-                distanceText.setText(progress+" km");
-            }
 
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-        });
         ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
             public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {

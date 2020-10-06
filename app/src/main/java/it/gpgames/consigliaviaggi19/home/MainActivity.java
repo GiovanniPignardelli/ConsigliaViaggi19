@@ -377,7 +377,7 @@ public class MainActivity extends AppCompatActivity implements DatabaseCallback,
                 break;
             case CALLBACK_NO_SEARCH_STRING:
                 iShowResults.putExtra("title","Ecco i nostri migliori risultati.");
-                iShowResults.putExtra("removeButtons", false);
+                iShowResults.putExtra("removeButtons", true);
                 break;
             case HomeSliderAdapter.FLAG_SLIDER_ITEM:
                 iShowResults.putExtra("title","Ecco il meglio di questo posto.");

@@ -142,11 +142,11 @@ public class PlaceFirebaseDAO implements PlaceDAO {
                                 if(newPlace != null) callback.callback(newPlace,callbackCode);
                                 return;
                             }
+                            else
+                                callback.manageError(new Exception("Nessuna struttura trovata nei dintorni."), callbackCode);
                         }
                     });
                 }
-                callback.manageError(new Exception("Nessuna struttura trovata nei dintorni."), callbackCode);
-
             }
 
             @Override

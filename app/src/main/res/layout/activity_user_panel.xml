@@ -24,21 +24,20 @@
                 android:id="@+id/change_image_button"
                 android:layout_width="160dp"
                 android:layout_height="60dp"
-                android:layout_marginTop="32dp"
+                android:layout_marginTop="16dp"
                 android:text="Carica Immagine"
                 android:textSize="14sp"
                 android:visibility="invisible"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.501"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/show_user_review_button"
-                app:layout_constraintVertical_bias="0.0" />
+                app:layout_constraintTop_toBottomOf="@+id/changeNameButton" />
 
             <Button
                 android:id="@+id/reset_password_button"
                 android:layout_width="160dp"
                 android:layout_height="60dp"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="16dp"
                 android:text="Resetta Password"
                 android:textSize="14sp"
                 android:visibility="invisible"
@@ -50,7 +49,7 @@
                 android:id="@+id/logout_button"
                 android:layout_width="160dp"
                 android:layout_height="60dp"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="16dp"
                 android:text="Logout"
                 android:textSize="14sp"
                 android:visibility="invisible"
@@ -134,6 +133,28 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView13" />
+
+            <Switch
+                android:id="@+id/fullNameSwitch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="Mostra nome completo"
+                android:visibility="invisible"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/show_user_review_button" />
+
+            <Button
+                android:id="@+id/changeNameButton"
+                android:layout_width="160dp"
+                android:layout_height="60dp"
+                android:layout_marginTop="16dp"
+                android:text="Cambia nome"
+                android:visibility="invisible"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/fullNameSwitch" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
 

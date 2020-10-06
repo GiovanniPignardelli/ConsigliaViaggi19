@@ -9,9 +9,12 @@ import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,13 +46,15 @@ import it.gpgames.consigliaviaggi19.search.place_details.reviews.ReviewsAdapter;
 public class UserPanelActivity extends AppCompatActivity implements DatabaseCallback {
 
     public static final int IMGPRV=1;
+    public static final int CHANGE_NAME=2;
 
     private static final NetworkChangeReceiver networkChangeReceiver=NetworkChangeReceiver.getNetworkChangeReceiverInstance();
 
     private ImageView bBack;
     private ImageView iUserPicture;
     private TextView tUserDisplayName,nReviews,avgReviews;
-    private Button bChangeProfilePicture,bLogout,bResetPassword,bShowReviews;
+    private Button bChangeProfilePicture,bLogout,bResetPassword,bShowReviews,bChangeName;
+    private Switch showFullNameSwitch;
     private User currentUser;
     private UserDAO userDao = DAOFactory.getDAOInstance().getUserDAO();
     private PlaceDAO placeDao = DAOFactory.getDAOInstance().getPlaceDAO();
@@ -63,6 +68,7 @@ public class UserPanelActivity extends AppCompatActivity implements DatabaseCall
         bResetPassword = findViewById(R.id.reset_password_button);
         bBack=findViewById(R.id.back2);
         bChangeProfilePicture=findViewById(R.id.change_image_button);
+        bChangeName=findViewById(R.id.changeNameButton);
         iUserPicture = findViewById(R.id.userPicture);
         iUserPicture.setImageResource(R.drawable.default_profile_picture);
         tUserDisplayName = findViewById(R.id.userDisplayName);
@@ -70,6 +76,7 @@ public class UserPanelActivity extends AppCompatActivity implements DatabaseCall
         nReviews=findViewById(R.id.n_review_user);
         avgReviews=findViewById(R.id.avg_review_user);
         bShowReviews=findViewById(R.id.show_user_review_button);
+        showFullNameSwitch=findViewById(R.id.fullNameSwitch);
         initListeners();
     }
 
@@ -81,12 +88,6 @@ public class UserPanelActivity extends AppCompatActivity implements DatabaseCall
         registerReceiver(networkChangeReceiver, filter);
 
         currentUser = getIntent().getParcelableExtra("userToShow");
-        if(currentUser.getUserID().equals(User.getLocalInstance().getUserID()))
-        {
-            bLogout.setVisibility(View.VISIBLE);
-            bResetPassword.setVisibility(View.VISIBLE);
-            bChangeProfilePicture.setVisibility(View.VISIBLE);
-        }
         loadCurrentUserOnView();
     }
 
@@ -133,21 +134,70 @@ public class UserPanelActivity extends AppCompatActivity implements DatabaseCall
                 reviewDao.getReviewsByUserID(currentUser.getUserID(),UserPanelActivity.this, 0);
             }
         });
+
+        bChangeName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i=new Intent(UserPanelActivity.this, ChangeNameActivity.class);
+                startActivityForResult(i, CHANGE_NAME);
+            }
+        });
+
+        showFullNameSwitch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                boolean isChecked=showFullNameSwitch.isChecked();
+                userDao.setShowFullName(currentUser.getUserID(), isChecked,UserPanelActivity.this,3);
+                bBack.setEnabled(false);
+                bChangeProfilePicture.setEnabled(false);
+                bLogout.setEnabled(false);
+                bResetPassword.setEnabled(false);
+                bShowReviews.setEnabled(false);
+                bChangeName.setEnabled(false);
+                showFullNameSwitch.setEnabled(false);
+            }
+        });
+
     }
 
     private void loadCurrentUserOnView(){
-        tUserDisplayName.setText(currentUser.getDisplayName());
+        tUserDisplayName.setText(currentUser.getShowingName());
+
         nReviews.setText(String.valueOf(currentUser.getnReview()));
         avgReviews.setText(String.valueOf(currentUser.getAvgReview()));
-        if(currentUser.getAvatar()!=null) Glide.with(getApplicationContext())
+        if(currentUser.getAvatar()!=null && !currentUser.getAvatar().equals("")) Glide.with(getApplicationContext())
                 .load(currentUser.getAvatar())
                 .into(iUserPicture);
+
+        if(currentUser.getUserID().equals(User.getLocalInstance().getUserID()))
+        {
+            showFullNameSwitch.setVisibility(View.VISIBLE);
+            bLogout.setVisibility(View.VISIBLE);
+            bChangeName.setVisibility(View.VISIBLE);
+            bResetPassword.setVisibility(View.VISIBLE);
+            bChangeProfilePicture.setVisibility(View.VISIBLE);
+            if(currentUser.getShowingFlag()==User.FLAG_FULLNAME)
+                showFullNameSwitch.setChecked(true);
+            else
+                showFullNameSwitch.setChecked(false);
+            bLogout.setEnabled(true);
+            bChangeName.setEnabled(true);
+            bResetPassword.setEnabled(true);
+            bChangeProfilePicture.setEnabled(true);
+            if(!currentUser.getFirstName().equals("") || !currentUser.getLastName().equals(""))
+                showFullNameSwitch.setEnabled(true);
+            else
+                showFullNameSwitch.setEnabled(false);
+        }
+
+        bBack.setEnabled(true);
+        bShowReviews.setEnabled(true);
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == IMGPRV)
+        if (requestCode == IMGPRV) {
             if (resultCode == Activity.RESULT_OK) {
                 Bitmap picToUpload;
                 try {
@@ -157,6 +207,32 @@ public class UserPanelActivity extends AppCompatActivity implements DatabaseCall
                     e.printStackTrace();
                 }
             }
+        }
+        else if(requestCode == CHANGE_NAME)
+        {
+            if(resultCode == Activity.RESULT_OK)
+            {
+                boolean nameHasChanged=data.getBooleanExtra("change",false);
+                if(nameHasChanged)
+                {
+                    boolean nameHasBeenReset=data.getBooleanExtra("reset", false);
+                    if(nameHasBeenReset)
+                    {
+                        userDao.setUserFullName(currentUser.getUserID(),"","",this,3);
+                    }
+                    else
+                    {
+                        String name=data.getStringExtra("name");
+                        if(name==null)name="";
+
+                        String surname=data.getStringExtra("surname");
+                        if(surname==null)surname="";
+
+                        userDao.setUserFullName(currentUser.getUserID(),name,surname,this,3);
+                    }
+                }
+            }
+        }
     }
 
     /**Passa il media ottenuto dalla galleria (onActivityResult) all'UserDAO per l'update.*/
@@ -165,9 +241,12 @@ public class UserPanelActivity extends AppCompatActivity implements DatabaseCall
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         pic.compress(Bitmap.CompressFormat.JPEG, 100, baos);
         byte[] data = baos.toByteArray();
-        bChangeProfilePicture.setEnabled(false);
-        bResetPassword.setEnabled(false);
         bLogout.setEnabled(false);
+        bResetPassword.setEnabled(false);
+        bChangeProfilePicture.setEnabled(false);
+        showFullNameSwitch.setEnabled(false);
+        bBack.setEnabled(false);
+        bShowReviews.setEnabled(false);
         String uid = User.getLocalInstance().getUserID();
         userDao.setAvatarByID(uid, data, this, 0);
     }
@@ -199,12 +278,16 @@ public class UserPanelActivity extends AppCompatActivity implements DatabaseCall
             case 2:
                 Toast.makeText(getApplicationContext(),"Reset Password: controlla la casella di posta elettronica.",Toast.LENGTH_SHORT).show();
                 break;
+            case 3:
+                userDao.getUserByID(currentUser.getUserID(),this,1);
+                break;
+
         }
     }
 
     @Override
     public void callback(HandshakeResponse hreq, int callbackCode) {
-
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
@@ -219,7 +302,15 @@ public class UserPanelActivity extends AppCompatActivity implements DatabaseCall
 
     @Override
     public void callback(User user, int callbackCode) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        switch(callbackCode)
+        {
+            case 1:
+                currentUser=user;
+                loadCurrentUserOnView();
+                break;
+            default:
+                throw new UnsupportedOperationException("Not supported yet.");
+        }
     }
 
     @Override
@@ -252,12 +343,12 @@ public class UserPanelActivity extends AppCompatActivity implements DatabaseCall
 
     @Override
     public void places_callback(List<Place> places, int callbackCode) {
-
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public void manageError(Exception e, int callbackCode) {
-        Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
-        finish();
+        Toast.makeText(this, "Errore. Controllare i log.", Toast.LENGTH_SHORT).show();
+        Log.d("query",e.getMessage());
     }
 }
