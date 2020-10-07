@@ -25,8 +25,6 @@ public class DistanceRadiusSliderActivity extends Activity {
     private Button bAccept;
     private RadiusSliderCallback activity;
 
-    private int actualDistance;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,7 +46,6 @@ public class DistanceRadiusSliderActivity extends Activity {
                     seekBar.setAlpha(1);
                     distanceIsSelected=true;
                 }
-                actualDistance=seekBar.getProgress();
                 tDistance.setText(seekBar.getProgress()+" km");
             }
 

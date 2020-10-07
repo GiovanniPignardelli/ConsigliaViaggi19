@@ -62,10 +62,10 @@ public class PlaceInformationAdapter extends RecyclerView.Adapter<RecyclerView.V
 
     public class InfoViewHolder extends RecyclerView.ViewHolder {
 
-        View mView;
+        private View mView;
 
-        TextView info;
-        ImageView image;
+        private TextView info;
+        private ImageView image;
 
 
         public InfoViewHolder(@NonNull View itemView) {

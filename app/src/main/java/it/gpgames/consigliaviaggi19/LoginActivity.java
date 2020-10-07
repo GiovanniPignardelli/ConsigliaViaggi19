@@ -113,7 +113,7 @@ public class LoginActivity extends AppCompatActivity implements DatabaseCallback
 
     @Override
     public void callback(HandshakeResponse hreq, int callbackCode) {
-
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
@@ -151,7 +151,7 @@ public class LoginActivity extends AppCompatActivity implements DatabaseCallback
 
     @Override
     public void places_callback(List<Place> places, int callbackCode) {
-
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 

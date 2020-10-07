@@ -9,7 +9,12 @@ import it.gpgames.consigliaviaggi19.DAO.firebaseDAO.UserFirebaseDAO;
 
 public class DAOFactory {
     private static DAOFactory dao;
-    String db = "firebase";
+    private static String db = "firebase";
+
+    private DAOFactory()
+    {
+        //private constructor for singleton class
+    }
 
     public static synchronized DAOFactory getDAOInstance() {
         if (dao == null)

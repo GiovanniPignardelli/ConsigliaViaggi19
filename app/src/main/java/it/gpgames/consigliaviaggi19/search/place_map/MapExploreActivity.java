@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -27,7 +26,6 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.database.DatabaseError;
 
 import java.util.List;
 
@@ -38,7 +36,6 @@ import it.gpgames.consigliaviaggi19.DAO.firebaseDAO.HandshakeResponse;
 import it.gpgames.consigliaviaggi19.DAO.models.reviews.Review;
 import it.gpgames.consigliaviaggi19.R;
 import it.gpgames.consigliaviaggi19.DAO.models.places.Place;
-import it.gpgames.consigliaviaggi19.home.MainActivity;
 import it.gpgames.consigliaviaggi19.search.place_details.PlaceDetailsActivity;
 import it.gpgames.consigliaviaggi19.DAO.models.users.User;
 import it.gpgames.consigliaviaggi19.search.place_details.reviews.ReviewsAdapter;
@@ -78,51 +75,52 @@ public class MapExploreActivity extends AppCompatActivity implements OnMapReadyC
 
         @Override
         public void callback(int callbackCode) {
-
+            throw new UnsupportedOperationException("Not supported yet.");
         }
 
         @Override
         public void callback(HandshakeResponse hreq, int callbackCode) {
-
+            throw new UnsupportedOperationException("Not supported yet.");
         }
 
         @Override
         public void callback(Place p, int callbackCode) {
+            throw new UnsupportedOperationException("Not supported yet.");
         }
 
         @Override
         public void callback(Place place, ReviewsAdapter.ReviewViewHolder holder, int callbackCode) {
-
+            throw new UnsupportedOperationException("Not supported yet.");
         }
 
         @Override
         public void callback(User user, int callbackCode) {
-
+            throw new UnsupportedOperationException("Not supported yet.");
         }
 
         @Override
         public void callback(User user, ReviewsAdapter.ReviewViewHolder holder, int callbackCode) {
-
+            throw new UnsupportedOperationException("Not supported yet.");
         }
 
         @Override
         public void callback(List<Review> reviews, int callbackCode) {
-
+            throw new UnsupportedOperationException("Not supported yet.");
         }
 
         @Override
         public void callback(List<Place> weakList, List<Place> topList, int callbackCode) {
-
+            throw new UnsupportedOperationException("Not supported yet.");
         }
 
         @Override
         public void places_callback(List<Place> places, int callbackCode) {
-
+            throw new UnsupportedOperationException("Not supported yet.");
         }
 
         @Override
         public void callback(String message, int callbackCode) {
-
+            throw new UnsupportedOperationException("Not supported yet.");
         }
 
         @Override
@@ -132,7 +130,7 @@ public class MapExploreActivity extends AppCompatActivity implements OnMapReadyC
         }
     }
 
-    private ActivityCompat callingActivity;
+
     private FusedLocationProviderClient client;
     private ImageView bBack;
     private SupportMapFragment fMap;

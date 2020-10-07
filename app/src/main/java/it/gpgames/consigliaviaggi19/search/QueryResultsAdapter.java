@@ -29,7 +29,6 @@ public class QueryResultsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     private List<Place> placesList;
     private LayoutInflater inflater;
-    private Place holdingPlace;
     private ResultsActivity activity;
     private ListItemOnClickListener listener = new ListItemOnClickListener();
 
@@ -51,17 +50,17 @@ public class QueryResultsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder h, int position) {
         final ResultsViewHolder holder = (ResultsViewHolder) h;
-        holdingPlace=placesList.get(position);
+        Place holdingPlace = placesList.get(position);
 
         holder.title.setText(holdingPlace.getName());
         holder.nReviews.setText(holdingPlace.getnReviews().toString());
         holder.rating.setRating(holdingPlace.getAvgReview());
         if(holdingPlace.getPictures()!=null && holdingPlace.getPictures().get(0)!=null)
         {
-            String picUri=holdingPlace.getPictures().get(0);
+            String picUri= holdingPlace.getPictures().get(0);
             Glide.with(holder.itemView.getContext()).load(picUri).into(holder.image);
         }
-        holder.location.setText(holdingPlace.getAddress()+", "+holdingPlace.getCity()+", "+holdingPlace.getState());
+        holder.location.setText(holdingPlace.getAddress()+", "+ holdingPlace.getCity()+", "+ holdingPlace.getState());
 
     }
 
@@ -73,17 +72,14 @@ public class QueryResultsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     public class ResultsViewHolder extends RecyclerView.ViewHolder {
 
-        View mView;
-
-        TextView title;
-        TextView location;
-        TextView nReviews;
-        ImageView image;
-        RatingBar rating;
+        private TextView title;
+        private TextView location;
+        private TextView nReviews;
+        private ImageView image;
+        private RatingBar rating;
 
         public ResultsViewHolder(@NonNull View itemView) {
             super(itemView);
-            mView = itemView;
             title=itemView.findViewById(R.id.Title);
             location=itemView.findViewById(R.id.addressView);
             nReviews=itemView.findViewById(R.id.numRew);

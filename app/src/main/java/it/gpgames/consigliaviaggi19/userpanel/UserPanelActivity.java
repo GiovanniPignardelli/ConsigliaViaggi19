@@ -57,7 +57,6 @@ public class UserPanelActivity extends AppCompatActivity implements DatabaseCall
     private Switch showFullNameSwitch;
     private User currentUser;
     private UserDAO userDao = DAOFactory.getDAOInstance().getUserDAO();
-    private PlaceDAO placeDao = DAOFactory.getDAOInstance().getPlaceDAO();
     private ReviewDAO reviewDao = DAOFactory.getDAOInstance().getReviewDAO();
     private LoginDAO loginDao = DAOFactory.getDAOInstance().getLoginDAO();
 

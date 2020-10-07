@@ -65,9 +65,6 @@ public class FiltersSelectorActivity extends Activity implements FilterTagsAdapt
 
     private HashMap<Integer,ArrayList<String>> actualTags=new HashMap<>();
 
-    private boolean distanceIsSelected=false;
-    private int actualDistance;
-
     private boolean ratingIsSelected=false;
     private float actualRating;
 
@@ -209,8 +206,6 @@ public class FiltersSelectorActivity extends Activity implements FilterTagsAdapt
             @Override
             public void onClick(View v) {
                 filterCallback.setCategory(actualCategory);
-                if(distanceIsSelected)
-                    filterCallback.setMaxDistance(actualDistance);
                 if(priceIsSelected)
                     filterCallback.setPriceString(actualPrice);
                 if(ratingIsSelected)
@@ -384,7 +379,6 @@ public class FiltersSelectorActivity extends Activity implements FilterTagsAdapt
         void setMinRating(int rating);
         void setPriceString(String price);
         void setTags(HashMap<Integer,ArrayList<String>> tags);
-        void setMaxDistance(int km);
         void refreshFilter();
     }
 }

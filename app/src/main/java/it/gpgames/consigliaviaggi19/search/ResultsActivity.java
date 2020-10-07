@@ -60,7 +60,6 @@ public class ResultsActivity extends AppCompatActivity implements DatabaseCallba
     private HashMap<Integer,ArrayList<String>> tags;
     private String category;
     private Integer minRating;
-    private Integer maxDistance;
     private String priceTag;
 
     //order
@@ -159,7 +158,6 @@ public class ResultsActivity extends AppCompatActivity implements DatabaseCallba
                 tags=null;
                 category=null;
                 minRating=null;
-                maxDistance=null;
                 priceTag=null;
                 Intent i=new Intent(ResultsActivity.this,FiltersSelectorActivity.class);
                 i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -196,6 +194,7 @@ public class ResultsActivity extends AppCompatActivity implements DatabaseCallba
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
     }
+
     public RecyclerView getRecyclerView()
     {
         return resultQueries;
@@ -214,7 +213,7 @@ public class ResultsActivity extends AppCompatActivity implements DatabaseCallba
 
     @Override
     public void callback(HandshakeResponse hreq, int callbackCode) {
-
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
@@ -250,7 +249,7 @@ public class ResultsActivity extends AppCompatActivity implements DatabaseCallba
 
     @Override
     public void places_callback(List<Place> places, int callbackCode) {
-
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
@@ -296,11 +295,6 @@ public class ResultsActivity extends AppCompatActivity implements DatabaseCallba
     @Override
     public void setTags(HashMap<Integer, ArrayList<String>> tags) {
         this.tags=tags;
-    }
-
-    @Override
-    public void setMaxDistance(int km) {
-        this.maxDistance=km;
     }
 
     @Override

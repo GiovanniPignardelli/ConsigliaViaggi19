@@ -157,7 +157,7 @@ public class WriteReviewActivity extends AppCompatActivity implements DatabaseCa
 
     @Override
     public void callback(Place place, MarkerOptions mOpt, int callbackCode) {
-
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
@@ -167,7 +167,7 @@ public class WriteReviewActivity extends AppCompatActivity implements DatabaseCa
 
     @Override
     public void callback(HandshakeResponse hreq, int callbackCode) {
-
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
@@ -206,7 +206,7 @@ public class WriteReviewActivity extends AppCompatActivity implements DatabaseCa
 
     @Override
     public void places_callback(List<Place> places, int callbackCode) {
-
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override

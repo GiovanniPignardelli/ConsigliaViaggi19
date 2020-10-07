@@ -38,12 +38,12 @@ import it.gpgames.consigliaviaggi19.search.filters.order.OrderSelectorActivity;
  * ha più di una parola, vengono generati ricorsivamente tanti QueryExecutor quante sono le parole di ricerca.*/
 public class FirebaseQueryExecutor {
 
-    int callbackCode;
+    private int callbackCode;
 
     /** Riferimento all'activity che attende i risultati della query. Essa deve implementare l'interfaccia DatabaseCallback*/
     private DatabaseCallback waitingForResults;
 
-    private FirebaseFirestore dbRef = FirebaseFirestore.getInstance();
+    private final FirebaseFirestore dbRef = FirebaseFirestore.getInstance();
 
     /** La stringa di ricerca è stata precedentemente splittata in parole*/
     private String[] parsedString;

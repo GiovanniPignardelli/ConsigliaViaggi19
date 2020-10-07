@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -61,7 +62,7 @@ public class BackofficeHandshakeActivity extends Activity implements DatabaseCal
 
     @Override
     public void callback(Place place, MarkerOptions mOpt, int callbackCode) {
-
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
@@ -71,51 +72,52 @@ public class BackofficeHandshakeActivity extends Activity implements DatabaseCal
 
     @Override
     public void callback(HandshakeResponse hreq, int callbackCode) {
-
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public void callback(Place place, int callbackCode) {
-
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public void callback(Place place, ReviewsAdapter.ReviewViewHolder holder, int callbackCode) {
-
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public void callback(User user, int callbackCode) {
-
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public void callback(User user, ReviewsAdapter.ReviewViewHolder holder, int callbackCode) {
-
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public void callback(List<Review> reviews, int callbackCode) {
-
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public void callback(List<Place> weakList, List<Place> topList, int callbackCode) {
-
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public void places_callback(List<Place> places, int callbackCode) {
-
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public void callback(String message, int callbackCode) {
-
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public void manageError(Exception e, int callbackCode) {
-
+        Log.d("error",e.getMessage());
+        Toast.makeText(this,"Errore. Controllare i log.", Toast.LENGTH_LONG).show();
     }
 }

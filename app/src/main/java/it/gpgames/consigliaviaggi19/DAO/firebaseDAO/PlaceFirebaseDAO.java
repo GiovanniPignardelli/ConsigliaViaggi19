@@ -104,7 +104,6 @@ public class PlaceFirebaseDAO implements PlaceDAO {
         });
     }
 
-
     @Override
     public void getPlaceByLocation(LatLng loc, float radius, final DatabaseCallback callback, final int callbackCode) {
         if(geoFire == null){

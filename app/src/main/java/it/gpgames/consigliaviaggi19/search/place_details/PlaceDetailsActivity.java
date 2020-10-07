@@ -364,7 +364,7 @@ public class PlaceDetailsActivity extends AppCompatActivity implements ReviewsAd
 
     @Override
     public void places_callback(List<Place> places, int callbackCode) {
-
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
@@ -374,6 +374,7 @@ public class PlaceDetailsActivity extends AppCompatActivity implements ReviewsAd
 
     @Override
     public void manageError(Exception e, int callbackCode) {
-        Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+        Log.d("errore",e.getMessage());
+        Toast.makeText(this, "Errore. Controllare i log.", Toast.LENGTH_SHORT).show();
     }
 }

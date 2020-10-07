@@ -31,8 +31,6 @@ public class OrderSelectorActivity extends Activity {
     public static final int FLAG_ALPHABETICAL=3;
     public static final int FLAG_AGE=4;
 
-    private ArrayList<String> orderTags;
-
     private Spinner orderSpinner;
     private RadioButton ascButton,descButton;
     private Button applyButton,cancelButton;
@@ -52,12 +50,10 @@ public class OrderSelectorActivity extends Activity {
         applyButton=findViewById(R.id.order_apply_button);
         cancelButton=findViewById(R.id.order_cancel_button);
         init();
-
     }
 
     private void init() {
         orderCallback= ResultsActivity.getLastOrderInstance();
-        orderTags=new ArrayList<>(Arrays.asList(getResources().getStringArray(R.array.order_tags)));
         initListeners();
     }
 

@@ -29,7 +29,6 @@ public class ShowUserReviewsActivity extends AppCompatActivity implements Review
 
     private RecyclerView recyclerView;
     private ReviewsAdapter reviewsAdapter;
-    private String userID;
     private ImageView back;
     private UserDAO userDao = DAOFactory.getDAOInstance().getUserDAO();
     private PlaceDAO placeDao = DAOFactory.getDAOInstance().getPlaceDAO();
