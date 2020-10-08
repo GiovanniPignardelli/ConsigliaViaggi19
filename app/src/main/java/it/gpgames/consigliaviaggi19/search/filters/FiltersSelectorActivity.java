@@ -1,9 +1,7 @@
 package it.gpgames.consigliaviaggi19.search.filters;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,21 +11,20 @@ import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RatingBar;
-import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
 import it.gpgames.consigliaviaggi19.R;
-import it.gpgames.consigliaviaggi19.search.QueryResultsAdapter;
 import it.gpgames.consigliaviaggi19.search.ResultsActivity;
 
+/**Activity che permette di selezionare vari filtri di ricerca prima di effettaure una query.
+ * Contiene vari FLAG utili a rappresentare queste informazioni.
+ * Implementa l'interfaccia TagSetter presente nel FilterTagsAdapter perchè quest'ulimo adatta ai vari RecyclerView i tag in base alla categoria selezionata. I listener di questi tag operano proprio su un riferimento ad un interfaccia di questo tipo*/
 public class FiltersSelectorActivity extends Activity implements FilterTagsAdapter.TagSetter {
 
     private ArrayList<String> generalTags;
@@ -51,6 +48,7 @@ public class FiltersSelectorActivity extends Activity implements FilterTagsAdapt
     public static final String PRICE_TWO="€€";
     public static final String PRICE_THREE="€€€";
 
+    /**riferimento alla classe che aspetta riscontro dei filtri selezionati*/
     private FilterCallback filterCallback;
 
     private TextView distanceText,otherTagsText;
@@ -63,6 +61,8 @@ public class FiltersSelectorActivity extends Activity implements FilterTagsAdapt
 
     private FilterTagsAdapter adapter;
 
+    /**Tag attualmente selezinati. Le chiavi assumo valori dai FLAG_..._TAGS, mentre i valori da una delle liste di tag inizializzate
+     * nel metodo onCreate()*/
     private HashMap<Integer,ArrayList<String>> actualTags=new HashMap<>();
 
     private boolean ratingIsSelected=false;
@@ -74,6 +74,7 @@ public class FiltersSelectorActivity extends Activity implements FilterTagsAdapt
     private int actualCategory=FLAG_ANY;
 
     @Override
+    /**Inizializza i componenti gli ArrayList dei TAG dalle risorse dell'applicazione*/
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_filters_selector);
@@ -239,6 +240,7 @@ public class FiltersSelectorActivity extends Activity implements FilterTagsAdapt
         });
     }
 
+    /**Resetta tutti i tag.*/
     private void cleanTags() {
         actualTags=new HashMap<>();
         for (int childCount = mainTags.getChildCount(), i = 0; i < childCount; ++i) {
@@ -252,12 +254,14 @@ public class FiltersSelectorActivity extends Activity implements FilterTagsAdapt
         }
     }
 
+    /**Inizializza il RecyclerView relativo ai tag non primari.*/
     private void setUpSecondaryTags(List<String> mergedLists) {
         adapter=new FilterTagsAdapter(mergedLists,this,this);
         secondaryTags.setAdapter(adapter);
         secondaryTags.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
     }
 
+    /**Inizializza il RecyclerView dei tag generali.*/
     private void setUpGeneralRecyclerView() {
         adapter = new FilterTagsAdapter(generalTags,this,this);
         mainTags.setAdapter(adapter);
@@ -265,6 +269,7 @@ public class FiltersSelectorActivity extends Activity implements FilterTagsAdapt
     }
 
     @Override
+    /**Aggiunge un tag alla lista di tag attuali. Se la lista non è ancora stata creata, la inizializza.*/
     public void addTag(String tag) {
         ArrayList<String> toAdd;
 
@@ -335,6 +340,7 @@ public class FiltersSelectorActivity extends Activity implements FilterTagsAdapt
     }
 
     @Override
+    /**Rimuove un tag dalla lista di tag attuali.*/
     public void removeTag(String tag) {
         List<String> toRemove;
         if(generalTags.contains(tag))
@@ -373,6 +379,7 @@ public class FiltersSelectorActivity extends Activity implements FilterTagsAdapt
         }
     }
 
+    /**Interfaccia che deve essere implementata da ogni classe che attende riscontro sulla selezione dei tag.*/
     public interface FilterCallback
     {
         void setCategory(int categoryFlag);

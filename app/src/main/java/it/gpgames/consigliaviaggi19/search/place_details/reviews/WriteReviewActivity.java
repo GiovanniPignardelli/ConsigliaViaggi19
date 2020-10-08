@@ -39,6 +39,8 @@ import it.gpgames.consigliaviaggi19.DAO.models.reviews.Review;
 import it.gpgames.consigliaviaggi19.search.place_details.PlaceDetailsActivity;
 import it.gpgames.consigliaviaggi19.DAO.models.users.User;
 
+/**Activity che permette di scrivere ed inviare una recensione.
+ * Implementa l'interfaccia DatabaseCallback perché invia al database mascherato dal DAOFactory la recensione inserita e ne attende riscontro.*/
 public class WriteReviewActivity extends AppCompatActivity implements DatabaseCallback {
 
     private CircleImageView iPlacePic;
@@ -49,9 +51,11 @@ public class WriteReviewActivity extends AppCompatActivity implements DatabaseCa
     private Button bSendReview;
     private androidx.appcompat.widget.Toolbar hider;
 
+    /**Riferimento al posto che si sta recensendo*/
     private Place toShow;
     private String dbDocID;
 
+    /**NetworkChangeReceiver per restare aggiornata sullo stato della connessione*/
     private final static NetworkChangeReceiver networkChangeReceiver=NetworkChangeReceiver.getNetworkChangeReceiverInstance();
     private ReviewDAO reviewDao = DAOFactory.getDAOInstance().getReviewDAO();
     private PlaceDAO placeDAO = DAOFactory.getDAOInstance().getPlaceDAO();
@@ -132,6 +136,8 @@ public class WriteReviewActivity extends AppCompatActivity implements DatabaseCa
         });
     }
 
+    /**Metodo invocato quando le informazioni sulla nuova review vengono raccolte.
+     * Esso genera un oggetto Review e la invia al reviewDao.*/
     private void sendReview(String reviewString, int rating, String day, String month, String year) {
         Review review=new Review(dbDocID, User.getLocalInstance().getUserID(),reviewString,year,month,day, rating);
         reviewDao.createReview(review,this,0);

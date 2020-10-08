@@ -14,6 +14,8 @@ import org.w3c.dom.Text;
 import it.gpgames.consigliaviaggi19.DAO.models.users.User;
 import it.gpgames.consigliaviaggi19.R;
 
+/**Activity che permette ad un utente di reimpostare o resettare il proprio nome completo.
+ * Al termine dell'activity viene posto come result (con il metodo setResult) le informazioni ottenute.*/
 public class ChangeNameActivity extends Activity {
 
     private Button confirmButton,resetButton;

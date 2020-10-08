@@ -9,6 +9,8 @@ import android.widget.Toast;
 
 import it.gpgames.consigliaviaggi19.R;
 
+/**Activity che viene visualizzata quando non è stata riscontrata una connessione di rete dal NetworkChangeReceiver
+ * @see NetworkChangeReceiver*/
 public class NoConnectionActivity extends AppCompatActivity {
 
     Button bRetry;

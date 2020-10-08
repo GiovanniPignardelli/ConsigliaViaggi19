@@ -13,15 +13,18 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 import it.gpgames.consigliaviaggi19.R;
 
+/**Adapter che adatta i tag ai RecyclerView presenti in activity_filters_selector.xml.*/
 public class FilterTagsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
+    /**Lista dei tag da visualizzare*/
     private List<String> tagsList;
-    private String holdingTag;
 
+    /**Instanza della classe che attende la selezione dei tag.*/
     private TagSetter setter;
 
     private LayoutInflater inflater;
 
+    /**Listener che viene triggherato quando un tag viene selezionato o deselezionato.*/
     private SetterCheckBoxListener listener;
 
     public FilterTagsAdapter(List<String> tags, Context context, TagSetter setter) {
@@ -42,7 +45,7 @@ public class FilterTagsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder h, int position) {
         final FilterTagsAdapter.TagViewHolder holder = (FilterTagsAdapter.TagViewHolder) h;
-        holdingTag=tagsList.get(position);
+        String holdingTag = tagsList.get(position);
         holder.box.setText(holdingTag);
         holder.box.setOnCheckedChangeListener(listener);
     }
@@ -64,12 +67,14 @@ public class FilterTagsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         }
     }
 
+    /**Interfaccia che deve implementare la classe che attende la selezione o la deselezione dei tag.*/
     public interface TagSetter
     {
         void addTag(String tag);
         void removeTag(String tag);
     }
 
+    /**Listener triggherato ogni volta che un checkbox relativo a un tag viene cliccato, in modo da tenere aggiornata la selezione dei tag.*/
     private class SetterCheckBoxListener implements CompoundButton.OnCheckedChangeListener {
 
         @Override

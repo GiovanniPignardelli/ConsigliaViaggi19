@@ -7,6 +7,10 @@ import it.gpgames.consigliaviaggi19.DAO.firebaseDAO.RegisterFirebaseDAO;
 import it.gpgames.consigliaviaggi19.DAO.firebaseDAO.ReviewFirebaseDAO;
 import it.gpgames.consigliaviaggi19.DAO.firebaseDAO.UserFirebaseDAO;
 
+/**Classe singoletto che serve come filtro tra l'app e il database. Infatti tramite questa classe, e le varie interfacce ...DAO, il grado
+ * di modularità dell'app è alto. Se si vuole cambiare database di appoggio, è sufficiente cambiare la stringa db e implementare
+ * i vari metodi definiti dalle interfacce, senza che il resto dell'app abbia bisongo di ristrutturazioni.
+ * La classe di occupa di istanziare [Model][DB_UTILIZZATO]DAO in base alla stringa che rappresenta il db e il tipo di DAO richiesto.*/
 public class DAOFactory {
     private static DAOFactory dao;
     private static String db = "firebase";

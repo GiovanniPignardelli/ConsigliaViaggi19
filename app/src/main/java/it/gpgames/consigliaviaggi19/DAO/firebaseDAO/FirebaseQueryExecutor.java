@@ -34,27 +34,46 @@ import it.gpgames.consigliaviaggi19.DAO.models.places.Restaurant;
 import it.gpgames.consigliaviaggi19.search.filters.FiltersSelectorActivity;
 import it.gpgames.consigliaviaggi19.search.filters.order.OrderSelectorActivity;
 
-/** Si occupa di eseguire le query. Ha due costruttori: uno pubblico, uno privato. Se la stringa di ricerca
- * ha più di una parola, vengono generati ricorsivamente tanti QueryExecutor quante sono le parole di ricerca.*/
+/** Classe incaricata di esegure le query sui Place su Firestore.*/
 public class FirebaseQueryExecutor {
 
+    /**Codice di ritorno al callback; per discriminare i ritorni al DatabaseCallback
+     * @see it.gpgames.consigliaviaggi19.DAO.DatabaseCallback*/
     private int callbackCode;
 
-    /** Riferimento all'activity che attende i risultati della query. Essa deve implementare l'interfaccia DatabaseCallback*/
+    /** Riferimento all'activity che attende i risultati della query. Essa deve implementare l'interfaccia DatabaseCallback
+     * @see it.gpgames.consigliaviaggi19.DAO.DatabaseCallback*/
     private DatabaseCallback waitingForResults;
 
     private final FirebaseFirestore dbRef = FirebaseFirestore.getInstance();
 
     /** La stringa di ricerca è stata precedentemente splittata in parole*/
     private String[] parsedString;
+
+    /**Categoria dei place da cercare: una tra "place", "hotel", "restaurant".*/
     private String category;
+
+    /**Punteggio minimo dei place da cercare.*/
     private Integer minRating;
+
+    /**Fascia economica dei place da cercare. E' una stringa tra: "€", "€€", "€€€"*/
     private String price;
+
+    /**Mappa che tiene corrispondenze Interi - Liste di Stringhe. La chiave intera rappresenta un flag che indica la categoria del Tag, mentre il valore (la lista di Stringhe), indica i tag.
+     * Per dettagli sui flag:
+     * @see it.gpgames.consigliaviaggi19.search.filters.FiltersSelectorActivity*/
     private HashMap<Integer,ArrayList<String>> tags;
 
+    /**Criterio di ordinamento. E' un flag che prende valori tra quelli nella classe OrderSelectorActivity.
+     * @see it.gpgames.consigliaviaggi19.search.filters.order.OrderSelectorActivity*/
     private Integer order;
+
+    /**Direzione dell'ordinamento. Prende valore da uno degli appositi flag in OrderSelectorActivity.
+     * @see it.gpgames.consigliaviaggi19.search.filters.order.OrderSelectorActivity*/
     private Integer direction;
 
+    /**Firestore non supporta l'ordinamento per migliori corrispondenze. Questo tipo di ordinamento
+     * viene eseguito sul client, e questo attributo discrimina quando questo deve avvenire.*/
     private boolean isToReorderByBestMatch=false;
 
     /** Costruttore pubblico che inizializza i parametri */
@@ -71,6 +90,7 @@ public class FirebaseQueryExecutor {
         this.order=order;
     }
 
+    /**Metodo che esegue la query richiama il waitingForResult col metodo callback().*/
     public void executeQuery()
     {
         //Query di base con la ricerca sui tag di ricerca.
@@ -83,6 +103,7 @@ public class FirebaseQueryExecutor {
         //applico i filtri
         query=applyFilter(query);
 
+        //applico l'ordine
         query=applyOrder(query);
 
         query.limit(100).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -98,7 +119,6 @@ public class FirebaseQueryExecutor {
                     }
                     if(isToReorderByBestMatch)
                         reorderByBestMatch(placeList);
-                    Log.d("query","sto per ritornare");
                     waitingForResults.callback(null, placeList, callbackCode);
                 }
                 else
@@ -107,6 +127,12 @@ public class FirebaseQueryExecutor {
         });
     }
 
+    /**Metodo che opera su una lista di place e li ordina per migliori corrispondenze.
+     * Se ho due Place A e B, A è una miglior corrispondenza rispetto a B se A contiene nel suo nome più parole prese dalla stringa di ricerca rispetto a B
+     * Viene instanziato un Comparator che compara i Place proprio in base a questa relazione d'ordine.
+     * Se due Place hanno le stesse corrispondenze, vengono ordinati in ordine alfabetico.
+     * @param placeList Lista dei place da riordinare.
+     * @throws IllegalStateException*/
     private void reorderByBestMatch(ArrayList<Place> placeList) {
 
         if(parsedString==null)
@@ -115,6 +141,7 @@ public class FirebaseQueryExecutor {
             return;
         }
 
+        //le parole della stringa di ricerca vengono messe in un set, così da non avere duplicati e poter verificare facilmente se una stringa appartiene all'insieme.
         final HashSet<String> searchStrings=new HashSet<>();
         searchStrings.addAll(Arrays.asList(parsedString));
 
@@ -144,6 +171,9 @@ public class FirebaseQueryExecutor {
             Collections.reverse(placeList);
     }
 
+    /**Metodo che applica l'ordine e la direzione
+     * Per questioni di robustezza, se l'ordinamento non è ben definito, viene usato uno di default (BEST_MATCH, DESCENDING).
+     * @param query query alla quale applicare l'ordine.*/
     private Query applyOrder(Query query) {
         if(order==null || direction==null)
         {
@@ -190,6 +220,10 @@ public class FirebaseQueryExecutor {
         return query;
     }
 
+    /**Metodo che applica i filtri ad una query.
+     * @param query query alla quale applicare i filtri
+     * PRECONDIZIONE: la categoria di filtri da applicare deve essere compatibile con la categoria nella quale si stanno cercando i Place
+     * @throws IllegalStateException nel caso in cui questa precondizione venga violata.*/
     private Query applyFilter(Query query) {
         if(category!=null)
             query=query.whereEqualTo("category",category);

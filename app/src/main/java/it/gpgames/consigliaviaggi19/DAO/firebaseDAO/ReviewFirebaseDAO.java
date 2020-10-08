@@ -26,13 +26,15 @@ import it.gpgames.consigliaviaggi19.DAO.models.places.Place;
 import it.gpgames.consigliaviaggi19.DAO.models.reviews.Review;
 import it.gpgames.consigliaviaggi19.DAO.models.users.User;
 import it.gpgames.consigliaviaggi19.search.place_details.PlaceDetailsActivity;
-
+/**Implementazione Firebase dell'interfaccia ReviewDAO*/
 public class ReviewFirebaseDAO implements ReviewDAO {
 
     FirebaseFirestore dbRef = FirebaseFirestore.getInstance();
 
+    /**Cerca tutte le reviews associate ad un utente.
+     * @param dataID id dell'utente del quale si vogliono scaricare le recensioni*/
     public void getReviewsByUserID(String dataID, final DatabaseCallback callback, final int callbackCode){
-        dbRef.collection("reviewPool").whereEqualTo("userId",dataID).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        dbRef.collection("reviewPool").whereEqualTo("userId",dataID).orderBy("rating",Query.Direction.DESCENDING).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                     if(task.isSuccessful())
@@ -45,20 +47,11 @@ public class ReviewFirebaseDAO implements ReviewDAO {
         });
     }
 
-    public void getReviewsByPlaceID(String dataID, final DatabaseCallback callback, final int callbackCode){
-            dbRef.collection("reviewPool").whereEqualTo("placeId",dataID).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                    if(task.isSuccessful())
-                    {
-                        List<Review> reviews = (List<Review>) task.getResult().toObjects(Review.class);
-                        callback.callback(reviews, callbackCode);
-                    }
-                    else callback.manageError(new DatabaseUtilities.DataNotFoundException(), callbackCode);
-                }
-            });
-    }
-
+    /**Metodo che restituisce al DatabaseCallback tutte le reviews associate ad un Place
+     * @param dataID id del Place
+     * @param actualSort Criterio di ordinamento delle reviews (è un flag che prende valore tra quelli in PlaceDetailsActivity)
+     * @param actualOrder direzione di ordinamento (è un flag che prende valore tra quelli in PlaceDetailsActivity)
+     * @see it.gpgames.consigliaviaggi19.search.place_details.PlaceDetailsActivity*/
     public void getReviewsByPlaceID(String dataID, final DatabaseCallback callback, int actualSort, int actualOrder, final int callbackCode) {
         Query query = FirebaseFirestore.getInstance().collection("reviewPool").whereEqualTo("placeId", dataID);
         if (actualSort == PlaceDetailsActivity.SORT_DATE && actualOrder == PlaceDetailsActivity.ORDER_ASC)
@@ -82,7 +75,8 @@ public class ReviewFirebaseDAO implements ReviewDAO {
         });
     }
 
-
+    /**Metodo che invia una recensione al Firestore.
+     * @param review Review pre-generata.*/
     public void createReview(final Review review, final DatabaseCallback callback, final int callbackCode){
         dbRef.collection("reviewPool").add(review).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
             @Override
@@ -102,6 +96,8 @@ public class ReviewFirebaseDAO implements ReviewDAO {
         });
     }
 
+    /**Metodo che viene richiamato all'inserimento di ogni recensione perchè le statistiche sulle recensioni dei place e degli user vengano opportunamente aggiornate
+     * @deprecated perché questo task va effettuato server-side. (Momentaneamente client-side)*/
     private void refreshStats(final Review review, final DatabaseCallback callback, final int callbackCode) {
 
         FirebaseFirestore.getInstance().collection("userPool").whereEqualTo("userID", FirebaseAuth.getInstance().getUid()).limit(1).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -182,20 +178,16 @@ public class ReviewFirebaseDAO implements ReviewDAO {
                             });
                         }
                     });
-
-
-
-
-
                 }
                 else
                     callback.manageError(task.getException(),callbackCode);
             }
-
-
         });
     }
 
+    /**Restituisce la reviews associata ad un utente e un place, se esiste, altrimenti restituisce null
+     * @param placeID id del place
+     * @param userID id dello user*/
     public void getReviewsByPlaceIDAndUserID(String placeID, String userID, final DatabaseCallback callback, int callbackCode){
         FirebaseFirestore.getInstance().collection("reviewPool").whereEqualTo("placeId",placeID).whereEqualTo("userId", userID).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override

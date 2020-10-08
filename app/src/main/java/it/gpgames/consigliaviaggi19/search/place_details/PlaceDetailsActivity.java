@@ -4,11 +4,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Pair;
@@ -20,19 +18,12 @@ import android.widget.RatingBar;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnSuccessListener;
-
-import com.google.firebase.storage.ListResult;
-import com.google.firebase.storage.StorageReference;
 import com.smarteist.autoimageslider.IndicatorView.animation.type.IndicatorAnimationType;
 import com.smarteist.autoimageslider.SliderAnimations;
 import com.smarteist.autoimageslider.SliderView;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import it.gpgames.consigliaviaggi19.DAO.DAOFactory;
 import it.gpgames.consigliaviaggi19.DAO.DatabaseCallback;
 import it.gpgames.consigliaviaggi19.DAO.ReviewDAO;
@@ -56,11 +47,6 @@ public class PlaceDetailsActivity extends AppCompatActivity implements ReviewsAd
     /**Place da mostrare. Viene passato dall'activity chiamante.*/
     private Place toShow;
 
-    //vari adapter che adattano i contenuti al layout
-    private PlaceInformationAdapter placeInformationAdapter;
-    private PlaceSliderAdapter sliderAdapter;
-    private ReviewsAdapter reviewsAdapter;
-
     private TextView title, ratingInfo;
     private ImageView back, orderArrow;
     private SliderView slider;
@@ -75,9 +61,9 @@ public class PlaceDetailsActivity extends AppCompatActivity implements ReviewsAd
     public final static int SORT_DATE=1;
     public final static int SORT_STAR=0;
 
-    //intero che indica la direzione (asc o desc).
+    /**intero che indica la direzione (asc o desc).*/
     private int actualOrder;
-    //intero che indica il criterio (data o stelle)
+    /**intero che indica il criterio (data o stelle)*/
     private int actualSort;
 
     private boolean alreadyWritten=false;
@@ -226,7 +212,7 @@ public class PlaceDetailsActivity extends AppCompatActivity implements ReviewsAd
         if(toShow.getAddYear()!=null && !(toShow.getAddYear().equals("")))
             info.add(new Pair<Integer, String>(PlaceInformationAdapter.CLOCK_ID, toShow.getAddYear()));
 
-        placeInformationAdapter = new PlaceInformationAdapter(PlaceDetailsActivity.this, info);
+        PlaceInformationAdapter placeInformationAdapter = new PlaceInformationAdapter(PlaceDetailsActivity.this, info);
         information.setAdapter(placeInformationAdapter);
         information.setLayoutManager(new LinearLayoutManager(PlaceDetailsActivity.this, RecyclerView.VERTICAL, false));
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(information.getContext(),
@@ -250,7 +236,7 @@ public class PlaceDetailsActivity extends AppCompatActivity implements ReviewsAd
 
     /** Avvia lo slider per le immagini della struttura visualizzata.*/
     private void startSliderAdapter(List<String> urls) {
-        sliderAdapter=new PlaceSliderAdapter(getApplicationContext(),urls, toShow.getDbDocID(), PlaceDetailsActivity.this);
+        PlaceSliderAdapter sliderAdapter = new PlaceSliderAdapter(urls, PlaceDetailsActivity.this);
         slider.setSliderAdapter(sliderAdapter);
         slider.setIndicatorAnimation(IndicatorAnimationType.WORM);
         slider.setSliderTransformAnimation(SliderAnimations.SIMPLETRANSFORMATION);
@@ -332,7 +318,7 @@ public class PlaceDetailsActivity extends AppCompatActivity implements ReviewsAd
     public void callback(List<Review> reviewsList, int callbackCode) {
         switch(callbackCode){
             case CALLBACK_REFRESH_REVIEWS:
-                reviewsAdapter=new ReviewsAdapter(PlaceDetailsActivity.this,reviewsList, PlaceDetailsActivity.this, ReviewsAdapter.FLAG_USER);
+                ReviewsAdapter reviewsAdapter = new ReviewsAdapter(PlaceDetailsActivity.this, reviewsList, PlaceDetailsActivity.this, ReviewsAdapter.FLAG_USER);
                 reviews.setAdapter(reviewsAdapter);
                 reviews.setLayoutManager(new LinearLayoutManager(PlaceDetailsActivity.this, RecyclerView.VERTICAL, false));
                 break;

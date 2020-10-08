@@ -3,6 +3,7 @@ package it.gpgames.consigliaviaggi19.DAO;
 import it.gpgames.consigliaviaggi19.search.place_details.reviews.ReviewsAdapter;
 import it.gpgames.consigliaviaggi19.userpanel.UserPanelActivity;
 
+/**Interfaccia che deve implementare ogni classe DAO che intenda operare sugli User.*/
 public interface UserDAO {
     public void getUserByID(final String userID, final DatabaseCallback callback, final ReviewsAdapter.ReviewViewHolder holder, int callbackCode);
     public void getUserByID(String userID, final DatabaseCallback callback, int callbackCode);

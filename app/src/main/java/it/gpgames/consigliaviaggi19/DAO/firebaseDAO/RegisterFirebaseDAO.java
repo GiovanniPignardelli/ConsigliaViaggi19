@@ -18,10 +18,14 @@ import it.gpgames.consigliaviaggi19.DAO.DatabaseCallback;
 import it.gpgames.consigliaviaggi19.DAO.RegisterDAO;
 import it.gpgames.consigliaviaggi19.DAO.models.users.User;
 
+/**Implementazione Firebase dell'interfaccia RegisterDAO*/
 public class RegisterFirebaseDAO implements RegisterDAO {
     FirebaseAuth fAuth=FirebaseAuth.getInstance();
 
     @Override
+    /**Registra un utente al FirebaseAuth e genera un elemento della collezione userPool che ne detiene le informazioni secondarie.
+     * @param user Utente da registrare
+     * @param password scelta dall'utente*/
     public void register(final User user, String password, final DatabaseCallback callback, final int callbackCode) {
         fAuth.createUserWithEmailAndPassword(user.getEmail(), password).addOnCompleteListener(
                 new OnCompleteListener<AuthResult>() {

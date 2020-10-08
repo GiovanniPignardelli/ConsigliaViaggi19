@@ -11,6 +11,9 @@ import it.gpgames.consigliaviaggi19.DAO.models.reviews.Review;
 import it.gpgames.consigliaviaggi19.DAO.models.users.User;
 import it.gpgames.consigliaviaggi19.search.place_details.reviews.ReviewsAdapter;
 
+/**Interfaccia che deve implementare ogni classe che attende risultati da richieste effettuate ad un DAO.
+ * I vari overloading del metodo callback definiscono i vari casi.
+ * Infatti sono molteplici i tipi di richiesta che una classe può effettuare ad un DAO.*/
 public interface DatabaseCallback
 {
     int CALLBACK_DEFAULT_CODE = 0;

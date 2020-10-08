@@ -66,8 +66,8 @@ public class HomeSliderAdapter extends
         return mSliderItems.size();
     }
 
+    /**Holder degli elementi dello slider nella MainActivity*/
     class SliderAdapterVH extends SliderViewAdapter.ViewHolder {
-
         View itemView;
         ImageView imageViewBackground;
         TextView textViewDescription;

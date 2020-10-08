@@ -18,7 +18,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**La classe User detiene localmente le informazioni relative ad un utente.
- * La classe maniente una propria istanza (LocalInstance), che fa riferimento all'utente corrente.*/
+ * La classe maniente una propria istanza (LocalInstance), che fa riferimento all'utente corrente autenticato.*/
 public class User implements Parcelable {
 
     private static User localInstance = null;

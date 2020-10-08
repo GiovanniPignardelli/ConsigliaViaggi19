@@ -6,8 +6,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -25,6 +27,9 @@ import it.gpgames.consigliaviaggi19.DAO.models.reviews.Review;
 import it.gpgames.consigliaviaggi19.search.place_details.PlaceDetailsActivity;
 import it.gpgames.consigliaviaggi19.search.place_details.reviews.ReviewsAdapter;
 
+/**Activity che permette la visualizzazione di tutte le recensioni relative ad un utente.
+ * @see it.gpgames.consigliaviaggi19.DAO.DatabaseCallback
+ * @see it.gpgames.consigliaviaggi19.search.place_details.reviews.ReviewsAdapter.RecyclerGetter*/
 public class ShowUserReviewsActivity extends AppCompatActivity implements ReviewsAdapter.RecyclerGetter, DatabaseCallback {
 
     private RecyclerView recyclerView;
@@ -79,17 +84,17 @@ public class ShowUserReviewsActivity extends AppCompatActivity implements Review
 
     @Override
     public void callback(Place place, MarkerOptions mOpt, int callbackCode) {
-
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public void callback(int callbackCode) {
-
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public void callback(HandshakeResponse hreq, int callbackCode) {
-
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
@@ -102,7 +107,7 @@ public class ShowUserReviewsActivity extends AppCompatActivity implements Review
 
     @Override
     public void callback(Place place, ReviewsAdapter.ReviewViewHolder holder, int callbackCode) {
-
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
@@ -115,31 +120,32 @@ public class ShowUserReviewsActivity extends AppCompatActivity implements Review
 
     @Override
     public void callback(User user, ReviewsAdapter.ReviewViewHolder holder, int callbackCode) {
-
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public void callback(List<Review> reviews, int callbackCode) {
-
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public void callback(List<Place> weakList, List<Place> topList, int callbackCode) {
-
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public void places_callback(List<Place> places, int callbackCode) {
-
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public void callback(String message, int callbackCode) {
-
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public void manageError(Exception e, int callbackCode) {
-
+        Toast.makeText(this,"Errore, controllare i log.",Toast.LENGTH_LONG).show();
+        Log.d("query",e.getMessage());
     }
 }

@@ -2,7 +2,7 @@ package it.gpgames.consigliaviaggi19.DAO.models.reviews;
 
 
 import java.io.Serializable;
-
+ /**Model per le review.*/
 public class Review implements Serializable {
 
     String placeId;

@@ -4,7 +4,7 @@ import android.provider.ContactsContract;
 
 import it.gpgames.consigliaviaggi19.DAO.firebaseDAO.HandshakeResponse;
 import it.gpgames.consigliaviaggi19.DAO.firebaseDAO.LoginFirebaseDAO;
-
+/**Interfaccia che deve implementare ogni classe DAO che intenda operare sul Login*/
 public interface LoginDAO {
     public void isAuthenticated(DatabaseCallback callback, int callbackCode);
     public void authentication(String username, String password, DatabaseCallback callback, int callbackCode);

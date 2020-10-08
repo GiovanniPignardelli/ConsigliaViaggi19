@@ -4,20 +4,25 @@ import android.graphics.Bitmap;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+/**Modello per gli elementi dello slider della MainActivity*/
 public class HomeSliderItem implements Parcelable {
 
     public static final String STRING_CITY="city";
     public static final String STRING_STATE="state";
 
+    /**Parola chiave, cioò quella che verra utilizzata come elemento di ricerca. Di Default indica una località.*/
     String keyword;
     Bitmap img;
+    /**Descrizione dell'elemento, che viene visualizzata nello slider.*/
     String desc;
+
+    /**Tipo di località che indica la keyword. Assume valore tra uno dei due Flag STRING_CITY e STRING_STATE*/
+    String locationType;
+
 
     public String getLocationType() {
         return locationType;
     }
-
-    String locationType;
 
     public String getDescription() {
         return desc;
@@ -65,14 +70,14 @@ public class HomeSliderItem implements Parcelable {
         return index;
     }
 
-    int index;
+    private int index;
 
     public String getKeyword() {
         return keyword;
     }
 
 
-
+    /**Costruttore*/
     public HomeSliderItem(Bitmap img, String keyword, String desc, int index,String location_type){
         this.img = img;
         this.keyword = keyword;

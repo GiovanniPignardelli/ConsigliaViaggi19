@@ -7,6 +7,7 @@ import java.util.HashMap;
 
 import it.gpgames.consigliaviaggi19.home.MainActivity;
 import it.gpgames.consigliaviaggi19.search.place_details.reviews.ReviewsAdapter;
+/**Interfaccia che deve implementare ogni classe DAO che intenda operare sui Place*/
 
 public interface PlaceDAO {
     public void getPlaceByTags(final String searchString,String category, Integer minRating, String price, HashMap<Integer, ArrayList<String>> tags,Integer order, Integer direction, DatabaseCallback callback, int callbackCode);

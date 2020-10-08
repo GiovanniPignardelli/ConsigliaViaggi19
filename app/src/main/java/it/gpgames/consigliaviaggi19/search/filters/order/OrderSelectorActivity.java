@@ -20,6 +20,8 @@ import java.util.HashMap;
 import it.gpgames.consigliaviaggi19.R;
 import it.gpgames.consigliaviaggi19.search.ResultsActivity;
 
+/**Activity che permette di selezionare il criterio d'ordinamento e la direzione di una ricerca.
+ * Contiene vari FLAG utili a rappresentare queste informazioni.*/
 public class OrderSelectorActivity extends Activity {
 
     public static final int FLAG_ASC=0;
@@ -37,7 +39,9 @@ public class OrderSelectorActivity extends Activity {
 
     private OrderCallback orderCallback;
 
+    /**Criterio d'ordinamento attuale; di defaul è FLAG_BEST_MATCH*/
     private int actualOrder=FLAG_BEST_MATCH;
+    /**Direzione di ordinamento; di default è FLAG_DESC*/
     private int actualDirection=FLAG_DESC;
 
     @Override
@@ -105,6 +109,7 @@ public class OrderSelectorActivity extends Activity {
         });
     }
 
+    /**Interfaccia che deve implementare ogni classe cha aspetta informazioni sull'ordinamento di una query.*/
     public interface OrderCallback
     {
         void setOrder(int orderFlag);

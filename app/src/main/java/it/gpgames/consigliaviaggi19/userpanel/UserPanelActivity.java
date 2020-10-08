@@ -43,6 +43,11 @@ import it.gpgames.consigliaviaggi19.R;
 import it.gpgames.consigliaviaggi19.network.NetworkChangeReceiver;
 import it.gpgames.consigliaviaggi19.search.place_details.reviews.ReviewsAdapter;
 
+/**Activity per la visualizzazione delle informazioni relative ad un utente.
+ * Questa viene utilizzata sia nel caso in cui un utente visualizzi il proprio pannello, sia nel caso
+ * in cui un utente visualizzi un pannello altrui.
+ * Nel primo caso l'activity mostra anche i pulsanti di gestione dell'account.
+ * @see it.gpgames.consigliaviaggi19.DAO.DatabaseCallback*/
 public class UserPanelActivity extends AppCompatActivity implements DatabaseCallback {
 
     public static final int IMGPRV=1;
@@ -55,7 +60,10 @@ public class UserPanelActivity extends AppCompatActivity implements DatabaseCall
     private TextView tUserDisplayName,nReviews,avgReviews;
     private Button bChangeProfilePicture,bLogout,bResetPassword,bShowReviews,bChangeName;
     private Switch showFullNameSwitch;
+
+    /**User attualmente visualizzato*/
     private User currentUser;
+
     private UserDAO userDao = DAOFactory.getDAOInstance().getUserDAO();
     private ReviewDAO reviewDao = DAOFactory.getDAOInstance().getReviewDAO();
     private LoginDAO loginDao = DAOFactory.getDAOInstance().getLoginDAO();
@@ -92,11 +100,7 @@ public class UserPanelActivity extends AppCompatActivity implements DatabaseCall
 
 
 
-    /**Inizializza i Listeners dell'UserPanelActivity:
-     * OnClickListener(bBack): button per tornare alla MainActivity;
-     * OnClickListener(bChangeProfilePicture): cambia immagine profilo per lo User.
-     * OnClickListener(bLogout): effettua sign-out.
-     * OnClickListener(bResetPassword): invia email per il reset della password.*/
+    /**Inizializza i Listeners dell'UserPanelActivity*/
     private void initListeners()
     {
         bBack.setOnClickListener(new View.OnClickListener() {
@@ -159,6 +163,7 @@ public class UserPanelActivity extends AppCompatActivity implements DatabaseCall
 
     }
 
+    /**Aggiorna le views con le informazioni dell'utente corrente.*/
     private void loadCurrentUserOnView(){
         tUserDisplayName.setText(currentUser.getShowingName());
 
@@ -194,6 +199,7 @@ public class UserPanelActivity extends AppCompatActivity implements DatabaseCall
     }
 
     @Override
+    /**L'activity attende risultati sia dal cambio di immagine di un utente, sia dal cambio del nome completo.*/
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == IMGPRV) {
@@ -300,6 +306,7 @@ public class UserPanelActivity extends AppCompatActivity implements DatabaseCall
     }
 
     @Override
+    /**Allora l'activity ha chiesto informazioni circa un utente. Quelle ottenute vengono visualizzate.*/
     public void callback(User user, int callbackCode) {
         switch(callbackCode)
         {

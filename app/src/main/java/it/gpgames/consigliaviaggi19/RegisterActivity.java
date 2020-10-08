@@ -36,7 +36,9 @@ import it.gpgames.consigliaviaggi19.home.MainActivity;
 import it.gpgames.consigliaviaggi19.network.NetworkChangeReceiver;
 import it.gpgames.consigliaviaggi19.DAO.models.users.User;
 import it.gpgames.consigliaviaggi19.search.place_details.reviews.ReviewsAdapter;
-
+/**Activity di registrazione di un nuovo utente.
+ * Implementa l'interfaccia DatabaseCallback perché attende riscontri dal registerDAO.
+ * @see it.gpgames.consigliaviaggi19.DAO.DatabaseCallback*/
 public class RegisterActivity extends AppCompatActivity implements DatabaseCallback {
     EditText eUser,ePsw,eEmail,confirmPsw,fName,lName;
     Button bLogin,bRegister;
@@ -207,7 +209,7 @@ public class RegisterActivity extends AppCompatActivity implements DatabaseCallb
 
     @Override
     public void places_callback(List<Place> places, int callbackCode) {
-
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override

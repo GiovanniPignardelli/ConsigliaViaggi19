@@ -25,12 +25,15 @@ import it.gpgames.consigliaviaggi19.DAO.UserDAO;
 import it.gpgames.consigliaviaggi19.DAO.models.users.User;
 import it.gpgames.consigliaviaggi19.search.place_details.reviews.ReviewsAdapter;
 import it.gpgames.consigliaviaggi19.userpanel.UserPanelActivity;
-
+ /**Implementazione Firebase dell'interfaccia UserDAO*/
 public class UserFirebaseDAO implements UserDAO {
 
     private final FirebaseFirestore dbRef = FirebaseFirestore.getInstance();
     private final StorageReference stoRef = FirebaseStorage.getInstance().getReference();
 
+    /**Restituisce al DatabaseCallback uno user, dato l'id di quest'ultimo.
+     * @param userID userID
+     * @param holder holder da ritornare al DatabaseCallback. Può essere null nel caso in cui non vi è la necessità di adattare le informazioni ottenute ad un holder.*/
     public void getUserByID(final String userID, final DatabaseCallback callback, final ReviewsAdapter.ReviewViewHolder holder, final int callbackCode)
     {
         dbRef.collection("userPool").whereEqualTo("userID",userID).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -49,10 +52,15 @@ public class UserFirebaseDAO implements UserDAO {
         });
     }
 
+    /**Restituisce al DatabaseCallback uno user, dato l'id di quest'ultimo.
+     * richiama la medesima funzione, con l'holder posto a null. */
     public void getUserByID(final String userID, final DatabaseCallback callback, final int callbackCode){
         getUserByID(userID,callback,null, callbackCode);
     }
 
+    /**Setta l'avatar di uno user, dato il suo id e l'array di byte che rappresentano l'immagine.
+     * @param uid id dell'utente
+     * @param data flusso di byte che rappresenta l'immagine.*/
     public void setAvatarByID(final String uid, byte[] data, final DatabaseCallback callback, final int callbackCode){
         final StorageReference userProfileImagesRef = stoRef.child("Users/Avatars/avatar_"+
                 uid+".jpg");
@@ -103,6 +111,9 @@ public class UserFirebaseDAO implements UserDAO {
     }
 
     @Override
+    /**Modifica il flag di visualizzazione del nome di un dato utente. Egli può infatti decidere se mostrare il suo userName o il suo nome completo (se lo ha inserito)
+     * @param userID id dell'utene
+     * @param isChecked valore true se si deve impostare il flag sulla visualizzazione del nome completo, false altrimenti*/
     public void setShowFullName(final String userID, final boolean isChecked, final DatabaseCallback callback, final int callbackCode) {
         FirebaseFirestore.getInstance().collection("userPool").whereEqualTo("userID", userID).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
@@ -133,6 +144,10 @@ public class UserFirebaseDAO implements UserDAO {
     }
 
     @Override
+    /**Setta il nome completo di uno user (Nome e Cognome)
+     * @param userID
+     * @param name nome inserito dall'utente
+     * @param surname cognome inserito dall utente*/
     public void setUserFullName(String userID, final String name, final String surname, final DatabaseCallback callback, final int callbackCode) {
         FirebaseFirestore.getInstance().collection("userPool").whereEqualTo("userID", userID).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
@@ -145,13 +160,11 @@ public class UserFirebaseDAO implements UserDAO {
                         public void onComplete(@NonNull Task<Void> task) {
                             if(task.isSuccessful())
                             {
-                                Log.d("user","nome cambiato.");
                                 ref.update("lastName", surname).addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
                                         if(task.isSuccessful())
                                         {
-                                            Log.d("user","cognome cambiato");
                                             if(name.equals("") && surname.equals(""))
                                             {
                                                 ref.update("showingFlag", User.FLAG_USERNAME).addOnCompleteListener(new OnCompleteListener<Void>() {

@@ -82,10 +82,13 @@ import it.gpgames.consigliaviaggi19.DAO.models.users.User;
 import it.gpgames.consigliaviaggi19.userpanel.UserPanelActivity;
 import it.gpgames.consigliaviaggi19.home.slider.HomeSliderItem;
 
+/**Activity principale dell'app.
+ * Implementa l'interfaccia DatabaseCallback perché richiede informazioni ai vari DAO, ed attende il loro callback.
+ * @see it.gpgames.consigliaviaggi19.DAO.DatabaseCallback
+ * Implementa l'interfaccia DistanceRadiusSliderActivity.RadiusSliderCallback perché attende callback sulla selezione del raggio nel quale effettuare la ricerca*/
 public class MainActivity extends AppCompatActivity implements DatabaseCallback, DistanceRadiusSliderActivity.RadiusSliderCallback {
 
-    private DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference();
-
+    /**l'activity utilizza un NetworkChangeReceiver per rimanere aggiornata sullo stato della connessione*/
     private static final NetworkChangeReceiver networkChangeReceiver=NetworkChangeReceiver.getNetworkChangeReceiverInstance();
 
     private SliderView sliderView;
@@ -94,18 +97,22 @@ public class MainActivity extends AppCompatActivity implements DatabaseCallback,
     private ImageView bMapExplore;
     private ImageView bUserPanel;
     private SearchView svSearchPlaces;
+    /**Viene tenuta traccia dell'ultima stringa di ricerca*/
     private static String lastSearchString;
+    /**Viene tenuta traccia dell'ultima instanza della classe.*/
+    private static MainActivity lastInstance;
+
+
+    /**Riferimento allo userDao fornito dal DAOFactory*/
     private UserDAO userDao = DAOFactory.getDAOInstance().getUserDAO();
+    /**Riferimento al placeDao fornito dal DAOFactory*/
     private PlaceDAO placeDao = DAOFactory.getDAOInstance().getPlaceDAO();
+    /**Riferimento al loginDao fornito dal DAOFactory*/
     private LoginDAO loginDao = DAOFactory.getDAOInstance().getLoginDAO();
 
     public static MainActivity getLastInstance() {
         return lastInstance;
     }
-
-    private static MainActivity lastInstance;
-
-
 
     public static String getLastSearchString() {
         return lastSearchString;
@@ -129,6 +136,7 @@ public class MainActivity extends AppCompatActivity implements DatabaseCallback,
     }
 
     @Override
+    /**Si registra al networkChangeReceiver*/
     protected void onResume() {
         super.onResume();
         IntentFilter filter = new IntentFilter();
@@ -143,8 +151,7 @@ public class MainActivity extends AppCompatActivity implements DatabaseCallback,
         initListeners();
     }
 
-    /**Inizializza i listener della activity_main.xml:
-     * - OnClickListener(bUserPanel): button per aprire l'UserPanelActivity;*/
+    /**Inizializza i listener*/
     private void initListeners()
     {
         //Inizializzazione listener dello user_button, per accede al pannello di controllo dell'utente
@@ -154,7 +161,6 @@ public class MainActivity extends AppCompatActivity implements DatabaseCallback,
                 userDao.getUserByID(User.getLocalInstance().getUserID(),MainActivity.this, 0);
             }
         });
-
 
         svSearchPlaces.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -199,8 +205,11 @@ public class MainActivity extends AppCompatActivity implements DatabaseCallback,
         });
     }
 
-    /** Inizializza lo slider di immagini nell'activity_main.xml. Nota: vedere HomeSliderItemsGetter e HomeSliderAdapter. */
+    /** Inizializza lo slider di immagini nell'activity_main.xml.
+     * @see HomeSliderItemsGetter
+     * @see HomeSliderAdapter*/
     private void initSlider(){
+        DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference();
         final DatabaseReference sliderImgsRef = dbRef.child("home").child("slider");
         sliderImgsRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -239,12 +248,12 @@ public class MainActivity extends AppCompatActivity implements DatabaseCallback,
             public void onCancelled(@NonNull DatabaseError databaseError) { }
         });
     }
-    private FusedLocationProviderClient client;
+
     private Location loc;
 
     private void checkLocationPermissions(){
         if(ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
-            client = LocationServices.getFusedLocationProviderClient(this);
+            FusedLocationProviderClient client = LocationServices.getFusedLocationProviderClient(this);
             client.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
                 @Override
                 public void onSuccess(Location location) {

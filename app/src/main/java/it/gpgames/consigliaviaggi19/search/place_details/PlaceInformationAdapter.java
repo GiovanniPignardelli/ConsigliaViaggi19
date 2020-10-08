@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 import it.gpgames.consigliaviaggi19.R;
-
+/**Adapter che adatta le informazioni relative a una struttura in un RecyclerView*/
 public class PlaceInformationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     public static final int CLOCK_ID=R.drawable.clock;
@@ -31,7 +31,7 @@ public class PlaceInformationAdapter extends RecyclerView.Adapter<RecyclerView.V
     public static final int FOOD_ID=R.drawable.food;
 
     private LayoutInflater inflater;
-    List<Pair<Integer, String>> information;
+    private List<Pair<Integer, String>> information;
 
     public PlaceInformationAdapter(Context context, List<Pair<Integer, String>> list)
     {
@@ -62,15 +62,12 @@ public class PlaceInformationAdapter extends RecyclerView.Adapter<RecyclerView.V
 
     public class InfoViewHolder extends RecyclerView.ViewHolder {
 
-        private View mView;
-
         private TextView info;
         private ImageView image;
 
 
         public InfoViewHolder(@NonNull View itemView) {
             super(itemView);
-            mView = itemView;
             info=itemView.findViewById(R.id.information);
             image=itemView.findViewById(R.id.info_image);
         }

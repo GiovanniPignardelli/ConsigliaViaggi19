@@ -2,7 +2,7 @@ package it.gpgames.consigliaviaggi19.DAO.models.places;
 
 import java.io.Serializable;
 import java.util.List;
-
+/**Model per un generico Place.*/
 public class Place implements Serializable {
 
     public static final String CATEGORY_RESTAURANT="restaurant";
@@ -19,6 +19,7 @@ public class Place implements Serializable {
     private String province;
     private List<String> tags;
     private String dbDocID;
+    //urls delle immagini
     private List<String> pictures;
     private String addYear;
     private String email;
@@ -221,26 +222,4 @@ public class Place implements Serializable {
     {
 
     }
-
-
-    /*
-    public static void PlaceGenerator(){
-        FirebaseFirestore mFirestore = FirebaseFirestore.getInstance();
-        final CollectionReference places = mFirestore.collection("places");
-        final Place toAdd = new Place("Hotel Bobby", "Via Martino 3", "Afragola", "80021", "Italia", "€",new ArrayList<String>(Arrays.asList("Vista mare","Free Wifi")),"2020","40.936752", "14.319622","info@bobby.com","0818526746","www.bobby.com","restaurant");
-        places.add(toAdd).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-            @Override
-            public void onSuccess(DocumentReference documentReference) {
-                Log.d("RestaurantGenerator", "DocumentSnapshot written with ID: " + documentReference.getId());
-
-            }
-        })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w("RestaurantGenerator", "Error adding document", e);
-                    }
-                });
-    }
-    */
 }

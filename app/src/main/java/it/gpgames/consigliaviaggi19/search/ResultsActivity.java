@@ -40,7 +40,12 @@ import it.gpgames.consigliaviaggi19.search.place_details.reviews.ReviewsAdapter;
 import it.gpgames.consigliaviaggi19.search.place_map.MapExploreActivity;
 
 /** Activity che si occupa di visualizzare i risultati di una query.
- * A questa activity viene anche passata la stringa di ricerca tramite intent*/
+ * A seconda del tipo di ricerca, i risultati possono essergli passati tramite Intent, oppure è lei a doverli richiedere al DOA.
+ * Implementa per questo motivo l'interfaccia DatabaseCallback.
+ * @see it.gpgames.consigliaviaggi19.DAO.DatabaseCallback
+ * Implementa le interfacce FilterCallback e OrderCallback perché instanza le rispettive activity e ne attende riscontri.
+ * @see it.gpgames.consigliaviaggi19.search.filters.FiltersSelectorActivity.FilterCallback
+ * @see it.gpgames.consigliaviaggi19.search.filters.order.OrderSelectorActivity.OrderCallback*/
 public class ResultsActivity extends AppCompatActivity implements DatabaseCallback, FiltersSelectorActivity.FilterCallback, OrderSelectorActivity.OrderCallback {
 
     private static android.content.Context context;
@@ -187,6 +192,8 @@ public class ResultsActivity extends AppCompatActivity implements DatabaseCallba
         return lastInstance;
     }
 
+    /**Metodo richiamato per avviare l'activity PlaceDetailsActivity
+     * @param toShow Luogo del quale si devono visualizzare i dettagli.*/
     public static void showDetails(Place toShow)
     {
         Intent intent = new Intent(context, PlaceDetailsActivity.class);

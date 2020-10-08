@@ -26,18 +26,15 @@ import it.gpgames.consigliaviaggi19.R;
 import it.gpgames.consigliaviaggi19.home.slider.HomeSliderItem;
 import it.gpgames.consigliaviaggi19.home.slider.HomeSliderItemsGetter;
 
+/**Adapter che adatta le immagini relative a una struttura nello SliderImage della PlaceDetailsActivity*/
 public class PlaceSliderAdapter extends SliderViewAdapter<PlaceSliderAdapter.PlaceSliderVH> {
 
-    private Context context;
     private List<String> mSliderItems;
-    private String docID;
     private AppCompatActivity activity;
 
-    public PlaceSliderAdapter(Context context, List<String> sliderImages, String docID, AppCompatActivity activity) {
-        this.context = context;
+    public PlaceSliderAdapter(List<String> sliderImages, AppCompatActivity activity) {
         mSliderItems = sliderImages;
         this.activity=activity;
-        this.docID=docID;
 
     }
 

@@ -23,6 +23,8 @@ import it.gpgames.consigliaviaggi19.DAO.models.users.User;
 import it.gpgames.consigliaviaggi19.LoginActivity;
 import it.gpgames.consigliaviaggi19.home.MainActivity;
 
+/**Implementazione Firebase dell'interfaccia LoginDAO
+ * @see it.gpgames.consigliaviaggi19.DAO.LoginDAO*/
 public class LoginFirebaseDAO implements LoginDAO {
 
     private FirebaseAuth fAuth = FirebaseAuth.getInstance();
@@ -30,14 +32,15 @@ public class LoginFirebaseDAO implements LoginDAO {
     private FirebaseFirestore fFir = FirebaseFirestore.getInstance();
 
     @Override
+    /**Restituisce al chiamante, tramite callback(String, int), l'uid dell'utente autenticato, se esiste, altrimenti null.*/
     public void isAuthenticated(DatabaseCallback callback, int callbackCode) {
         if(fAuth == null) callback.callback((String) null,callbackCode);
         else callback.callback(fAuth.getUid(),callbackCode);
     }
 
-
-
     @Override
+    /**Restituisce al chiamante (DatabaseCallback) l'uid dell'utente nel caso venga correttamente autenticato,
+     * altrimenti richiama il metodo manageError con l'eccezione generata.*/
     public void authentication(String email, String password, final DatabaseCallback callback, final int callbackCode) {
         fAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(
                 new OnCompleteListener<AuthResult>() {
@@ -76,8 +79,8 @@ public class LoginFirebaseDAO implements LoginDAO {
     }
 
     @Override
+    /**Inizializzazione di un listener sullo stato di autenticazione. In caso di scadenza token, il listener si attiva.*/
     public void isTokenExpired(final DatabaseCallback callback, final int callbackCode) {
-        // Inizializzazione listener sullo stato di autenticazione. In caso di scadenza token, il listener si attiva.
         FirebaseAuth.getInstance().addAuthStateListener(new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {

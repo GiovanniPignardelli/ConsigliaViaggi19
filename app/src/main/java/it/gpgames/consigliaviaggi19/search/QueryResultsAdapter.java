@@ -24,7 +24,7 @@ import it.gpgames.consigliaviaggi19.R;
 import it.gpgames.consigliaviaggi19.home.slider.HomeSliderItemsGetter;
 import it.gpgames.consigliaviaggi19.DAO.models.places.Place;
 
-/** La classe si occupa di adattare i contenuti dei places models ai layout*/
+/** La classe si occupa di adattare i contenuti dei places models al RecyclerView nella ResultsActivity*/
 public class QueryResultsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private List<Place> placesList;
@@ -88,6 +88,7 @@ public class QueryResultsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
     }
 
+    /**Listener attivato al click sulla view di un ResultsViewHolder. Richiama il metodo showDetails della classe ResultsActivity con il luogo da mostrare..*/
     private class ListItemOnClickListener implements View.OnClickListener
     {
         @Override

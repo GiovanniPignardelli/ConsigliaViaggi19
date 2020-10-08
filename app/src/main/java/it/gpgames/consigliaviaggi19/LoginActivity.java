@@ -32,6 +32,9 @@ import it.gpgames.consigliaviaggi19.home.MainActivity;
 import it.gpgames.consigliaviaggi19.network.NetworkChangeReceiver;
 import it.gpgames.consigliaviaggi19.search.place_details.reviews.ReviewsAdapter;
 
+/**Activity di login.
+ * Implementa DatabaseCallback perché richiede autenticazione al loginDao
+ * @see it.gpgames.consigliaviaggi19.DAO.DatabaseCallback*/
 public class LoginActivity extends AppCompatActivity implements DatabaseCallback {
     private Button login,signin;
     private EditText e,p;

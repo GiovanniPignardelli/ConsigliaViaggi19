@@ -1,5 +1,6 @@
 package it.gpgames.consigliaviaggi19.DAO;
 
+/**Classe che contiene funzionalità per il Database*/
 public class DatabaseUtilities {
 
     /** Splitta una stringa con un dato pivot e setta tutti i caratteri a lowercase. Restituisce un array delle dimensioni del numero di parole della stringa.*/
