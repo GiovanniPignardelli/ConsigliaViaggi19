@@ -14,6 +14,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
+
 import it.gpgames.consigliaviaggi19.DAO.DatabaseCallback;
 import it.gpgames.consigliaviaggi19.DAO.RegisterDAO;
 import it.gpgames.consigliaviaggi19.DAO.models.users.User;
@@ -58,5 +60,25 @@ public class RegisterFirebaseDAO implements RegisterDAO {
                     }
                 });
 
+    }
+
+    public void checkIfUsernameIsUsed(final String username, final DatabaseCallback callback, final int callbackcode)
+    {
+        FirebaseFirestore.getInstance().collection("userPool").whereEqualTo("displayName", username).limit(1).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if(task.isSuccessful())
+                {
+                    if(task.getResult().size()>0)
+                        callback.callback(username,callbackcode);
+                    else
+                        callback.callback((String)null, callbackcode);
+                }
+                else
+                {
+                    callback.manageError(task.getException(),callbackcode);
+                }
+            }
+        });
     }
 }

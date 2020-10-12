@@ -135,4 +135,16 @@
         tools:layout_editor_absoluteX="3dp"
         tools:layout_editor_absoluteY="162dp" />
 
+    <ImageView
+        android:id="@+id/no_res_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/no_results" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

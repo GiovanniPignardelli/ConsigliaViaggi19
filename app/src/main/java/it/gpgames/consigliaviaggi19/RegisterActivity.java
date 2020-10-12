@@ -25,10 +25,15 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.StringTokenizer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import it.gpgames.consigliaviaggi19.DAO.DAOFactory;
 import it.gpgames.consigliaviaggi19.DAO.DatabaseCallback;
+import it.gpgames.consigliaviaggi19.DAO.LoginDAO;
 import it.gpgames.consigliaviaggi19.DAO.RegisterDAO;
+import it.gpgames.consigliaviaggi19.DAO.UserDAO;
 import it.gpgames.consigliaviaggi19.DAO.firebaseDAO.HandshakeResponse;
 import it.gpgames.consigliaviaggi19.DAO.models.places.Place;
 import it.gpgames.consigliaviaggi19.DAO.models.reviews.Review;
@@ -40,9 +45,12 @@ import it.gpgames.consigliaviaggi19.search.place_details.reviews.ReviewsAdapter;
  * Implementa l'interfaccia DatabaseCallback perché attende riscontri dal registerDAO.
  * @see it.gpgames.consigliaviaggi19.DAO.DatabaseCallback*/
 public class RegisterActivity extends AppCompatActivity implements DatabaseCallback {
-    EditText eUser,ePsw,eEmail,confirmPsw,fName,lName;
-    Button bLogin,bRegister;
-    RegisterDAO registerDAO= DAOFactory.getDAOInstance().getRegisterDAO();
+    private EditText eUser,ePsw,eEmail,confirmPsw,fName,lName;
+    private Button bLogin,bRegister;
+    private RegisterDAO registerDAO= DAOFactory.getDAOInstance().getRegisterDAO();
+
+    private User toRegister;
+    private String fPsw;
 
     private static final NetworkChangeReceiver networkChangeReceiver=NetworkChangeReceiver.getNetworkChangeReceiverInstance();
 
@@ -75,13 +83,19 @@ public class RegisterActivity extends AppCompatActivity implements DatabaseCallb
 
                 if(TextUtils.isEmpty(email))
                 {
+                    eEmail.setError("Inserire una email.");
+                    return;
+                }
+
+                if(!mailSyntaxCheck(email))
+                {
                     eEmail.setError("Inserire una email valida.");
                     return;
                 }
 
-                if(TextUtils.isEmpty(username))
+                if(TextUtils.isEmpty(username) || username.length()<4)
                 {
-                    eUser.setError("Inserire un username valido.");
+                    eUser.setError("Inserire un username valido. Almeno 3 caratteri.");
                     return;
                 }
 
@@ -113,9 +127,9 @@ public class RegisterActivity extends AppCompatActivity implements DatabaseCallb
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
                 String dateString=date.format(formatter);
 
-                User toRegister=new User(username,email,null,false,0, (float) 0,dateString,null,firstName,lastName,0,User.FLAG_USERNAME);
-                registerDAO.register(toRegister,password,RegisterActivity.this,0);
-
+                toRegister=new User(username,email,null,false,0, (float) 0,dateString,null,firstName,lastName,0,User.FLAG_USERNAME);
+                fPsw=password;
+                registerDAO.checkIfUsernameIsUsed(toRegister.getDisplayName(),RegisterActivity.this, 1);
 
             }
         });
@@ -156,6 +170,30 @@ public class RegisterActivity extends AppCompatActivity implements DatabaseCallb
         }
 
         return true;
+    }
+
+    /**verifica la validità sintattica di un indirizzo email*/
+    private boolean mailSyntaxCheck(String email)
+    {
+        Pattern p = Pattern.compile(".+@.+\\.[a-z]+");
+
+        Matcher m = p.matcher(email);
+
+        boolean matchFound = m.matches();
+
+        StringTokenizer st = new StringTokenizer(email, ".");
+        String lastToken = null;
+        while (st.hasMoreTokens()) {
+            lastToken = st.nextToken();
+        }
+        if (matchFound && lastToken.length() >= 2
+                && email.length() - 1 != lastToken.length()) {
+
+            return true;
+        } else {
+            return false;
+        }
+
     }
 
     @Override
@@ -214,7 +252,16 @@ public class RegisterActivity extends AppCompatActivity implements DatabaseCallb
 
     @Override
     public void callback(String message, int callbackCode) {
-        Toast.makeText(this,message,Toast.LENGTH_LONG).show();
+        if(callbackCode==1 && message!=null)
+        {
+            Toast.makeText(this,"Username già utilizzato",Toast.LENGTH_LONG).show();
+        }
+        else if(callbackCode==1 && message==null)
+        {
+            registerDAO.register(toRegister,fPsw,RegisterActivity.this,0);
+        }
+        else
+            Toast.makeText(this,message,Toast.LENGTH_LONG).show();
     }
 
     @Override

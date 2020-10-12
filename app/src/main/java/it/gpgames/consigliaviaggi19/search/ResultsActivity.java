@@ -50,7 +50,7 @@ public class ResultsActivity extends AppCompatActivity implements DatabaseCallba
 
     private static android.content.Context context;
     private TextView titleText;
-    private ImageView bBack;
+    private ImageView bBack, ImgNoRes;
     private Button bMapExplore, bFilter, bOrder;
     private RecyclerView resultQueries;
     private QueryResultsAdapter adapter;
@@ -81,6 +81,7 @@ public class ResultsActivity extends AppCompatActivity implements DatabaseCallba
         resultQueries = findViewById(R.id.resultQueries);
         bFilter = findViewById(R.id.filterBy);
         bOrder = findViewById(R.id.orderBy);
+        ImgNoRes = findViewById(R.id.no_res_view);
         initListeners();
         context=getApplicationContext();
         lastInstance=this;
@@ -131,10 +132,20 @@ public class ResultsActivity extends AppCompatActivity implements DatabaseCallba
      * di organizzare i risultati nella scrollView dell'activity. Per farlo si serve dell'adapter QueryResultAdapter.*/
     public void setUpRecyclerView(List<Place> weakList, List<Place> topList) {
         if(topList != null) lastQuery = topList;
-        adapter = new QueryResultsAdapter(ResultsActivity.this, lastQuery, this);
-        resultQueries.setAdapter(adapter);
-        resultQueries.setLayoutManager(new LinearLayoutManager(ResultsActivity.this, RecyclerView.VERTICAL, false));
-        bMapExplore.setEnabled(true);
+        if(topList.size()>0)
+        {
+            adapter = new QueryResultsAdapter(ResultsActivity.this, lastQuery, this);
+            resultQueries.setAdapter(adapter);
+            resultQueries.setLayoutManager(new LinearLayoutManager(ResultsActivity.this, RecyclerView.VERTICAL, false));
+            bMapExplore.setEnabled(true);
+            ImgNoRes.setVisibility(View.INVISIBLE);
+        }
+        else
+        {
+            ImgNoRes.setVisibility(View.VISIBLE);
+            Toast.makeText(this, "Non ho trovato risultati.", Toast.LENGTH_LONG).show();
+        }
+
     }
 
     private void initListeners(){
