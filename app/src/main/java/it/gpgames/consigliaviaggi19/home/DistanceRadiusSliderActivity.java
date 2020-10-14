@@ -12,10 +12,10 @@ import android.widget.TextView;
 import it.gpgames.consigliaviaggi19.DAO.DatabaseCallback;
 import it.gpgames.consigliaviaggi19.R;
 
-/**Activity che permette di selezionare un raggio d'azione del quale visualizzare i risultati*/
+/**Activity che permette di selezionare un raggio d'azione nel quale visualizzare i risultati*/
 public class DistanceRadiusSliderActivity extends Activity {
 
-    /**Intefaccia che deve implementare una classe che desidera ricevere callback sul raggio selezionato*/
+    /**Intefaccia implementata da una classe che desidera ricevere callback sul raggio selezionato*/
     public interface RadiusSliderCallback{
         void receiveInputData(float value);
     }

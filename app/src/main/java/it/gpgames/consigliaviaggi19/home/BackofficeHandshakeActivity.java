@@ -25,6 +25,7 @@ import it.gpgames.consigliaviaggi19.DAO.models.users.User;
 import it.gpgames.consigliaviaggi19.R;
 import it.gpgames.consigliaviaggi19.search.place_details.reviews.ReviewsAdapter;
 
+/**Un'activity popup per l'inserimento del requestCode dal Backoffice, così da consentire l'accesso tramite 2FA.*/
 public class BackofficeHandshakeActivity extends Activity implements DatabaseCallback {
 
     private EditText eHandshakeCode;

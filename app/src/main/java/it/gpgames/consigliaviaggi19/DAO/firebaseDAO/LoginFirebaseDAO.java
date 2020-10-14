@@ -64,6 +64,7 @@ public class LoginFirebaseDAO implements LoginDAO {
         callback.callback(callbackCode);
     }
 
+    /**Richiede un reset della password per l'utente corrente.*/
     @Override
     public void resetPasswordRequest(final DatabaseCallback callback, final int callbackCode) {
         fAuth.sendPasswordResetEmail(User.getLocalInstance().getEmail())
@@ -96,6 +97,7 @@ public class LoginFirebaseDAO implements LoginDAO {
     }
 
 
+    /**Controlla all'avvio della MainActivity l'esistenza di HandshakeRequests dal Backoffice.*/
     @Override
     public void checkHandshakeRequests(final String userID, final DatabaseCallback callback, final int callbackCode) {
         fDat.getReference().child("backendTokens").addListenerForSingleValueEvent(new ValueEventListener() {
@@ -113,6 +115,7 @@ public class LoginFirebaseDAO implements LoginDAO {
         });
     }
 
+    /**Invia al backoffice la risposta all'HandshakeRequest.*/
     @Override
     public void sendHandshakeResponse(HandshakeResponse hreq, final DatabaseCallback callback, final int callbackCode) {
         fDat.getReference().child("backendResponseTokens").child(fAuth.getUid()).setValue(hreq);

@@ -1,0 +1,17 @@
+it.gpgames.consigliaviaggi19
+it.gpgames.consigliaviaggi19.DAO
+it.gpgames.consigliaviaggi19.DAO.firebaseDAO
+it.gpgames.consigliaviaggi19.DAO.models.places
+it.gpgames.consigliaviaggi19.DAO.models.reviews
+it.gpgames.consigliaviaggi19.DAO.models.users
+it.gpgames.consigliaviaggi19.home
+it.gpgames.consigliaviaggi19.home.slider
+it.gpgames.consigliaviaggi19.network
+it.gpgames.consigliaviaggi19.search
+it.gpgames.consigliaviaggi19.search.filters
+it.gpgames.consigliaviaggi19.search.filters.order
+it.gpgames.consigliaviaggi19.search.place_details
+it.gpgames.consigliaviaggi19.search.place_details.reviews
+it.gpgames.consigliaviaggi19.search.place_details.slider
+it.gpgames.consigliaviaggi19.search.place_map
+it.gpgames.consigliaviaggi19.userpanel
