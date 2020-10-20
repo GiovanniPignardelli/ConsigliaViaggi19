@@ -7,6 +7,7 @@
     tools:context=".userpanel.UserPanelActivity">
 
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/nestedScrollView4"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginBottom="9dp"
@@ -71,8 +72,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <de.hdodenhof.circleimageview.CircleImageView
-                xmlns:app="http://schemas.android.com/apk/res-auto"
+            <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/userPicture"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
@@ -172,27 +172,23 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0" />
 
-    <TextView
-        android:id="@+id/title2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="sans-serif-black"
-        android:shadowColor="#FFFFFF"
-        android:text="ConsigliaViaggi19"
-        android:textColor="#000000"
-        android:textSize="24sp"
-        app:layout_constraintBottom_toBottomOf="@+id/toolbar2"
+    <ImageView
+        android:id="@+id/imageView8"
+        android:layout_width="0dp"
+        android:layout_height="110dp"
+        app:layout_constraintBottom_toTopOf="@+id/nestedScrollView4"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/toolbar2" />
+        app:layout_constraintTop_toTopOf="@+id/toolbar2"
+        app:layout_constraintVertical_bias="0.41000003"
+        app:srcCompat="@drawable/logo_full" />
 
     <ImageView
         android:id="@+id/back2"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_marginEnd="48dp"
         app:layout_constraintBottom_toBottomOf="@+id/toolbar2"
-        app:layout_constraintEnd_toStartOf="@+id/title2"
         app:layout_constraintStart_toStartOf="@+id/toolbar2"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/back" />

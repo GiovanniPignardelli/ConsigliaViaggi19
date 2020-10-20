@@ -15,6 +15,16 @@
         tools:layout_editor_absoluteX="-152dp"
         tools:layout_editor_absoluteY="91dp">
 
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="0dp"
+            android:layout_height="120dp"
+            app:layout_constraintBottom_toTopOf="@+id/textView7"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/logo_full" />
+
         <TextView
             android:id="@+id/textView3"
             android:layout_width="wrap_content"

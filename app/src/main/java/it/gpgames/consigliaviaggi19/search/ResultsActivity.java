@@ -131,9 +131,9 @@ public class ResultsActivity extends AppCompatActivity implements DatabaseCallba
     /** Quando si ottengono i risultati di una query, si passano le liste ottenute a questo metodo che si occupa
      * di organizzare i risultati nella scrollView dell'activity. Per farlo si serve dell'adapter QueryResultAdapter.*/
     public void setUpRecyclerView(List<Place> weakList, List<Place> topList) {
-        if(topList != null) lastQuery = topList;
-        if(topList.size()>0)
+        if(topList!=null && topList.size()>0)
         {
+            lastQuery = topList;
             adapter = new QueryResultsAdapter(ResultsActivity.this, lastQuery, this);
             resultQueries.setAdapter(adapter);
             resultQueries.setLayoutManager(new LinearLayoutManager(ResultsActivity.this, RecyclerView.VERTICAL, false));
